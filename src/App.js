@@ -17,6 +17,7 @@ function App() {
         >
           Learn React
         </a>
+        <div className='bg-red-700 w-1/2 h-14'></div>
       </header>
     </div>
   );
