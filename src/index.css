@@ -1,7 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "./components/TableComponent/_.css";
+@import "./components/PaginationComponent/_.scss";
+@import "./components/ModalComponent/_.css";
 
+:root{
+  --react-color-azulReyPlast: #0055B8;
+  --react-color-rojoReyPlast: #eb0029;
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -9,9 +16,62 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: black;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.z-1000{
+  z-index: 1000;
+}
+
+.text-color-azulReyPlast{
+  color: #0055B8;
+}
+.text-color-rojoReyPlast{
+  color: #eb0029;
+}
+.bg-color-rojoReyPlast{
+  background-color: #eb0029;
+}
+.page-container{
+  @apply p-2 lg:p-8 text-black;
+}
+
+.desktop{
+  @apply hidden md:block;
+}
+
+.mobile{
+  @apply block md:hidden;
+}
+
+.filter-group-container{
+  @apply my-4 flex justify-center w-full;
+}
+
+.filter-button{
+  @apply py-2 px-4 border-2 border-blue-800;
+}
+
+.filter-checkbox-container {
+  display: inline-block;
+}
+
+.filter-checkbox-label {
+  @apply py-2 px-4 border-2 border-blue-800;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.filter-checkbox-container input[type="checkbox"] {
+  display: none;
+}
+
+.filter-checkbox-container input[type="checkbox"]:checked + .filter-checkbox-label {
+  @apply bg-blue-800;
+  color: white;
 }

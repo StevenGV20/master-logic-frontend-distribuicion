@@ -1,13 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  HashRouter,
+  Route,
+  Routes,
+} from "react-router-dom";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import { routesPages } from "./utils/routes";
+
+const router = createBrowserRouter(routesPages);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <RouterProvider router={router} />     */}
+    <BrowserRouter basename="/masterLogic/home/react">
+      <Routes>
+        {routesPages.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

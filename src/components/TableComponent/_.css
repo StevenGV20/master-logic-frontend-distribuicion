@@ -1,0 +1,49 @@
+.table-container {
+  @apply my-2 overflow-x-auto sm:-mx-6 lg:-mx-8;
+}
+.table-container-p {
+  @apply py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8;
+}
+.table-container-content {
+  @apply shadow overflow-hidden border-b border-gray-200 sm:rounded-lg;
+}
+.table-container-tb {
+  @apply min-w-full divide-y divide-gray-200;
+}
+.table-container-th {
+  @apply px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+.table-container-tbody {
+  @apply bg-white divide-y divide-gray-300;
+}
+.table-container-tbody td {
+  @apply text-center space-y-1 py-2;
+}
+.table-container-tbody label{
+  @apply font-semibold;
+}
+.table-container-tbody td .td-group {
+  @apply text-center block;
+}
+.table-container-tbody td .td-group-mobile{
+  @apply text-left block space-y-2;
+}
+.table-container-td {
+  @apply px-6 py-4 whitespace-nowrap text-center;
+}
+.table-container-td .title {
+  @apply text-sm;
+}
+.table-container-td .active {
+  @apply px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800;
+}
+.table-container-td .icon-edit {
+  @apply p-2 inline-flex text-xs leading-5 font-semibold rounded-full text-blue-500 hover:bg-blue-100;
+}
+.table-container-td .icon-delete {
+  @apply p-2 inline-flex text-xs leading-5 font-semibold rounded-full text-red-500 hover:bg-red-100;
+}
+.table-container-td .image {
+  @apply md:w-20 mx-auto;
+}
+/* px-6 py-4 whitespace-nowrap text-sm text-gray-500 */
