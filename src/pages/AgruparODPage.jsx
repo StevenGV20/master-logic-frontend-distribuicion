@@ -6,6 +6,7 @@ import { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import Table from "../components/TableComponent";
@@ -14,7 +15,6 @@ import ModalMessage from "../components/ModalComponent";
 import FilterComponent from "../components/FilterComponent";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import { PAGE_AGRUPAR_OD } from "../utils/titles";
-import { fetchOrdenesDespachoOsis } from "../api/ordenesDespachoApi";
 import { URL_MASTERLOGIC_API } from "../utils/general";
 
 const AgruparODPage = () => {
@@ -54,21 +54,23 @@ const AgruparODPage = () => {
     "",
   ];
   const [ordenesDespacho, setOrdenesDespacho] = useState([]);
+  const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
-    const fetchOrdenesDespacho = async()=> {
+    const fetchOrdenesDespacho = async () => {
       try {
         const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
         if (!response.ok) {
           throw new Error("Error al cargar el archivo JSON");
         }
         const data = await response.json();
-        console.log(data);
+        console.log(data.ordenesDespacho);
         setOrdenesDespacho(data.ordenesDespacho);
+        setLoadingTable(false);
       } catch (error) {
         console.error(error);
       }
-    }
+    };
     fetchOrdenesDespacho();
     return () => {
       /* const listOD = await fetchOrdenesDespacho();
@@ -89,18 +91,23 @@ const AgruparODPage = () => {
     emisionOrden: "",
   });
 
-  const onSearchOsis = async () => {
-    const lista = await fetchOrdenesDespachoOsis();
-    console.log(lista);
-    setOrdenesDespachoOsis(lista);
-  };
-
-  useEffect(() => {
-    
-    return () => {
-      
+  const cols_od_osis = ["ID","PEDIDO","ORDEN DESPACHO","CANAL","CLIENTE","ESTADO"]
+  const onSearchOsis = () => {
+    const fetchOrdenesDespachoOsis = async (filtros) => {
+      try {
+        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
+        if (!response.ok) {
+          throw new Error("Error al cargar el archivo JSON");
+        }
+        const data = await response.json();
+        console.log(data);
+        setOrdenesDespachoOsis(data.ordenesDespachoOsis);
+      } catch (error) {
+        console.error(error);
+      }
     };
-  }, []);
+    fetchOrdenesDespachoOsis();
+  };
 
   return (
     <div className="page-container">
@@ -131,14 +138,15 @@ const AgruparODPage = () => {
         carritoOrdenesDespacho={carritoOrdenesDespacho}
         setCarritoOrdenesDespacho={setCarritoOrdenesDespacho}
         titlePage={PAGE_AGRUPAR_OD}
+        loadingTable={loadingTable}
       />
 
       <div className="relative">
         <button
           onClick={() => setOpenCarritoGrupos(true)}
-          className="z-50 fixed right-6 bottom-3 bg-gray-300 rounded-full py-6 px-8 sm:py-8 sm:px-10 hover:ring-gray-400 hover:ring-2 shadow-md shadow-gray-600"
+          className="z-50 fixed right-6 bottom-6 bg-gray-300 rounded-full py-6 px-6 scale-100 sm:scale-110  hover:ring-gray-400 hover:ring-2 shadow-md shadow-gray-600"
         >
-          <p>3</p>
+          <AppRegistrationIcon sx={{ fontSize: 25 }}/>
         </button>
       </div>
 
@@ -235,10 +243,10 @@ const AgruparODPage = () => {
             </button>
           </div>
         </div>
-        <Table cols={cols_desktop}>
+        <Table cols={cols_od_osis}>
           {ordenesDespachoOsis.length > 0 &&
             ordenesDespachoOsis.map((orden) => (
-              <tr key={orden.item}>
+              <tr key={orden.item} className="text-black">
                 <td>{orden.item}</td>
                 <td>
                   <div className="td-group">
@@ -261,7 +269,6 @@ const AgruparODPage = () => {
                 <td>
                   <div>{orden.estado}</div>
                 </td>
-                <td>Opciones</td>
               </tr>
             ))}
         </Table>
@@ -430,57 +437,6 @@ const AgruparODPage = () => {
           </div>
         </FilterComponent>
       }
-
-      {/* <Snackbar
-        autoHideDuration={3000}
-        open={openCarritoGrupos}
-        onClose={() => {
-          setOpenCarritoGrupos(false);
-        }}
-        sx={{ minWidth: 360 }}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        className="bg-white mb-20 h-96 rounded-md shadow-lg ring-gray-500 shadow-gray-300"
-      >
-        <div className="p-8 text-left">
-          {carritoOrdenesDespacho.map((orden) => (
-            <div className="td-group-mobile text-sm">
-              <label className="w-full text-left">{orden.item}</label>
-              <div>
-                <label>Pedido:</label>
-                <div className="flex space-x-4">
-                  <div>{orden.numeroPedido}</div>
-                  <div>{orden.emisionPedido}</div>
-                </div>
-              </div>
-              <div>
-                <label>Orden de Despacho:</label>
-                <div className="flex space-x-4">
-                  <div>{orden.numeroOrdenDespacho}</div>
-                  <div>{orden.emisionOrdenDespacho}</div>
-                </div>
-              </div>
-              <div>
-                <label htmlFor="">Canal:</label> {orden.canal}
-              </div>
-              <div>
-                <label>Cliente:</label>
-                <div>{orden.cliente}</div>
-                <div>{orden.direccionEntrega}</div>
-                <div>{orden.ubigeo}</div>
-              </div>
-              <div className="block space-x-3">
-                <label>Carga:</label>
-                <div className="grid grid-cols-2">
-                  <div>{orden.volumen}</div>
-                  <div>{orden.bultos} bultos</div>
-                  <div>{orden.peso}</div>
-                  <div>S/. {orden.monto}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Snackbar> */}
     </div>
   );
 };

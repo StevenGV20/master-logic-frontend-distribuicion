@@ -11,6 +11,7 @@ import { PAGE_GENERAR_GRR } from "../utils/titles";
 import { ordenesDespachoFake } from "../data/ordenesDespachoFake";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import FilterComponent from "../components/FilterComponent";
+import { URL_MASTERLOGIC_API } from "../utils/general";
 
 const GenerarGRR = () => {
   registerLocale("es", es);
@@ -27,11 +28,24 @@ const GenerarGRR = () => {
   ];
   const [ordenesDespacho, setOrdenesDespacho] = useState([]);
   const [openFilter, setOpenFilter] = useState(false);
+  const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
-    return () => {
-      setOrdenesDespacho(ordenesDespachoFake.result);
+    const fetchOrdenesDespacho = async (filtros) => {
+      try {
+        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
+        if (!response.ok) {
+          throw new Error("Error al cargar el archivo JSON");
+        }
+        const data = await response.json();
+        console.log(data);
+        setOrdenesDespacho(data.ordenesDespacho);
+        setLoadingTable(false)
+      } catch (error) {
+        console.error(error);
+      }
     };
+    fetchOrdenesDespacho();
   }, []);
 
   const [startDate, setStartDate] = useState(null);
@@ -69,10 +83,11 @@ const GenerarGRR = () => {
       </div>
       <ListOrdenesDespachoComponent
         cols_desktop={cols_desktop}
-        ordenesDespacho={ordenesDespacho}
+        ordenesDespacho={ordenesDespacho.result}
         setOrdenesDespacho={setOrdenesDespacho}
         showButtonDelete={false}
         titlePage=""
+        loadingTable={loadingTable}
       />
       <FilterComponent
         open={openFilter}

@@ -17,6 +17,7 @@ const ListOrdenesDespachoComponent = ({
   carritoOrdenesDespacho,
   setCarritoOrdenesDespacho,
   titlePage = "",
+  loadingTable,
 }) => {
   const [page, setPage] = React.useState(1);
   const handleChange = (event, value) => {
@@ -49,7 +50,7 @@ const ListOrdenesDespachoComponent = ({
     <div>
       <div className="desktop my-6">
         <Table cols={cols_desktop}>
-          {ordenesDespacho.length > 0 ? (
+          {!loadingTable ? (
             ordenesDespacho.map((orden) => (
               <tr
                 onClick={() =>
@@ -123,7 +124,7 @@ const ListOrdenesDespachoComponent = ({
       </div>
       <div className="mobile">
         <Table cols={[]}>
-          {ordenesDespacho.length > 0 &&
+          {!loadingTable ? (
             ordenesDespacho.map((orden) => (
               <tr className="grid grid-cols-6" key={orden.item}>
                 <td className="col-span-4">
@@ -182,7 +183,12 @@ const ListOrdenesDespachoComponent = ({
                   <ViewIcon className={"w-10 h-10 text-right"} />
                 </td> */}
               </tr>
-            ))}
+            ))
+          ) : (
+            <td colSpan={cols_desktop.length}>
+              <CircularProgress />
+            </td>
+          )}
         </Table>
       </div>
 

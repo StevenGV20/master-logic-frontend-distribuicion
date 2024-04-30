@@ -29,14 +29,13 @@ import dayjs from "dayjs";
 
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { PAGE_ASIGNAR_VEHICULO } from "../utils/titles";
-import {
-  ordenesDespachoFake
-} from "../data/ordenesDespachoFake";
+import { ordenesDespachoFake } from "../data/ordenesDespachoFake";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import ModalMessage from "../components/ModalComponent";
-import { TextareaAutosize } from "@mui/material";
-import {listGroupsFake} from"../data/grupos";
-import {listVehiculos} from "../data/listaVehiculos"
+import { CircularProgress, TextareaAutosize } from "@mui/material";
+import { listGroupsFake } from "../data/grupos";
+import { listVehiculos } from "../data/listaVehiculos";
+import { URL_MASTERLOGIC_API } from "../utils/general";
 
 function Row(props) {
   const { row, isMobile } = props;
@@ -52,6 +51,23 @@ function Row(props) {
       setOrdenesDespacho(ordenesDespachoFake.result);
       setVehiculos(listVehiculos);
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchVehiculos = async () => {
+      try {
+        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
+        if (!response.ok) {
+          throw new Error("Error al cargar el archivo JSON");
+        }
+        const data = await response.json();
+        console.log(data);
+        setVehiculos(data.vehiculos);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchVehiculos();
   }, []);
 
   const calcularVolumenTotal = (ordenes) => {
@@ -110,8 +126,14 @@ function Row(props) {
             <TableCell colSpan={2}>
               <div>{row.name}</div>
               <div>{row.sede}</div>
-              <div><div>Volumen total (m3):</div>{calcularVolumenTotal(row.ordenesDespacho)}</div>
-              <div><div>Monto total:</div>{calcularMontoTotal(row.ordenesDespacho)}</div>
+              <div>
+                <div>Volumen total (m3):</div>
+                {calcularVolumenTotal(row.ordenesDespacho)}
+              </div>
+              <div>
+                <div>Monto total:</div>
+                {calcularMontoTotal(row.ordenesDespacho)}
+              </div>
             </TableCell>
             <TableCell colSpan={1}>
               {row.vehiculo ? (
@@ -216,8 +238,8 @@ function Row(props) {
                 >
                   {vehiculos.length > 0 &&
                     vehiculos.map((v) => (
-                      <MenuItem value={v.placa}>
-                        {v.conductor} - {v.capacidadDescripcion}
+                      <MenuItem value={v.vehiculo}>
+                        {v.chofer} - {v.volumenMaximo}
                       </MenuItem>
                     ))}
                 </Select>
@@ -302,10 +324,30 @@ function Row(props) {
 //const rows = listGroupsFake.result;
 
 const AsignarVehiculoPage = () => {
-  const [rows, setRows] = useState([]);
-  useEffect(() => {
-    setRows(listGroupsFake.result);
+  const [grupos, setGrupos] = useState([]);
+  /* useEffect(() => {
+    setGrupos(listGroupsFake.result);
     console.log(listGroupsFake.result);
+  }, []);
+ */
+  const [loadingTable, setLoadingTable] = useState(true);
+
+  useEffect(() => {
+    const fetchGrupos = async (filtros) => {
+      try {
+        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
+        if (!response.ok) {
+          throw new Error("Error al cargar el archivo JSON");
+        }
+        const data = await response.json();
+        console.log(data);
+        setGrupos(data.grupos);
+        setLoadingTable(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchGrupos();
   }, []);
 
   const cols_desktop = [
@@ -320,7 +362,7 @@ const AsignarVehiculoPage = () => {
     "",
   ];
 
-  const cols_mobile = ["GRUPO","","VEHÍCULO", ""];
+  const cols_mobile = ["GRUPO", "", "VEHÍCULO", ""];
 
   return (
     <div className="page-container">
@@ -339,10 +381,15 @@ const AsignarVehiculoPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.length > 0 &&
-                rows.map((row) => (
+              {!loadingTable ? (
+                grupos.result.map((row) => (
                   <Row key={row.name} row={row} isMobile={false} />
-                ))}
+                ))
+              ) : (
+                <td colSpan={cols_desktop.length}>
+                  <CircularProgress />
+                </td>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -354,13 +401,15 @@ const AsignarVehiculoPage = () => {
             <TableHead>
               <TableRow>
                 {cols_mobile.map((col) => (
-                  <TableCell align="center" key={col}>{col}</TableCell>
+                  <TableCell align="center" key={col}>
+                    {col}
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.length > 0 &&
-                rows.map((row) => (
+              {grupos.length > 0 &&
+                grupos.map((row) => (
                   <Row key={row.name} row={row} isMobile={true} />
                 ))}
             </TableBody>

@@ -15,7 +15,7 @@
         "volumen": 7,
         "medidaVolumen": "m3",
         "bultos": 2,
-        "peso": "0.5 Tn",
+        "peso": "0.5Tn",
         "monto": 40000,
         "ubigeo": "Lima-Lima-Cercado de Lima",
         "direccionEntrega": "Direccion ABC",
@@ -135,7 +135,7 @@
         "ubigeo": "Lima-Lima-Rimac",
         "direccionEntrega": "Direccion DEF",
         "observacion": "SODIMAC - RIMAC",
-        "grupo": "GRUPO_03",
+        "grupo": "",
         "sede": "ATE"
       },
       {
@@ -156,6 +156,66 @@
         "rangoHora": "11:00-13:00",
         "observacion": "SODIMAC - SAN MIGUEL",
         "grupo": "GRUPO_04",
+        "sede": "ATE"
+      },
+      {
+        "item": 9,
+        "numeroPedido": 24041877,
+        "emisionPedido": "04/16/2024",
+        "numeroOrdenDespacho": 24042622,
+        "emisionOrdenDespacho": "04/18/2024",
+        "canal": "RETAIL",
+        "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
+        "volumen": 5,
+        "medidaVolumen": "m3",
+        "bultos": 5,
+        "peso": "0.8 Tn",
+        "monto": 1308.22,
+        "ubigeo": "Lima-Lima-San Miguel",
+        "direccionEntrega": "Direccion YZ",
+        "rangoHora": "11:00-13:00",
+        "observacion": "SODIMAC - SAN MIGUEL",
+        "grupo": "",
+        "sede": "ATE"
+      },
+      {
+        "item": 10,
+        "numeroPedido": 24041877,
+        "emisionPedido": "04/16/2024",
+        "numeroOrdenDespacho": 24042622,
+        "emisionOrdenDespacho": "04/18/2024",
+        "canal": "RETAIL",
+        "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
+        "volumen": 5,
+        "medidaVolumen": "m3",
+        "bultos": 5,
+        "peso": "0.8 Tn",
+        "monto": 1308.22,
+        "ubigeo": "Lima-Lima-San Miguel",
+        "direccionEntrega": "Direccion YZ",
+        "rangoHora": "11:00-13:00",
+        "observacion": "SODIMAC - SAN MIGUEL",
+        "grupo": "GRUPO_04",
+        "sede": "ATE"
+      },
+      {
+        "item": 11,
+        "numeroPedido": 24041877,
+        "emisionPedido": "04/16/2024",
+        "numeroOrdenDespacho": 24042622,
+        "emisionOrdenDespacho": "04/18/2024",
+        "canal": "RETAIL",
+        "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
+        "volumen": 5,
+        "medidaVolumen": "m3",
+        "bultos": 5,
+        "peso": "0.8 Tn",
+        "monto": 1308.22,
+        "ubigeo": "Lima-Lima-San Miguel",
+        "direccionEntrega": "Direccion YZ",
+        "rangoHora": "11:00-13:00",
+        "observacion": "SODIMAC - SAN MIGUEL",
+        "grupo": "",
         "sede": "ATE"
       }
     ]
@@ -319,7 +379,8 @@
       "estado": "ACTIVO",
       "propietario": "DECAPOLIS",
       "sede": "ATE",
-      "volumenMaximo": 15
+      "volumenMaximo": 15,
+      "tipoVolumen": "m3"
     },
     {
       "id": 2,
@@ -329,7 +390,8 @@
       "estado": "ACTIVO",
       "propietario": "DECAPOLIS",
       "sede": "ATE",
-      "volumenMaximo": 14
+      "volumenMaximo": 14,
+      "tipoVolumen": "m3"
     },
     {
       "id": 3,
@@ -339,7 +401,8 @@
       "estado": "ACTIVO",
       "propietario": "DECAPOLIS",
       "sede": "ATE",
-      "volumenMaximo": 50
+      "volumenMaximo": 50,
+      "tipoVolumen": "m3"
     },
     {
       "id": 4,
@@ -350,7 +413,8 @@
       "motivo": "Mantenimiento",
       "propietario": "DECAPOLIS",
       "sede": "ATE",
-      "volumenMaximo": 55
+      "volumenMaximo": 55,
+      "tipoVolumen": "m3"
     },
     {
       "id": 5,
@@ -360,7 +424,8 @@
       "estado": "ACTIVO",
       "propietario": "DECAPOLIS",
       "sede": "LURIN",
-      "volumenMaximo": 70
+      "volumenMaximo": 70,
+      "tipoVolumen": "m3"
     }
   ],
   "grupos": {
@@ -385,7 +450,8 @@
             "volumen": 7,
             "medidaVolumen": "m3",
             "bultos": 2,
-            "peso": "0.5 Tn",
+            "peso": 0.5,
+            "unidadPeso": "Tn",
             "monto": 40000,
             "ubigeo": "Lima-Lima-Cercado de Lima",
             "direccionEntrega": "Direccion ABC",
@@ -403,7 +469,8 @@
             "volumen": 10,
             "medidaVolumen": "m3",
             "bultos": 7,
-            "peso": "1.5 Tn",
+            "peso": 1.5,
+            "unidadPeso": "Tn",
             "monto": 2308.22,
             "ubigeo": "Lima-Lima-Breña",
             "direccionEntrega": "Direccion YZ",
@@ -556,44 +623,44 @@
   },
   "ordenesDespachoOsis": [
     {
-     "item": 1,
-     "numeroPedido": 24033736,
-     "emisionPedido": "04\/15\/2024",
-     "numeroOrden": 24042441,
-     "emisionOrden": "04\/18\/2024",
-     "canal": "NACIONAL",
-     "cliente": "20600890485 - MULTIPLASTIC EL LOBO E.I.R.L.",
-     "estado": "No importado"
+      "item": 1,
+      "numeroPedido": 24033736,
+      "emisionPedido": "04/15/2024",
+      "numeroOrden": 24042441,
+      "emisionOrden": "04/18/2024",
+      "canal": "NACIONAL",
+      "cliente": "20600890485 - MULTIPLASTIC EL LOBO E.I.R.L.",
+      "estado": "No importado"
     },
     {
-     "item": 2,
-     "numeroPedido": 24041875,
-     "emisionPedido": "04\/16\/2024",
-     "numeroOrden": 24042620,
-     "emisionOrden": "04\/18\/2024",
-     "canal": "RETAIL",
-     "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
-     "estado": "No importado"
+      "item": 2,
+      "numeroPedido": 24041875,
+      "emisionPedido": "04/16/2024",
+      "numeroOrden": 24042620,
+      "emisionOrden": "04/18/2024",
+      "canal": "RETAIL",
+      "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
+      "estado": "No importado"
     },
     {
-     "item": 3,
-     "numeroPedido": 24041876,
-     "emisionPedido": "04\/16\/2024",
-     "numeroOrden": 24042621,
-     "emisionOrden": "04\/18\/2024",
-     "canal": "RETAIL",
-     "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
-     "estado": "No importado"
+      "item": 3,
+      "numeroPedido": 24041876,
+      "emisionPedido": "04/16/2024",
+      "numeroOrden": 24042621,
+      "emisionOrden": "04/18/2024",
+      "canal": "RETAIL",
+      "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
+      "estado": "No importado"
     },
     {
-     "item": 4,
-     "numeroPedido": 24041877,
-     "emisionPedido": "04\/16\/2024",
-     "numeroOrden": 24042622,
-     "emisionOrden": "04\/18\/2024",
-     "canal": "RETAIL",
-     "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
-     "estado": "Importado"
+      "item": 4,
+      "numeroPedido": 24041877,
+      "emisionPedido": "04/16/2024",
+      "numeroOrden": 24042622,
+      "emisionOrden": "04/18/2024",
+      "canal": "RETAIL",
+      "cliente": "20112273922 - TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.",
+      "estado": "Importado"
     }
-   ]
+  ]
 }
