@@ -1,55 +1,35 @@
 import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { registerLocale, setDefaultLocale } from "react-datepicker";
-import es from "date-fns/locale/es";
-
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
-import dayjs from "dayjs";
 
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { PAGE_ASIGNAR_VEHICULO } from "../utils/titles";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import ModalMessage from "../components/ModalComponent";
-import { CircularProgress, TextareaAutosize } from "@mui/material";
-import { URL_MASTERLOGIC_API } from "../utils/general";
+import { CircularProgress } from "@mui/material";
+import {
+  GRUPOS_COLS_DESKTOP,
+  GRUPOS_COLS_MOBILE,
+  GRUPOS_COLS_MODAL_DESKTOP,
+  GRUPOS_COLS_MODAL_MOBILE,
+  URL_MASTERLOGIC_API,
+  VEHICULOS_DISPONIBILIDAD_COLS_DESKTOP,
+  VEHICULOS_DISPONIBILIDAD_COLS_MOBILE,
+} from "../utils/general";
 import {
   calcularMontoTotal,
   calcularVolumenAsignadoTotal,
   calcularVolumenTotal,
 } from "../utils/funciones";
 import TableCustom from "../components/TableComponent";
-import TableCollapseCustomComponent from "../components/TableComponent/TableCollapseCustomComponent";
+import TableCollapseMUICustomComponent from "../components/TableComponent/TableCollapseMUICustomComponent";
+import TableMUICustomComponent from "../components/TableComponent/TableMUICustomComponent";
+import FormAsignarVehiculoComponent from "../components/FormAsignarVehiculoComponent";
 
 function Row(props) {
-  const { row, isMobile, vehiculos, setVehiculos, loadingTable } = props;
-  const [open, setOpen] = React.useState(false);
+  const { row, isMobile, vehiculos } = props;
   const [grupoToAsign, setGrupoToAsign] = useState(null);
-  const [vehiculoSelected, setVehiculoSelected] = useState(null);
-
-  const handleChange = (event) => {
-    setVehiculoSelected(event.target.value);
-  };
 
   const handleAsignGroup = (group) => {
     setGrupoToAsign(group);
@@ -61,26 +41,21 @@ function Row(props) {
     setOpenModal(false);
   };
 
-  registerLocale("es", es);
-  setDefaultLocale("es");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [openEndDate, setOpenEndDate] = useState(false);
-
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-    setEndDate(null);
-    setOpenEndDate(true);
-  };
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-    setOpenEndDate(false);
-  };
-
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableCollapseMUICustomComponent
+        titleSubTable={"Ordenes de Despacho"}
+        subtable={
+          <ListOrdenesDespachoComponent
+            ordenesDespacho={row.ordenesDespacho}
+            setOrdenesDespacho={() => <></>}
+            showButtonDelete={false}
+            showPagination={false}
+            titlePage=""
+            loadingTable={false}
+          />
+        }
+      >
         {isMobile ? (
           <>
             <TableCell colSpan={2}>
@@ -151,35 +126,7 @@ function Row(props) {
             <TableCell align="center">{}</TableCell>
           </>
         )}
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Ordenes de Despacho
-              </Typography>
-              <ListOrdenesDespachoComponent
-                ordenesDespacho={row.ordenesDespacho}
-                setOrdenesDespacho={() => <></>}
-                showButtonDelete={false}
-                showPagination={false}
-                titlePage=""
-                loadingTable={false}
-              />
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+      </TableCollapseMUICustomComponent>
 
       <ModalMessage
         open={openModal}
@@ -187,108 +134,13 @@ function Row(props) {
         title={"Asignar Vehiculo"}
         titleBtnAceptar={"Asignar"}
         onBtnAceptar={onAsignarVehiculo}
+        showButtons={false}
       >
-        <div className="modal-group-container">
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">Grupo:</label>
-              <div>GRUPO 3</div>
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Volumen:</label>
-              <div>
-                {grupoToAsign &&
-                  calcularVolumenTotal(grupoToAsign.ordenesDespacho)}{" "}
-                m3
-              </div>
-            </div>
-          </div>
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">Vehiculo:</label>
-              <FormControl fullWidth>
-                <Select
-                  style={{ border: "2px #0055B8 solid" }}
-                  value={vehiculoSelected}
-                  onChange={handleChange}
-                >
-                  {vehiculos.length > 0 &&
-                    vehiculos.map((v) => (
-                      <MenuItem value={v.vehiculo}>
-                        {v.chofer} - {v.volumenMaximo}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Volumen Asignado:</label>
-              <div></div>
-            </div>
-          </div>
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">Fecha de Salida:</label>
-              <DatePicker
-                selected={startDate}
-                onChange={handleStartDateChange}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                locale="es"
-                dateFormat="dd/MM/yyyy"
-                popperPlacement="bottom-end"
-                className="modal-group-input-md"
-              />
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Hora de Salida:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <MobileTimePicker defaultValue={dayjs(new Date())} />
-              </LocalizationProvider>
-            </div>
-          </div>
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">Fecha de Carga:</label>
-              <DatePicker
-                selected={startDate}
-                onChange={handleEndDateChange}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                locale="es"
-                dateFormat="dd/MM/yyyy"
-                popperPlacement="bottom-end"
-                className="modal-group-input-md"
-              />
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Hora de Carga:</label>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <MobileTimePicker
-                  defaultValue={dayjs(new Date())}
-                  className="modal-group-input-md"
-                />
-              </LocalizationProvider>
-            </div>
-          </div>
-          <div className="flex">
-            <div className="modal-group-item-container">
-              <label htmlFor="">N° Palets:</label>
-              <input type="text" className="modal-group-input-md -ml-1" />
-            </div>
-          </div>
-          <div className="w-full block">
-            <label htmlFor="" className="w-full">
-              Observacion:
-            </label>
-            <TextareaAutosize
-              minRows={4}
-              className="border-2 border-blue-800 outline-none px-4 py-2 mt-2 w-full"
-            />
-          </div>
-        </div>
+        <FormAsignarVehiculoComponent
+          vehiculos={vehiculos}
+          grupoToAsign={grupoToAsign}
+          setOpenModal={setOpenModal}
+        />
       </ModalMessage>
     </React.Fragment>
   );
@@ -298,11 +150,7 @@ function Row(props) {
 
 const AsignarVehiculoPage = () => {
   const [grupos, setGrupos] = useState([]);
-  /* useEffect(() => {
-    setGrupos(listGroupsFake.result);
-    console.log(listGroupsFake.result);
-  }, []);
- */
+
   const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
@@ -340,28 +188,6 @@ const AsignarVehiculoPage = () => {
     fetchVehiculos();
   }, []);
 
-  const cols_desktop = [
-    "GRUPO",
-    "SEDE",
-    "VOLUMEN (m3)",
-    "MONTO TOTAL",
-    "UBIGEO",
-    "VEHÍCULO",
-    "RUTA",
-    "MONTO",
-    "",
-  ];
-
-  const cols_mobile = ["GRUPO", " ", "VEHÍCULO", ""];
-  const cols_vehiculos_disponibilidad = [
-    "VEHÍCULO",
-    "CHOFER",
-    "SEDE",
-    "VOLUMEN MAXIMO (m3)",
-    "VOLUMEN ACTUAL ASIGNADO (m3)",
-    "VOLUMEN DISPONIBLE (m3)",
-  ];
-
   const [openModalVehiculos, setOpenModalVehiculos] = useState(false);
 
   return (
@@ -377,14 +203,6 @@ const AsignarVehiculoPage = () => {
         >
           Ver Disponibilidad de Vehiculos
         </button>
-        {/* 
-        <div className="w-1/6 lg:w-1/12 text-center content-center grid justify-items-center">
-          <div className="w-5 ml-4">
-            <button onClick={() => setOpenFilter(true)}>
-              <FilterAltIcon />
-            </button>
-          </div>
-        </div> */}
       </div>
       <ModalMessage
         open={openModalVehiculos}
@@ -393,116 +211,190 @@ const AsignarVehiculoPage = () => {
         titleBtnAceptar={"Aceptar"}
         onBtnAceptar={() => setOpenModalVehiculos(false)}
       >
-        <div>
-          <TableCustom cols={cols_vehiculos_disponibilidad}>
+        <div className="desktop">
+          <TableCustom cols={VEHICULOS_DISPONIBILIDAD_COLS_DESKTOP}>
             {vehiculos.map((vehiculo) => {
               const totalVolumenAsignado = vehiculo.gruposAsignados
                 ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
                 : 0;
+              //["GRUPO", "SEDE", "VOLUMEN TOTAL", "MONTO TOTAL"]
               return (
-                <tr>
-                  <td>{vehiculo.vehiculo}</td>
-                  <td>{vehiculo.chofer}</td>
-                  <td>{vehiculo.sede}</td>
-                  <td>{vehiculo.volumenMaximo}</td>
-                  <td>{totalVolumenAsignado}</td>
-                  <td>{vehiculo.volumenMaximo - totalVolumenAsignado}</td>
-                </tr>
+                <>
+                  <TableCollapseMUICustomComponent
+                    titleSubTable={
+                      vehiculo.gruposAsignados &&
+                      vehiculo.gruposAsignados.length > 0
+                        ? "Grupos Asignados"
+                        : "No tienen ningún grupo asignado"
+                    }
+                    subtable={
+                      vehiculo.gruposAsignados &&
+                      vehiculo.gruposAsignados.length > 0 && (
+                        <TableMUICustomComponent
+                          cols={GRUPOS_COLS_MODAL_DESKTOP}
+                        >
+                          {vehiculo.gruposAsignados.map((grupo) => (
+                            <>
+                              <TableRow>
+                                <TableCell component="th" scope="row">
+                                  {grupo.name}
+                                </TableCell>
+                                <TableCell align="center">
+                                  {grupo.sede}
+                                </TableCell>
+                                <TableCell align="center">
+                                  {grupo.volumenTotal}
+                                </TableCell>
+                                <TableCell align="center">
+                                  {grupo.montoTotal}
+                                </TableCell>
+                              </TableRow>
+                            </>
+                          ))}
+                        </TableMUICustomComponent>
+                      )
+                    }
+                  >
+                    <>
+                      <TableCell component="th" scope="row" className="hidden">
+                        {vehiculo.vehiculo}
+                      </TableCell>
+                      <TableCell align="center">{vehiculo.chofer}</TableCell>
+                      <TableCell align="center">{vehiculo.sede}</TableCell>
+                      <TableCell align="center">
+                        {vehiculo.volumenMaximo}
+                      </TableCell>
+                      <TableCell align="center">
+                        {totalVolumenAsignado}
+                      </TableCell>
+                      <TableCell align="center">
+                        {vehiculo.volumenMaximo - totalVolumenAsignado}
+                      </TableCell>
+                    </>
+                  </TableCollapseMUICustomComponent>
+                </>
               );
             })}
           </TableCustom>
-
-          <TableCollapseCustomComponent
-            cols={cols_vehiculos_disponibilidad}
-            loadingTable={false}
-          >
-            <div>
-              {vehiculos.map((vehiculo) => {
-                const totalVolumenAsignado = vehiculo.gruposAsignados
-                  ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
-                  : 0;
-                return (
-                  <tr key={vehiculo.vehiculo}>
-                    <td>{vehiculo.vehiculo}</td>
-                    <td>{vehiculo.chofer}</td>
-                    <td>{vehiculo.sede}</td>
-                    <td>{vehiculo.volumenMaximo}</td>
-                    <td>{totalVolumenAsignado}</td>
-                    <td>{vehiculo.volumenMaximo - totalVolumenAsignado}</td>
-                  </tr>
-                );
-              })}
-            </div>
-          </TableCollapseCustomComponent>
+        </div>
+        <div className="mobile">
+          <TableCustom cols={VEHICULOS_DISPONIBILIDAD_COLS_MOBILE}>
+            {vehiculos.map((vehiculo) => {
+              const totalVolumenAsignado = vehiculo.gruposAsignados
+                ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
+                : 0;
+              //["GRUPO", "SEDE", "VOLUMEN TOTAL", "MONTO TOTAL"]
+              return (
+                <>
+                  <TableCollapseMUICustomComponent
+                    titleSubTable={
+                      vehiculo.gruposAsignados &&
+                      vehiculo.gruposAsignados.length > 0
+                        ? "Grupos Asignados"
+                        : "No tienen ningún grupo asignado"
+                    }
+                    subtable={
+                      vehiculo.gruposAsignados &&
+                      vehiculo.gruposAsignados.length > 0 && (
+                        <TableMUICustomComponent
+                          cols={GRUPOS_COLS_MODAL_MOBILE}
+                        >
+                          {vehiculo.gruposAsignados.map((grupo) => (
+                            <>
+                              <TableRow>
+                                <TableCell component="th" scope="row">
+                                  <div>{grupo.name}</div>
+                                  <div>{grupo.sede}</div>
+                                  <div>{grupo.volumenTotal}</div>
+                                  <div>{grupo.montoTotal}</div>
+                                </TableCell>
+                              </TableRow>
+                            </>
+                          ))}
+                        </TableMUICustomComponent>
+                      )
+                    }
+                  >
+                    <>
+                      <TableCell component="th" scope="row">
+                        <div className="block">
+                          <div className="grid grid-cols-1">
+                            <label htmlFor="">Vehiculo: </label>
+                            <span>{vehiculo.vehiculo}</span>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label htmlFor="">Chofer: </label>
+                            <span>{vehiculo.chofer}</span>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label htmlFor="">Sede: </label>
+                            <span>{vehiculo.sede}</span>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label htmlFor="">Volumen Maximo:</label>
+                            <span>{vehiculo.volumenMaximo}</span>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label htmlFor="">Volumen Asignado:</label>
+                            <span>{totalVolumenAsignado}</span>
+                          </div>
+                          <div className="grid grid-cols-1">
+                            <label htmlFor="">Volumen Disponible: </label>
+                            <span>
+                              {vehiculo.volumenMaximo - totalVolumenAsignado}
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+                    </>
+                  </TableCollapseMUICustomComponent>
+                </>
+              );
+            })}
+          </TableCustom>
         </div>
       </ModalMessage>
 
       <div className="desktop p-2 md:p-4">
-        <TableContainer component={Paper}>
-          <Table aria-label="collapsible table">
-            <TableHead>
-              <TableRow>
-                {cols_desktop.map((col) => (
-                  <TableCell align="center" key={col}>
-                    {col}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {!loadingTable ? (
-                grupos.result.map((row) => (
-                  <Row
-                    key={row.name}
-                    row={row}
-                    isMobile={false}
-                    loadingTable={loadingTable}
-                    vehiculos={vehiculos}
-                    setVehiculos={setVehiculos}
-                  />
-                ))
-              ) : (
-                <td colSpan={cols_desktop.length}>
-                  <CircularProgress />
-                </td>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <TableMUICustomComponent cols={GRUPOS_COLS_DESKTOP}>
+          {!loadingTable ? (
+            grupos.result.map((row) => (
+              <Row
+                key={row.name}
+                row={row}
+                isMobile={false}
+                loadingTable={loadingTable}
+                vehiculos={vehiculos}
+                setVehiculos={setVehiculos}
+              />
+            ))
+          ) : (
+            <td colSpan={GRUPOS_COLS_DESKTOP.length}>
+              <CircularProgress />
+            </td>
+          )}
+        </TableMUICustomComponent>
       </div>
 
       <div className="mobile">
-        <TableContainer component={Paper}>
-          <Table aria-label="collapsible table">
-            <TableHead>
-              <TableRow>
-                {cols_mobile.map((col) => (
-                  <TableCell align="center" key={col + "-mobile"}>
-                    {col}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {!loadingTable ? (
-                grupos.result.map((row) => (
-                  <Row
-                    key={row.item}
-                    row={row}
-                    isMobile={true}
-                    loadingTable={loadingTable}
-                    vehiculos={vehiculos}
-                    setVehiculos={setVehiculos}
-                  />
-                ))
-              ) : (
-                <td colSpan={cols_desktop.length}>
-                  <CircularProgress />
-                </td>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <TableMUICustomComponent cols={GRUPOS_COLS_MOBILE}>
+          {!loadingTable ? (
+            grupos.result.map((row) => (
+              <Row
+                key={row.item}
+                row={row}
+                isMobile={true}
+                loadingTable={loadingTable}
+                vehiculos={vehiculos}
+                setVehiculos={setVehiculos}
+              />
+            ))
+          ) : (
+            <td colSpan={GRUPOS_COLS_MOBILE.length}>
+              <CircularProgress />
+            </td>
+          )}
+        </TableMUICustomComponent>
       </div>
     </div>
   );

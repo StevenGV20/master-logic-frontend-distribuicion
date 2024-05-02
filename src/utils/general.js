@@ -1,3 +1,44 @@
-const URL_MASTERLOGIC_API = "https://raw.githubusercontent.com/StevenGV20/fakeapi-testing/main";
+const URL_MASTERLOGIC_API =
+  "https://raw.githubusercontent.com/StevenGV20/fakeapi-testing/main";
+const GRUPOS_COLS_MODAL_DESKTOP = [
+  "GRUPO",
+  "SEDE",
+  "VOLUMEN TOTAL",
+  "MONTO TOTAL",
+];
+const GRUPOS_COLS_MODAL_MOBILE = ["GRUPO", ""];
 
-export {URL_MASTERLOGIC_API}
+const GRUPOS_COLS_DESKTOP = [
+  "GRUPO",
+  "SEDE",
+  "VOLUMEN (m3)",
+  "MONTO TOTAL",
+  "UBIGEO",
+  "VEHÍCULO",
+  "RUTA",
+  "MONTO",
+  "",
+];
+
+const GRUPOS_COLS_MOBILE = ["GRUPO", " ", "VEHÍCULO", ""];
+const VEHICULOS_DISPONIBILIDAD_COLS_DESKTOP = [
+  "VEHÍCULO",
+  "CHOFER",
+  "SEDE",
+  "VOLUMEN MAXIMO (m3)",
+  "VOLUMEN ACTUAL ASIGNADO (m3)",
+  "VOLUMEN DISPONIBLE (m3)",
+  "",
+];
+
+const VEHICULOS_DISPONIBILIDAD_COLS_MOBILE = ["VEHÍCULO", ""];
+
+export {
+  URL_MASTERLOGIC_API,
+  GRUPOS_COLS_MODAL_DESKTOP,
+  GRUPOS_COLS_MODAL_MOBILE,
+  GRUPOS_COLS_DESKTOP,
+  GRUPOS_COLS_MOBILE,
+  VEHICULOS_DISPONIBILIDAD_COLS_DESKTOP,
+  VEHICULOS_DISPONIBILIDAD_COLS_MOBILE,
+};
