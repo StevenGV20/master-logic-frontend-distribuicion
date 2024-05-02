@@ -67,10 +67,6 @@ const AgruparODPage = () => {
       }
     };
     fetchOrdenesDespacho();
-    return () => {
-      /* const listOD = await fetchOrdenesDespacho();
-      console.log(listOD.result); */
-    };
   }, []);
 
   const [carritoOrdenesDespacho, setCarritoOrdenesDespacho] = useState([]);
@@ -88,12 +84,6 @@ const AgruparODPage = () => {
     }
   };
 
-  const onDeleteODFromCarrito = (orden) => {
-    console.log(orden);
-    const newLista = carritoOrdenesDespacho.filter((o) => o.item != orden.item);
-    setCarritoOrdenesDespacho(newLista);
-  };
-
   const [ordenesDespachoOsis, setOrdenesDespachoOsis] = useState([]);
   const [filtrosOsis, setFiltrosOsis] = useState({
     canal: "",
@@ -104,16 +94,6 @@ const AgruparODPage = () => {
     emisionOrden: "",
   });
 
-  const cols_od_osis = [
-    "ID",
-    "PEDIDO",
-    "ORDEN DESPACHO",
-    "CANAL",
-    "CLIENTE",
-    <div>
-      <Checkbox size="medium" />
-    </div>,
-  ];
   const onSearchOsis = () => {
     const fetchOrdenesDespachoOsis = async (filtros) => {
       try {
@@ -167,7 +147,8 @@ const AgruparODPage = () => {
       <div className="relative">
         <button
           onClick={() => setOpenCarritoGrupos(true)}
-          className="z-50 fixed right-6 bottom-6 bg-gray-300 rounded-full py-6 px-6 scale-100 sm:scale-110  hover:ring-gray-400 hover:ring-2 shadow-md shadow-gray-600"
+          className="z-50 fixed right-6 bottom-6 bg-gray-300 rounded-full py-6 px-6 scale-100 
+                      sm:scale-110 hover:scale-125  hover:ring-gray-400 hover:ring-2 shadow-md shadow-gray-600"
         >
           <AppRegistrationIcon sx={{ fontSize: 25 }} />
         </button>

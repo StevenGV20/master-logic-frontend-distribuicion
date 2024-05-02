@@ -31,11 +31,11 @@ function ErrorBoundary() {
 
 root.render(
   <React.StrictMode>
-    {/* <RouterProvider router={router} />     */}
+    {/* <RouterProvider router={router} />     buscarCadena(listaModulos, route.path)*/}
     <BrowserRouter basename="/masterLogic/distribucion/">
       <Routes>
         {routesPages.map((route) => {
-          if (buscarCadena(listaModulos, route.path)) {
+          if (true) {
             return (
               <Route
                 key={route.path}
