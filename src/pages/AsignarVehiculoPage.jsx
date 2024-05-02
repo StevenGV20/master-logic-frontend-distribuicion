@@ -211,7 +211,7 @@ const AsignarVehiculoPage = () => {
         titleBtnAceptar={"Aceptar"}
         onBtnAceptar={() => setOpenModalVehiculos(false)}
       >
-        <div className="desktop">
+        <div className="desktop text-black">
           <TableCustom cols={VEHICULOS_DISPONIBILIDAD_COLS_DESKTOP}>
             {vehiculos.map((vehiculo) => {
               const totalVolumenAsignado = vehiculo.gruposAsignados
@@ -277,7 +277,7 @@ const AsignarVehiculoPage = () => {
             })}
           </TableCustom>
         </div>
-        <div className="mobile">
+        <div className="mobile text-black">
           <TableCustom cols={VEHICULOS_DISPONIBILIDAD_COLS_MOBILE}>
             {vehiculos.map((vehiculo) => {
               const totalVolumenAsignado = vehiculo.gruposAsignados

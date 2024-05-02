@@ -15,7 +15,10 @@ import dayjs from "dayjs";
 
 import { TextareaAutosize } from "@mui/material";
 
-import { calcularVolumenTotal } from "../../utils/funciones";
+import {
+  calcularVolumenAsignadoTotal,
+  calcularVolumenTotal,
+} from "../../utils/funciones";
 
 const FormAsignarVehiculoComponent = ({
   vehiculos,
@@ -25,7 +28,8 @@ const FormAsignarVehiculoComponent = ({
   const [vehiculoSelected, setVehiculoSelected] = useState(null);
 
   const handleChange = (event) => {
-    setVehiculoSelected(event.target.value);
+    const v_selected = event.target.value;
+    setVehiculoSelected(v_selected);
   };
 
   const onAsignarVehiculo = () => {
@@ -38,6 +42,8 @@ const FormAsignarVehiculoComponent = ({
   const [endDate, setEndDate] = useState(new Date());
   const [openEndDate, setOpenEndDate] = useState(false);
 
+  const grupoVolumenTotal = calcularVolumenTotal(grupoToAsign.ordenesDespacho);
+
   const handleStartDateChange = (date) => {
     setStartDate(date);
     setEndDate(null);
@@ -48,6 +54,31 @@ const FormAsignarVehiculoComponent = ({
     setEndDate(date);
     setOpenEndDate(false);
   };
+
+  const showMessageCapacidadDisponible = (vehiculo) => {
+    if (!(vehiculo.gruposAsignados && vehiculo.gruposAsignados.length > 0))
+      return <span className="text-sm">No tiene ningun grupo asignado</span>;
+    const volAsigTotal = calcularVolumenAsignadoTotal(vehiculo.gruposAsignados);
+    const volDisponible =
+      vehiculo.volumenMaximo -
+      calcularVolumenAsignadoTotal(vehiculo.gruposAsignados);
+    if (volDisponible < grupoVolumenTotal) {
+      return (
+        <div className="block">
+          <div className="">{volAsigTotal}</div>
+          <div className="text-xs text-red-700">
+            Este grupo supera la capacidad disponible
+          </div>
+        </div>
+      );
+    } else
+      return (
+        <div>
+          <span>{volAsigTotal}</span>
+        </div>
+      );
+  };
+
   return (
     <div className="modal-group-container">
       <div className="modal-group-control-container">
@@ -58,7 +89,7 @@ const FormAsignarVehiculoComponent = ({
         <div className="modal-group-item-container">
           <label htmlFor="">Volumen:</label>
           <div>
-            {grupoToAsign && calcularVolumenTotal(grupoToAsign.ordenesDespacho)}{" "}
+            {grupoToAsign && grupoVolumenTotal}{" "}
             m3
           </div>
         </div>
@@ -74,7 +105,7 @@ const FormAsignarVehiculoComponent = ({
             >
               {vehiculos.length > 0 &&
                 vehiculos.map((v) => (
-                  <MenuItem value={v.vehiculo}>
+                  <MenuItem value={v}>
                     {v.chofer} - {v.volumenMaximo}
                   </MenuItem>
                 ))}
@@ -83,7 +114,18 @@ const FormAsignarVehiculoComponent = ({
         </div>
         <div className="modal-group-item-container">
           <label htmlFor="">Volumen Asignado:</label>
-          <div></div>
+          <div>
+            {vehiculoSelected && showMessageCapacidadDisponible(vehiculoSelected)}
+            {/* {vehiculoSelected &&
+              (vehiculoSelected.gruposAsignados &&
+              vehiculoSelected.gruposAsignados.length > 0 ? (
+                calcularVolumenAsignadoTotal(vehiculoSelected.gruposAsignados)
+              ) : (
+                <span className="text-sm">
+                  Este grupo supera la capacidad disponible
+                </span>
+              ))} */}
+          </div>
         </div>
       </div>
       <div className="modal-group-control-container">
@@ -152,7 +194,7 @@ const FormAsignarVehiculoComponent = ({
         <button
           type="button"
           className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-          onClick={()=>onAsignarVehiculo()}
+          onClick={() => onAsignarVehiculo()}
         >
           Aceptar
         </button>

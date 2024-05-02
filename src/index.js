@@ -8,21 +8,43 @@ import {
   HashRouter,
   Route,
   Routes,
+  useRouteError,
+  redirect,
 } from "react-router-dom";
 
 import { routesPages } from "./utils/routes";
+import { buscarCadena } from "./utils/funciones";
 
 const router = createBrowserRouter(routesPages);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+const rutas = localStorage.getItem("MENUS_CODIFICADO");
+const listaModulos = JSON.parse(window.atob(rutas));
+
+function ErrorBoundary() {
+  console.error("No page");
+  // Uncaught ReferenceError: path is not defined
+  redirect("/");
+  return (<div></div>)
+}
+
 root.render(
   <React.StrictMode>
     {/* <RouterProvider router={router} />     */}
-    <BrowserRouter basename="/masterLogic/home/react">
+    <BrowserRouter basename="/masterLogic/distribucion/">
       <Routes>
-        {routesPages.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
+        {routesPages.map((route) => {
+          if (buscarCadena(listaModulos, route.path)) {
+            return (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            );
+          }
+        })}
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

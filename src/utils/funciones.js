@@ -37,3 +37,20 @@ export const calcularVolumenAsignadoTotal = (grupos) => {
   }
   return totalVolumen;
 };
+
+export const buscarCadena = (objeto, cadena) => {
+  for (let clave in objeto) {
+    if (typeof objeto[clave] === "object") {
+      if (buscarCadena(objeto[clave], cadena)) {
+        return true;
+      }
+    } else if (
+      typeof objeto[clave] === "string" &&
+      objeto[clave].includes(cadena)
+    ) {
+      return true;
+    }
+  }
+  //return false;
+  return true
+}

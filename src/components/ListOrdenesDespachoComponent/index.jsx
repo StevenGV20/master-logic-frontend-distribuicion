@@ -35,7 +35,6 @@ const ListOrdenesDespachoComponent = ({
     "GRUPO",
   ];
 
-  const [openModalParticionar, setOpenModalParticionar] = useState(false);
   const [ordenSelected, setOrdenSelected] = useState({
     canal: "",
     cliente: "",
@@ -164,9 +163,11 @@ const ListOrdenesDespachoComponent = ({
               </tr>
             ))
           ) : (
-            <td colSpan={cols_desktop.length}>
-              <CircularProgress />
-            </td>
+            <tr>
+              <td colSpan={cols_desktop.length}>
+                <CircularProgress />
+              </td>
+            </tr>
           )}
         </TableCustom>
       </div>
@@ -266,9 +267,11 @@ const ListOrdenesDespachoComponent = ({
               </tr>
             ))
           ) : (
-            <td colSpan={cols_desktop.length}>
-              <CircularProgress />
-            </td>
+            <tr>
+              <td colSpan={cols_desktop.length}>
+                <CircularProgress />
+              </td>
+            </tr>
           )}
         </TableCustom>
       </div>
