@@ -27,6 +27,9 @@ code {
 .z-1000{
   z-index: 1000;
 }
+.react-btn-base{
+  @apply text-white bg-black py-2 px-4;
+}
 
 .text-color-azulReyPlast{
   color: #0055B8;
@@ -50,7 +53,7 @@ code {
 }
 
 .filter-group-container{
-  @apply my-4 flex justify-center w-full;
+  @apply my-4 flex justify-center w-full text-black;
 }
 
 .filter-button{

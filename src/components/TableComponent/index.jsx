@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Table({cols,children}) {  
+export default function TableCustom({cols,children}) {  
   return (
       <div className="table-container">
         <div className="table-container-p">

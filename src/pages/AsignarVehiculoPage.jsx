@@ -14,8 +14,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Input from "@mui/material/Input";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -29,69 +29,29 @@ import dayjs from "dayjs";
 
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { PAGE_ASIGNAR_VEHICULO } from "../utils/titles";
-import { ordenesDespachoFake } from "../data/ordenesDespachoFake";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import ModalMessage from "../components/ModalComponent";
 import { CircularProgress, TextareaAutosize } from "@mui/material";
-import { listGroupsFake } from "../data/grupos";
-import { listVehiculos } from "../data/listaVehiculos";
 import { URL_MASTERLOGIC_API } from "../utils/general";
+import {
+  calcularMontoTotal,
+  calcularVolumenAsignadoTotal,
+  calcularVolumenTotal,
+} from "../utils/funciones";
+import TableCustom from "../components/TableComponent";
+import TableCollapseCustomComponent from "../components/TableComponent/TableCollapseCustomComponent";
 
 function Row(props) {
-  const { row, isMobile } = props;
+  const { row, isMobile, vehiculos, setVehiculos, loadingTable } = props;
   const [open, setOpen] = React.useState(false);
   const [grupoToAsign, setGrupoToAsign] = useState(null);
-  const [vehiculos, setVehiculos] = useState([]);
   const [vehiculoSelected, setVehiculoSelected] = useState(null);
-
-  const [ordenesDespacho, setOrdenesDespacho] = useState([]);
-
-  useEffect(() => {
-    return () => {
-      setOrdenesDespacho(ordenesDespachoFake.result);
-      setVehiculos(listVehiculos);
-    };
-  }, []);
-
-  useEffect(() => {
-    const fetchVehiculos = async () => {
-      try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        console.log(data);
-        setVehiculos(data.vehiculos);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchVehiculos();
-  }, []);
-
-  const calcularVolumenTotal = (ordenes) => {
-    let totalVolumen = 0;
-    for (let index = 0; index < ordenes.length; index++) {
-      totalVolumen += ordenes[index].volumen;
-    }
-    return totalVolumen;
-  };
-
-  const calcularMontoTotal = (ordenes) => {
-    let totalMonto = 0;
-    for (let index = 0; index < ordenes.length; index++) {
-      totalMonto += ordenes[index].monto;
-    }
-    return totalMonto;
-  };
 
   const handleChange = (event) => {
     setVehiculoSelected(event.target.value);
   };
 
   const handleAsignGroup = (group) => {
-    console.log(group);
     setGrupoToAsign(group);
     setOpenModal(true);
   };
@@ -137,7 +97,12 @@ function Row(props) {
             </TableCell>
             <TableCell colSpan={1}>
               {row.vehiculo ? (
-                row.vehiculo
+                <div className="flex space-x-2 justify-center w-full">
+                  <div>{row.vehiculo}</div>
+                  <button className="z-50">
+                    <DeleteIcon className="text-red-600" />
+                  </button>
+                </div>
               ) : (
                 <div>
                   <button
@@ -165,7 +130,12 @@ function Row(props) {
             <TableCell align="center">{}</TableCell>
             <TableCell align="center">
               {row.vehiculo ? (
-                row.vehiculo
+                <div className="flex space-x-2 justify-center w-full">
+                  <div>{row.vehiculo}</div>
+                  <button className="z-50">
+                    <DeleteIcon className="text-red-600" />
+                  </button>
+                </div>
               ) : (
                 <div>
                   <button
@@ -199,10 +169,12 @@ function Row(props) {
                 Ordenes de Despacho
               </Typography>
               <ListOrdenesDespachoComponent
-                ordenesDespacho={ordenesDespacho}
-                setOrdenesDespacho={setOrdenesDespacho}
+                ordenesDespacho={row.ordenesDespacho}
+                setOrdenesDespacho={() => <></>}
                 showButtonDelete={false}
                 showPagination={false}
+                titlePage=""
+                loadingTable={false}
               />
             </Box>
           </Collapse>
@@ -224,7 +196,11 @@ function Row(props) {
             </div>
             <div className="modal-group-item-container">
               <label htmlFor="">Volumen:</label>
-              <div>30 m3</div>
+              <div>
+                {grupoToAsign &&
+                  calcularVolumenTotal(grupoToAsign.ordenesDespacho)}{" "}
+                m3
+              </div>
             </div>
           </div>
           <div className="modal-group-control-container">
@@ -247,10 +223,7 @@ function Row(props) {
             </div>
             <div className="modal-group-item-container">
               <label htmlFor="">Volumen Asignado:</label>
-              <div>
-                {grupoToAsign &&
-                  calcularVolumenTotal(grupoToAsign.ordenesDespacho)}
-              </div>
+              <div></div>
             </div>
           </div>
           <div className="modal-group-control-container">
@@ -335,19 +308,36 @@ const AsignarVehiculoPage = () => {
   useEffect(() => {
     const fetchGrupos = async (filtros) => {
       try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
+        const response = await fetch(`${URL_MASTERLOGIC_API}/grupos.json`);
         if (!response.ok) {
           throw new Error("Error al cargar el archivo JSON");
         }
         const data = await response.json();
-        console.log(data);
-        setGrupos(data.grupos);
+        setGrupos(data);
         setLoadingTable(false);
       } catch (error) {
         console.error(error);
       }
     };
     fetchGrupos();
+  }, []);
+
+  const [vehiculos, setVehiculos] = useState([]);
+
+  useEffect(() => {
+    const fetchVehiculos = async () => {
+      try {
+        const response = await fetch(`${URL_MASTERLOGIC_API}/vehiculos.json`);
+        if (!response.ok) {
+          throw new Error("Error al cargar el archivo JSON");
+        }
+        const data = await response.json();
+        setVehiculos(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchVehiculos();
   }, []);
 
   const cols_desktop = [
@@ -362,28 +352,114 @@ const AsignarVehiculoPage = () => {
     "",
   ];
 
-  const cols_mobile = ["GRUPO", "", "VEHÍCULO", ""];
+  const cols_mobile = ["GRUPO", " ", "VEHÍCULO", ""];
+  const cols_vehiculos_disponibilidad = [
+    "VEHÍCULO",
+    "CHOFER",
+    "SEDE",
+    "VOLUMEN MAXIMO (m3)",
+    "VOLUMEN ACTUAL ASIGNADO (m3)",
+    "VOLUMEN DISPONIBLE (m3)",
+  ];
+
+  const [openModalVehiculos, setOpenModalVehiculos] = useState(false);
 
   return (
     <div className="page-container">
       <div className="w-2/3">
         <BreadcrumbComponent message={PAGE_ASIGNAR_VEHICULO} />
       </div>
+      <div className="w-full flex my-3">
+        <div className="w-3/6 lg:w-9/12"></div>
+        <button
+          onClick={() => setOpenModalVehiculos(true)}
+          className="w-2/6 lg:w-2/12 bg-black text-white py-4"
+        >
+          Ver Disponibilidad de Vehiculos
+        </button>
+        {/* 
+        <div className="w-1/6 lg:w-1/12 text-center content-center grid justify-items-center">
+          <div className="w-5 ml-4">
+            <button onClick={() => setOpenFilter(true)}>
+              <FilterAltIcon />
+            </button>
+          </div>
+        </div> */}
+      </div>
+      <ModalMessage
+        open={openModalVehiculos}
+        setOpen={setOpenModalVehiculos}
+        title={"Disponibilidad de Vehiculos"}
+        titleBtnAceptar={"Aceptar"}
+        onBtnAceptar={() => setOpenModalVehiculos(false)}
+      >
+        <div>
+          <TableCustom cols={cols_vehiculos_disponibilidad}>
+            {vehiculos.map((vehiculo) => {
+              const totalVolumenAsignado = vehiculo.gruposAsignados
+                ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
+                : 0;
+              return (
+                <tr>
+                  <td>{vehiculo.vehiculo}</td>
+                  <td>{vehiculo.chofer}</td>
+                  <td>{vehiculo.sede}</td>
+                  <td>{vehiculo.volumenMaximo}</td>
+                  <td>{totalVolumenAsignado}</td>
+                  <td>{vehiculo.volumenMaximo - totalVolumenAsignado}</td>
+                </tr>
+              );
+            })}
+          </TableCustom>
 
-      <div className="desktop">
+          <TableCollapseCustomComponent
+            cols={cols_vehiculos_disponibilidad}
+            loadingTable={false}
+          >
+            <div>
+              {vehiculos.map((vehiculo) => {
+                const totalVolumenAsignado = vehiculo.gruposAsignados
+                  ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
+                  : 0;
+                return (
+                  <tr key={vehiculo.vehiculo}>
+                    <td>{vehiculo.vehiculo}</td>
+                    <td>{vehiculo.chofer}</td>
+                    <td>{vehiculo.sede}</td>
+                    <td>{vehiculo.volumenMaximo}</td>
+                    <td>{totalVolumenAsignado}</td>
+                    <td>{vehiculo.volumenMaximo - totalVolumenAsignado}</td>
+                  </tr>
+                );
+              })}
+            </div>
+          </TableCollapseCustomComponent>
+        </div>
+      </ModalMessage>
+
+      <div className="desktop p-2 md:p-4">
         <TableContainer component={Paper}>
           <Table aria-label="collapsible table">
             <TableHead>
               <TableRow>
                 {cols_desktop.map((col) => (
-                  <TableCell align="center">{col}</TableCell>
+                  <TableCell align="center" key={col}>
+                    {col}
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {!loadingTable ? (
                 grupos.result.map((row) => (
-                  <Row key={row.name} row={row} isMobile={false} />
+                  <Row
+                    key={row.name}
+                    row={row}
+                    isMobile={false}
+                    loadingTable={loadingTable}
+                    vehiculos={vehiculos}
+                    setVehiculos={setVehiculos}
+                  />
                 ))
               ) : (
                 <td colSpan={cols_desktop.length}>
@@ -401,17 +477,29 @@ const AsignarVehiculoPage = () => {
             <TableHead>
               <TableRow>
                 {cols_mobile.map((col) => (
-                  <TableCell align="center" key={col}>
+                  <TableCell align="center" key={col + "-mobile"}>
                     {col}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {grupos.length > 0 &&
-                grupos.map((row) => (
-                  <Row key={row.name} row={row} isMobile={true} />
-                ))}
+              {!loadingTable ? (
+                grupos.result.map((row) => (
+                  <Row
+                    key={row.item}
+                    row={row}
+                    isMobile={true}
+                    loadingTable={loadingTable}
+                    vehiculos={vehiculos}
+                    setVehiculos={setVehiculos}
+                  />
+                ))
+              ) : (
+                <td colSpan={cols_desktop.length}>
+                  <CircularProgress />
+                </td>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

@@ -104,19 +104,19 @@ const GenerarGRR = () => {
         <div className="filter-group-container">
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxToday" />
-            <label for="checkboxToday" className="filter-checkbox-label">
+            <label htmlFor="checkboxToday" className="filter-checkbox-label">
               Hoy
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxYesterday" />
-            <label for="checkboxYesterday" className="filter-checkbox-label">
+            <label htmlFor="checkboxYesterday" className="filter-checkbox-label">
               Ayer
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxSevenDays" />
-            <label for="checkboxSevenDays" className="filter-checkbox-label">
+            <label htmlFor="checkboxSevenDays" className="filter-checkbox-label">
               Hace 7 dias
             </label>
           </div>
@@ -158,13 +158,13 @@ const GenerarGRR = () => {
         <div className="filter-group-container">
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxOpcion1" />
-            <label for="checkboxOpcion1" className="filter-checkbox-label">
+            <label htmlFor="checkboxOpcion1" className="filter-checkbox-label">
               Opción 1
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxOpcion2" />
-            <label for="checkboxOpcion2" className="filter-checkbox-label">
+            <label htmlFor="checkboxOpcion2" className="filter-checkbox-label">
               Opción 2
             </label>
           </div>

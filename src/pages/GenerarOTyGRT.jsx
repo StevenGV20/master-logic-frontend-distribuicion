@@ -7,17 +7,8 @@ import es from "date-fns/locale/es";
 
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import { PAGE_GENERAR_OT_Y_GRT } from "../utils/titles";
-import { ordenesDespachoFake } from "../data/ordenesDespachoFake";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import FilterComponent from "../components/FilterComponent";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
 import { URL_MASTERLOGIC_API } from "../utils/general";
 
 const GenerarOTyGRT = () => {
@@ -47,7 +38,7 @@ const GenerarOTyGRT = () => {
         const data = await response.json();
         console.log(data);
         setOrdenesDespacho(data.ordenesDespacho);
-        setLoadingTable(false)
+        setLoadingTable(false);
       } catch (error) {
         console.error(error);
       }
@@ -111,19 +102,25 @@ const GenerarOTyGRT = () => {
         <div className="filter-group-container">
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxToday" />
-            <label for="checkboxToday" className="filter-checkbox-label">
+            <label htmlFor="checkboxToday" className="filter-checkbox-label">
               Hoy
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxYesterday" />
-            <label for="checkboxYesterday" className="filter-checkbox-label">
+            <label
+              htmlFor="checkboxYesterday"
+              className="filter-checkbox-label"
+            >
               Ayer
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxSevenDays" />
-            <label for="checkboxSevenDays" className="filter-checkbox-label">
+            <label
+              htmlFor="checkboxSevenDays"
+              className="filter-checkbox-label"
+            >
               Hace 7 dias
             </label>
           </div>
@@ -165,13 +162,13 @@ const GenerarOTyGRT = () => {
         <div className="filter-group-container">
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxOpcion1" />
-            <label for="checkboxOpcion1" className="filter-checkbox-label">
+            <label htmlFor="checkboxOpcion1" className="filter-checkbox-label">
               Opción 1
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxOpcion2" />
-            <label for="checkboxOpcion2" className="filter-checkbox-label">
+            <label htmlFor="checkboxOpcion2" className="filter-checkbox-label">
               Opción 2
             </label>
           </div>

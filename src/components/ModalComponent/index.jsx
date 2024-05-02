@@ -9,8 +9,7 @@ const ModalMessage = ({
   onBtnAceptar,
   children,
 }) => {
-  //const [open, setOpen] = useState(true)
-
+  
   const cancelButtonRef = useRef(null);
 
   return (

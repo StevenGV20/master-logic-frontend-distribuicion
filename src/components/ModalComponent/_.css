@@ -25,7 +25,7 @@
 }
 
 .modal-group-container{
-  @apply block p-4 space-y-4;
+  @apply block p-4 space-y-4 text-black;
 }
 .modal-group-control-container{
   @apply block sm:flex my-4 sm:space-x-4 space-y-4 sm:space-y-0;

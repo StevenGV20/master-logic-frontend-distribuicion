@@ -1,4 +1,5 @@
 import App from "../App";
+import { Agrupamiento, AsignVehiculo, GuiaRemitente, GuiaTransporte } from "../icons/icons-svg";
 import AgruparODPage from "../pages/AgruparODPage";
 import AsignarVehiculoPage from "../pages/AsignarVehiculoPage";
 import GenerarGRR from "../pages/GenerarGRR";
@@ -15,25 +16,25 @@ const routesPages = [
   {
     path: "/agrupar-orden-despacho",
     name: PAGE_AGRUPAR_OD,
-    icon: "",
+    icon: <Agrupamiento />,
     element: <AgruparODPage/>
   },
   {
     path: "/asignar-vehiculo",
     name: PAGE_ASIGNAR_VEHICULO,
-    icon: "",
+    icon: <AsignVehiculo />,
     element: <AsignarVehiculoPage/>
   },
   {
     path: "/generar-grr",
     name: PAGE_GENERAR_GRR,
-    icon: "",
+    icon: <GuiaRemitente />,
     element: <GenerarGRR/>
   },
   {
     path: "/generar-ot-grt",
     name: PAGE_GENERAR_OT_Y_GRT,
-    icon: "",
+    icon: <GuiaTransporte />,
     element: <GenerarOTyGRT/>
   },
 ];

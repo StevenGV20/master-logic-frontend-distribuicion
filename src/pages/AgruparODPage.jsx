@@ -7,15 +7,23 @@ import es from "date-fns/locale/es";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
-import Table from "../components/TableComponent";
 import ModalMessage from "../components/ModalComponent";
 //import Pagination from "../components/PaginationComponent";
 import FilterComponent from "../components/FilterComponent";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import { PAGE_AGRUPAR_OD } from "../utils/titles";
 import { URL_MASTERLOGIC_API } from "../utils/general";
+import { Checkbox } from "@mui/material";
+import ListODOsisComponent from "../components/ListODOsisComponent/TableCheckbox";
+import {
+  calcularBultosTotal,
+  calcularMontoTotal,
+  calcularPesoTotal,
+  calcularVolumenTotal,
+} from "../utils/funciones";
 
 const AgruparODPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -23,6 +31,7 @@ const AgruparODPage = () => {
 
   const onImportarOD = () => {
     setOpenModal(false);
+    setOrdenesDespachoOsis([]);
   };
 
   registerLocale("es", es);
@@ -59,13 +68,15 @@ const AgruparODPage = () => {
   useEffect(() => {
     const fetchOrdenesDespacho = async () => {
       try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
+        const response = await fetch(
+          `${URL_MASTERLOGIC_API}/ordenesDespacho_small.json`
+        );
         if (!response.ok) {
           throw new Error("Error al cargar el archivo JSON");
         }
         const data = await response.json();
-        console.log(data.ordenesDespacho);
-        setOrdenesDespacho(data.ordenesDespacho);
+        console.log(data);
+        setOrdenesDespacho(data);
         setLoadingTable(false);
       } catch (error) {
         console.error(error);
@@ -81,6 +92,24 @@ const AgruparODPage = () => {
   const [carritoOrdenesDespacho, setCarritoOrdenesDespacho] = useState([]);
   const [openCarritoGrupos, setOpenCarritoGrupos] = useState(false);
 
+  const handleSelectRow = async (orden) => {
+    const od = carritoOrdenesDespacho.find((o) => o.item === orden.item);
+    if (!od) {
+      setCarritoOrdenesDespacho([...carritoOrdenesDespacho, orden]);
+    } else {
+      const newLista = carritoOrdenesDespacho.filter(
+        (o) => o.item != orden.item
+      );
+      setCarritoOrdenesDespacho(newLista);
+    }
+  };
+
+  const onDeleteODFromCarrito = (orden) => {
+    console.log(orden);
+    const newLista = carritoOrdenesDespacho.filter((o) => o.item != orden.item);
+    setCarritoOrdenesDespacho(newLista);
+  };
+
   const [ordenesDespachoOsis, setOrdenesDespachoOsis] = useState([]);
   const [filtrosOsis, setFiltrosOsis] = useState({
     canal: "",
@@ -91,7 +120,16 @@ const AgruparODPage = () => {
     emisionOrden: "",
   });
 
-  const cols_od_osis = ["ID","PEDIDO","ORDEN DESPACHO","CANAL","CLIENTE","ESTADO"]
+  const cols_od_osis = [
+    "ID",
+    "PEDIDO",
+    "ORDEN DESPACHO",
+    "CANAL",
+    "CLIENTE",
+    <div>
+      <Checkbox size="medium" />
+    </div>,
+  ];
   const onSearchOsis = () => {
     const fetchOrdenesDespachoOsis = async (filtros) => {
       try {
@@ -139,6 +177,7 @@ const AgruparODPage = () => {
         setCarritoOrdenesDespacho={setCarritoOrdenesDespacho}
         titlePage={PAGE_AGRUPAR_OD}
         loadingTable={loadingTable}
+        handleSelectRow={handleSelectRow}
       />
 
       <div className="relative">
@@ -146,7 +185,7 @@ const AgruparODPage = () => {
           onClick={() => setOpenCarritoGrupos(true)}
           className="z-50 fixed right-6 bottom-6 bg-gray-300 rounded-full py-6 px-6 scale-100 sm:scale-110  hover:ring-gray-400 hover:ring-2 shadow-md shadow-gray-600"
         >
-          <AppRegistrationIcon sx={{ fontSize: 25 }}/>
+          <AppRegistrationIcon sx={{ fontSize: 25 }} />
         </button>
       </div>
 
@@ -243,35 +282,7 @@ const AgruparODPage = () => {
             </button>
           </div>
         </div>
-        <Table cols={cols_od_osis}>
-          {ordenesDespachoOsis.length > 0 &&
-            ordenesDespachoOsis.map((orden) => (
-              <tr key={orden.item} className="text-black">
-                <td>{orden.item}</td>
-                <td>
-                  <div className="td-group">
-                    <div>{orden.numeroPedido}</div>
-                    <div>{orden.emisionPedido}</div>
-                  </div>
-                </td>
-                <td>
-                  <div className="td-group">
-                    <div>{orden.numeroOrden}</div>
-                    <div>{orden.emisionOrden}</div>
-                  </div>
-                </td>
-                <td>{orden.canal}</td>
-                <td>
-                  <div className="td-group">
-                    <div>{orden.cliente}</div>
-                  </div>
-                </td>
-                <td>
-                  <div>{orden.estado}</div>
-                </td>
-              </tr>
-            ))}
-        </Table>
+        <ListODOsisComponent data={ordenesDespachoOsis} />
       </ModalMessage>
 
       <FilterComponent
@@ -289,19 +300,25 @@ const AgruparODPage = () => {
         <div className="filter-group-container">
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxToday" />
-            <label for="checkboxToday" className="filter-checkbox-label">
+            <label htmlFor="checkboxToday" className="filter-checkbox-label">
               Hoy
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxYesterday" />
-            <label for="checkboxYesterday" className="filter-checkbox-label">
+            <label
+              htmlFor="checkboxYesterday"
+              className="filter-checkbox-label"
+            >
               Ayer
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxSevenDays" />
-            <label for="checkboxSevenDays" className="filter-checkbox-label">
+            <label
+              htmlFor="checkboxSevenDays"
+              className="filter-checkbox-label"
+            >
               Hace 7 dias
             </label>
           </div>
@@ -343,13 +360,13 @@ const AgruparODPage = () => {
         <div className="filter-group-container">
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxOpcion1" />
-            <label for="checkboxOpcion1" className="filter-checkbox-label">
+            <label htmlFor="checkboxOpcion1" className="filter-checkbox-label">
               Opción 1
             </label>
           </div>
           <div className="filter-checkbox-container">
             <input type="checkbox" id="checkboxOpcion2" />
-            <label for="checkboxOpcion2" className="filter-checkbox-label">
+            <label htmlFor="checkboxOpcion2" className="filter-checkbox-label">
               Opción 2
             </label>
           </div>
@@ -360,83 +377,121 @@ const AgruparODPage = () => {
         </button>
       </FilterComponent>
 
-      {
-        <FilterComponent
-          open={openCarritoGrupos}
-          setOpen={setOpenCarritoGrupos}
-          title={"Ordenes de Despacho Selecionadas"}
-        >
-          <div className="table-container-tbody divide-y-2 divide-gray-400 md:p-4 text-left space-y-4 text-black">
-            {carritoOrdenesDespacho.map((orden, index) => (
-              <div className="grid grid-cols-10">
-                <div className="col-span-1 content-center">{index + 1}</div>
-                <div className="td-group-mobile p-2 text-sm col-span-9">
-                  <div>
-                    <label>Pedido:</label>
-                    <div className="flex space-x-4">
-                      <div>{orden.numeroPedido}</div>
-                      <div>{orden.emisionPedido}</div>
+      <FilterComponent
+        open={openCarritoGrupos}
+        setOpen={setOpenCarritoGrupos}
+        title={"Ordenes de Despacho Selecionadas"}
+      >
+        <div className="table-container-tbody divide-y-2 divide-gray-400 md:p-4 text-left space-y-4 text-black">
+          {carritoOrdenesDespacho.length > 0 ? (
+            <>
+              {carritoOrdenesDespacho.map((orden, index) => (
+                <div className="grid grid-cols-12" key={index}>
+                  <div className="col-span-1 content-center">{index + 1}</div>
+                  <div className="td-group-mobile p-2 text-sm col-span-10">
+                    <div>
+                      <label>Pedido:</label>
+                      <div className="flex space-x-4">
+                        <div>{orden.numeroPedido}</div>
+                        <div>{orden.emisionPedido}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <label>Orden de Despacho:</label>
+                      <div className="flex space-x-4">
+                        <div>{orden.numeroOrdenDespacho}</div>
+                        <div>{orden.emisionOrdenDespacho}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="">Canal:</label> {orden.canal}
+                    </div>
+                    <div>
+                      <label>Cliente:</label>
+                      <div>{orden.cliente}</div>
+                      <div>{orden.direccionEntrega}</div>
+                      <div>{orden.ubigeo}</div>
+                    </div>
+                    <div className="block space-x-3">
+                      <label>Carga:</label>
+                      <div className="grid grid-cols-2">
+                        <div>{orden.volumen}</div>
+                        <div>{orden.bultos} bultos</div>
+                        <div>{orden.peso}</div>
+                        <div>S/. {orden.monto && orden.monto.toFixed(2)}</div>
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <label>Orden de Despacho:</label>
-                    <div className="flex space-x-4">
-                      <div>{orden.numeroOrdenDespacho}</div>
-                      <div>{orden.emisionOrdenDespacho}</div>
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="">Canal:</label> {orden.canal}
-                  </div>
-                  <div>
-                    <label>Cliente:</label>
-                    <div>{orden.cliente}</div>
-                    <div>{orden.direccionEntrega}</div>
-                    <div>{orden.ubigeo}</div>
-                  </div>
-                  <div className="block space-x-3">
-                    <label>Carga:</label>
-                    <div className="grid grid-cols-2">
-                      <div>{orden.volumen}</div>
-                      <div>{orden.bultos} bultos</div>
-                      <div>{orden.peso}</div>
-                      <div>S/. {orden.monto}</div>
-                    </div>
+                  <div className="col-span-1 content-center">
+                    <button
+                      onClick={() => {
+                        handleSelectRow(orden);
+                      }}
+                    >
+                      <DeleteIcon className="text-red-600" />
+                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            <div className="mt-4 py-4 grid grid-cols-2 space-y-1">
-              <label htmlFor="">SEDE</label>
-              <input type="text" value={"ATE"} className="" />
-              <label htmlFor="">ENTREGA</label>
-              <input type="text" value={"19/04/2024"} className="" />
-              <label htmlFor="">Observación</label>
-              <textarea className="">ABC</textarea>
-              <label htmlFor="">Vol. m3</label>
-              <input type="text" value={"50 m3"} className="" />
-              <label htmlFor="">Bultos</label>
-              <input type="text" value={"10"} className="" />
-              <label htmlFor="">Peso</label>
-              <input type="text" value={"25Tn"} className="" />
-              <label htmlFor="">Monto</label>
-              <input type="text" value={"40,000"} className="" />
-              <label htmlFor="">N° ODs</label>
-              <input
-                type="text"
-                value={carritoOrdenesDespacho.length}
-                className=""
-              />
-              <div className="col-span-2">
-                <button className="w-full mt-4 bg-black py-2 text-white">
-                  AGRUPAR OD
-                </button>
+              <div className="mt-4 py-4 grid grid-cols-2 space-y-1">
+                <label htmlFor="">SEDE</label>
+                <input type="text" value={"ATE"} className="" readOnly />
+                <label htmlFor="">ENTREGA</label>
+                <input type="text" value={"19/04/2024"} className="" readOnly />
+                <label htmlFor="">Observación</label>
+                <textarea className="" defaultValue={"ABC"} />
+                <label htmlFor="">Vol. m3</label>
+                <input
+                  type="text"
+                  value={calcularVolumenTotal(carritoOrdenesDespacho)}
+                  className=""
+                  readOnly
+                />
+                <label htmlFor="">Bultos</label>
+                <input
+                  type="text"
+                  value={calcularBultosTotal(carritoOrdenesDespacho)}
+                  className=""
+                  readOnly
+                />
+                <label htmlFor="">Peso</label>
+                <input
+                  type="text"
+                  value={calcularPesoTotal(carritoOrdenesDespacho)}
+                  className=""
+                  readOnly
+                />
+                <label htmlFor="">Monto</label>
+                <input
+                  type="text"
+                  value={calcularMontoTotal(carritoOrdenesDespacho)}
+                  className=""
+                  readOnly
+                />
+                <label htmlFor="">N° ODs</label>
+                <input
+                  type="text"
+                  value={carritoOrdenesDespacho.length}
+                  className=""
+                  readOnly
+                />
+                <div className="col-span-2">
+                  <button className="w-full mt-4 bg-black py-2 text-white">
+                    AGRUPAR OD
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        </FilterComponent>
-      }
+            </>
+          ) : (
+            <>
+              <div className="text-center">
+                No has seleccionado ninguna Orden de Despacho.
+              </div>
+            </>
+          )}
+        </div>
+      </FilterComponent>
     </div>
   );
 };
