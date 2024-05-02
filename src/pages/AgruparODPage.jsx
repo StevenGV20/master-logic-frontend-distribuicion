@@ -7,7 +7,6 @@ import es from "date-fns/locale/es";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import ModalMessage from "../components/ModalComponent";
@@ -18,12 +17,7 @@ import { PAGE_AGRUPAR_OD } from "../utils/titles";
 import { URL_MASTERLOGIC_API } from "../utils/general";
 import { Checkbox } from "@mui/material";
 import ListODOsisComponent from "../components/ListODOsisComponent/TableCheckbox";
-import {
-  calcularBultosTotal,
-  calcularMontoTotal,
-  calcularPesoTotal,
-  calcularVolumenTotal,
-} from "../utils/funciones";
+import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacionODComponent";
 
 const AgruparODPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -52,16 +46,6 @@ const AgruparODPage = () => {
     setOpenEndDate(false);
   };
 
-  const cols_desktop = [
-    "Item",
-    "Pedido",
-    "Ord. Despacho",
-    "Canal",
-    "Cliente",
-    "Carga",
-    "GRUPO",
-    "",
-  ];
   const [ordenesDespacho, setOrdenesDespacho] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
 
@@ -385,103 +369,10 @@ const AgruparODPage = () => {
         <div className="table-container-tbody divide-y-2 divide-gray-400 md:p-4 text-left space-y-4 text-black">
           {carritoOrdenesDespacho.length > 0 ? (
             <>
-              {carritoOrdenesDespacho.map((orden, index) => (
-                <div className="grid grid-cols-12" key={index}>
-                  <div className="col-span-1 content-center">{index + 1}</div>
-                  <div className="td-group-mobile p-2 text-sm col-span-10">
-                    <div>
-                      <label>Pedido:</label>
-                      <div className="flex space-x-4">
-                        <div>{orden.numeroPedido}</div>
-                        <div>{orden.emisionPedido}</div>
-                      </div>
-                    </div>
-                    <div>
-                      <label>Orden de Despacho:</label>
-                      <div className="flex space-x-4">
-                        <div>{orden.numeroOrdenDespacho}</div>
-                        <div>{orden.emisionOrdenDespacho}</div>
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="">Canal:</label> {orden.canal}
-                    </div>
-                    <div>
-                      <label>Cliente:</label>
-                      <div>{orden.cliente}</div>
-                      <div>{orden.direccionEntrega}</div>
-                      <div>{orden.ubigeo}</div>
-                    </div>
-                    <div className="block space-x-3">
-                      <label>Carga:</label>
-                      <div className="grid grid-cols-2">
-                        <div>{orden.volumen}</div>
-                        <div>{orden.bultos} bultos</div>
-                        <div>{orden.peso}</div>
-                        <div>S/. {orden.monto && orden.monto.toFixed(2)}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-1 content-center">
-                    <button
-                      onClick={() => {
-                        handleSelectRow(orden);
-                      }}
-                    >
-                      <DeleteIcon className="text-red-600" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              <div className="mt-4 py-4 grid grid-cols-2 space-y-1">
-                <label htmlFor="">SEDE</label>
-                <input type="text" value={"ATE"} className="" readOnly />
-                <label htmlFor="">ENTREGA</label>
-                <input type="text" value={"19/04/2024"} className="" readOnly />
-                <label htmlFor="">Observación</label>
-                <textarea className="" defaultValue={"ABC"} />
-                <label htmlFor="">Vol. m3</label>
-                <input
-                  type="text"
-                  value={calcularVolumenTotal(carritoOrdenesDespacho)}
-                  className=""
-                  readOnly
-                />
-                <label htmlFor="">Bultos</label>
-                <input
-                  type="text"
-                  value={calcularBultosTotal(carritoOrdenesDespacho)}
-                  className=""
-                  readOnly
-                />
-                <label htmlFor="">Peso</label>
-                <input
-                  type="text"
-                  value={calcularPesoTotal(carritoOrdenesDespacho)}
-                  className=""
-                  readOnly
-                />
-                <label htmlFor="">Monto</label>
-                <input
-                  type="text"
-                  value={calcularMontoTotal(carritoOrdenesDespacho)}
-                  className=""
-                  readOnly
-                />
-                <label htmlFor="">N° ODs</label>
-                <input
-                  type="text"
-                  value={carritoOrdenesDespacho.length}
-                  className=""
-                  readOnly
-                />
-                <div className="col-span-2">
-                  <button className="w-full mt-4 bg-black py-2 text-white">
-                    AGRUPAR OD
-                  </button>
-                </div>
-              </div>
+              <FormCarritoAgrupacionODComponent
+                carritoOrdenesDespacho={carritoOrdenesDespacho}
+                handleSelectRow={handleSelectRow}
+              />
             </>
           ) : (
             <>

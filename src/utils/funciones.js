@@ -51,6 +51,34 @@ export const buscarCadena = (objeto, cadena) => {
       return true;
     }
   }
-  //return false;
-  return true
-}
+  return false;
+};
+
+export const convertirDateToTimeString = (fechaHoraString) => {
+  const fechaHora = new Date(fechaHoraString);
+
+  // Obtenemos la hora y los minutos
+  const horas = fechaHora.getHours();
+  const minutos = fechaHora.getMinutes();
+
+  // Formateamos la hora en un string
+  const horaString = `${horas < 10 ? "0" : ""}${horas}:${
+    minutos < 10 ? "0" : ""
+  }${minutos}`;
+
+  return horaString;
+};
+
+export const convertirTimeStringToDate = (horaString) => {
+  // Obtenemos las horas y los minutos desde la cadena
+  const [horasStr, minutosStr] = horaString.split(":");
+  const horas = parseInt(horasStr, 10);
+  const minutos = parseInt(minutosStr, 10);
+
+  // Creamos un objeto de fecha y hora con la fecha actual y la hora de la cadena
+  const fechaHora = new Date();
+  fechaHora.setHours(horas);
+  fechaHora.setMinutes(minutos);
+
+  return fechaHora;
+};
