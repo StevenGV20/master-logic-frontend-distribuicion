@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import TableCustom from "../TableComponent";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { PAGE_AGRUPAR_OD } from "../../utils/titles";
-import { Checkbox, CircularProgress } from "@mui/material";
+import { Checkbox, CircularProgress, MenuItem, Select } from "@mui/material";
 import ModalMessage from "../ModalComponent";
 import ParticionarODComponent from "../ParticionarODComponent";
 
@@ -19,11 +19,18 @@ const ListOrdenesDespachoComponent = ({
   titlePage = "",
   loadingTable,
   handleSelectRow,
+  findOrdenesDespacho,
 }) => {
   const [page, setPage] = React.useState(1);
+  const [limit, setLimit] = useState(10);
   const handleChange = (event, value) => {
     setPage(value);
+    findOrdenesDespacho(value, limit);
   };
+  const handleChangeLimit = (e) =>{
+    setLimit(e.target.value)
+    findOrdenesDespacho(page, e.target.value);
+  }
 
   const cols_desktop = [
     "Item",
@@ -52,18 +59,32 @@ const ListOrdenesDespachoComponent = ({
 
   return (
     <div>
+      <div className="flex space-x-4 place-items-center">
+        <div>Mostrar:</div>
+        <Select
+          value={limit}
+          id="demo-select-small"
+          onChange={(e) => handleChangeLimit(e)}
+         
+        >
+          <MenuItem value={10}>10</MenuItem>
+          <MenuItem value={25}>25</MenuItem>
+          <MenuItem value={50}>50</MenuItem>
+          <MenuItem value={100}>100</MenuItem>
+        </Select>
+      </div>
       <div className="desktop my-6">
         <TableCustom cols={cols_desktop}>
           {!loadingTable ? (
             ordenesDespacho.map((orden) => (
               <tr
                 className={
-                  (!orden.grupo &&
-                  titlePage.match(PAGE_AGRUPAR_OD)) ?
-                  (carritoOrdenesDespacho &&
-                  carritoOrdenesDespacho.find((o) => o.item == orden.item)
-                    ? "border-4 border-gray-800 bg-gray-200"
-                    : "hover:bg-gray-200") : ""
+                  !orden.grupo && titlePage.match(PAGE_AGRUPAR_OD)
+                    ? carritoOrdenesDespacho &&
+                      carritoOrdenesDespacho.find((o) => o.item == orden.item)
+                      ? "border-4 border-gray-800 bg-gray-200"
+                      : "hover:bg-gray-200"
+                    : ""
                 }
                 key={orden.item}
               >
@@ -277,7 +298,7 @@ const ListOrdenesDespachoComponent = ({
         <div className="w-full flex justify-center">
           <Stack spacing={2}>
             <Pagination
-              count={10}
+              count={ordenesDespacho && Math.ceil(ordenesDespacho.length / limit)}
               color="primary"
               showFirstButton
               showLastButton

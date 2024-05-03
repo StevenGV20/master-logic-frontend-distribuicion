@@ -15,7 +15,7 @@ import {
 import { routesPages } from "./utils/routes";
 import { buscarCadena } from "./utils/funciones";
 import { Provider } from "react-redux";
-import store from './redux/store'
+import store from "./redux/store";
 
 const router = createBrowserRouter(routesPages);
 
@@ -24,12 +24,6 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 const rutas = localStorage.getItem("MENUS_CODIFICADO");
 const listaModulos = JSON.parse(window.atob(rutas));
 
-function ErrorBoundary() {
-  console.error("No page");
-  // Uncaught ReferenceError: path is not defined
-  redirect("/");
-  return <div></div>;
-}
 
 root.render(
   <React.StrictMode>
@@ -37,21 +31,17 @@ root.render(
     <Provider store={store}>
       <BrowserRouter basename="/masterLogic/distribucion/">
         <Routes>
-          {
-            /*buscarCadena(listaModulos, route.path) &&*/ routesPages.map(
-              (route) => {
-                if (true) {
-                  return (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  );
-                }
-              }
-            )
-          }
+          {routesPages.map((route) => {
+            if (true /*buscarCadena(listaModulos, route.path) &&*/) {
+              return (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.element}
+                />
+              );
+            }
+          })}
         </Routes>
       </BrowserRouter>
     </Provider>

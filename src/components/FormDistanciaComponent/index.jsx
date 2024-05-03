@@ -69,7 +69,7 @@ const FormDistanciaComponent = ({
             >
               <option value="">[ Seleecione ]</option>
               {
-                sedesCombo.map(sede => (
+                sedesCombo && sedesCombo.length > 0 && sedesCombo.map(sede => (
                   <option value={sede.sede}>{sede.sede}</option>
                 ))
               }

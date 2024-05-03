@@ -60,7 +60,7 @@ const AgruparODPage = () => {
     const fetchOrdenesDespacho = async () => {
       try {
         const response = await fetch(
-          `${URL_MASTERLOGIC_API}/ordenesDespacho_small.json`
+          `${URL_MASTERLOGIC_API}/ordenesDespacho_small.json?limit=10&page=1`
         );
         if (!response.ok) {
           throw new Error("Error al cargar el archivo JSON");
@@ -74,6 +74,25 @@ const AgruparODPage = () => {
     };
     fetchOrdenesDespacho();
   }, []);
+
+  const findOrdenesDespacho = (page,limit) => {
+    const fetchOrdenesDespacho = async () => {
+      try {
+        const response = await fetch(
+          `${URL_MASTERLOGIC_API}/ordenesDespacho_small.json?page=${page}&limit=${limit}`
+        );
+        if (!response.ok) {
+          throw new Error("Error al cargar el archivo JSON");
+        }
+        const data = await response.json();
+        setOrdenesDespacho(data);
+        setLoadingTable(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchOrdenesDespacho();
+  };
 
   const [filtrosOrdenesDespacho, setFiltrosOrdenesDespacho] = useState({
     fechaInicio: new Date(),
@@ -200,6 +219,7 @@ const AgruparODPage = () => {
         titlePage={PAGE_AGRUPAR_OD}
         loadingTable={loadingTable}
         handleSelectRow={handleSelectRow}
+        findOrdenesDespacho={findOrdenesDespacho}
       />
 
       <div className="relative">
