@@ -6,6 +6,10 @@ import { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
 import { useFormik } from "formik";
 
+import { useSelector, useDispatch } from "react-redux";
+
+import { fetchData } from "../../redux/features/combos/sedeSlice";
+
 import {
   calcularBultosTotal,
   calcularMontoTotal,
@@ -20,29 +24,40 @@ const FormCarritoAgrupacionODComponent = ({
   registerLocale("es", es);
   setDefaultLocale("es");
 
+  const sedesCombo = useSelector((state) => state.sede.lista);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log("sedesCombo", sedesCombo);
+    if (!(sedesCombo.length > 0)) dispatch(fetchData());
+  }, []);
+
   const formik = useFormik({
     initialValues: {
-      sede: '',
+      sede: "",
       fechaEntrega: new Date(),
-      observacion: '',
+      observacion: "",
       volumen: calcularVolumenTotal(carritoOrdenesDespacho),
       bultos: calcularBultosTotal(carritoOrdenesDespacho),
       peso: calcularPesoTotal(carritoOrdenesDespacho),
       monto: calcularMontoTotal(carritoOrdenesDespacho),
       numeroOrdenes: carritoOrdenesDespacho.length,
-      listaOrdenesDespacho: carritoOrdenesDespacho
+      listaOrdenesDespacho: carritoOrdenesDespacho,
     },
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });
 
   React.useEffect(() => {
-    formik.setFieldValue('listaOrdenesDespacho', carritoOrdenesDespacho);
-    formik.setFieldValue('volumen', calcularVolumenTotal(carritoOrdenesDespacho));
-    formik.setFieldValue('bultos', calcularBultosTotal(carritoOrdenesDespacho));
-    formik.setFieldValue('peso', calcularPesoTotal(carritoOrdenesDespacho));
-    formik.setFieldValue('monto', calcularMontoTotal(carritoOrdenesDespacho));
+    formik.setFieldValue("listaOrdenesDespacho", carritoOrdenesDespacho);
+    formik.setFieldValue(
+      "volumen",
+      calcularVolumenTotal(carritoOrdenesDespacho)
+    );
+    formik.setFieldValue("bultos", calcularBultosTotal(carritoOrdenesDespacho));
+    formik.setFieldValue("peso", calcularPesoTotal(carritoOrdenesDespacho));
+    formik.setFieldValue("monto", calcularMontoTotal(carritoOrdenesDespacho));
   }, [carritoOrdenesDespacho]);
 
   return (
@@ -96,14 +111,30 @@ const FormCarritoAgrupacionODComponent = ({
         </div>
       ))}
 
-      <form className="mt-4 py-4 grid grid-cols-2 space-y-1" onSubmit={formik.handleSubmit}>
+      <form
+        className="mt-4 py-4 grid grid-cols-2 space-y-1"
+        onSubmit={formik.handleSubmit}
+      >
         <label htmlFor="">SEDE</label>
-        <input type="text" value={"ATE"} className="" readOnly />
+        <select
+          type="text"
+          name="sede"
+          id="sede"
+          value={formik.values.sede}
+          onChange={formik.handleChange}
+          autoComplete="given-name"
+          className={`p-2 outline-none focus:ring-blue-600 focus:ring-2`}
+        >
+          <option value="">[ Seleecione ]</option>
+          {sedesCombo.map((sede) => (
+            <option value={sede.sede}>{sede.sede}</option>
+          ))}
+        </select>
         <label htmlFor="">ENTREGA</label>
         <DatePicker
           selected={formik.values.fechaEntrega}
           value={formik.values.fechaEntrega}
-          onChange={date => formik.setFieldValue('fechaEntrega', date)}
+          onChange={(date) => formik.setFieldValue("fechaEntrega", date)}
           name="fechaEntrega"
           id="fechaEntrega"
           selectsStart

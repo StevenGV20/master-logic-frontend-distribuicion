@@ -11,7 +11,7 @@ const Home = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 p-8 gap-12">
         {routesPages.map((route) => (
           <React.Fragment key={route.name}>
-            {(route.path != "/" && buscarCadena(listaModulos, route.path)) && (
+            {(route.path != "/" /* && buscarCadena(listaModulos, route.path) */) && (
               <NavLink to={route.path} key={route.name}>
                 <OpcionCardComponent route={route} />
               </NavLink>

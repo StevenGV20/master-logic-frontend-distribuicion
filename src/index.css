@@ -24,7 +24,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
+input{
+  @apply outline-none;
+}
 .z-1000{
   z-index: 1000;
 }

@@ -1,7 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
+import { useSelector, useDispatch } from "react-redux";
 
-const FormRutasComponent = ({ rutaSelected, setOpenModal }) => {
+import { fetchData } from "../../redux/features/combos/sedeSlice";
+
+const FormRutasComponent = ({ rutaSelected, setOpenModal }) => {  
+
+  const sedesCombo = useSelector((state) => state.sede.lista);
+  const dispatch = useDispatch();
+
+  useEffect(() => {    
+    console.log("sedesCombo", sedesCombo);
+    if (!(sedesCombo.length > 0)) dispatch(fetchData());
+  }, []);
+
   const formik = useFormik({
     initialValues: {
       codigo: rutaSelected ? rutaSelected.codigo : "",
@@ -85,8 +97,11 @@ const FormRutasComponent = ({ rutaSelected, setOpenModal }) => {
               }`}
             >
               <option value="">[ Seleecione ]</option>
-              <option value="ATE">ATE</option>
-              <option value="LURIN">LURIN</option>
+              {
+                sedesCombo.map(sede => (
+                  <option value={sede.sede}>{sede.sede}</option>
+                ))
+              }
             </select>
             {formik.errors.sede && (
               <span className="form-container-group-content-span-error">

@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
+import { useSelector, useDispatch } from "react-redux";
+
+import { fetchData } from "../../redux/features/combos/sedeSlice";
 
 const FormVehiculoComponent = ({ vehiculoSelected, setOpenModal }) => {
   const formik = useFormik({
@@ -48,6 +51,15 @@ const FormVehiculoComponent = ({ vehiculoSelected, setOpenModal }) => {
       return errors;
     },
   });
+
+  const sedesCombo = useSelector((state) => state.sede.lista);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log("sedesCombo", sedesCombo);
+    if (!(sedesCombo.length > 0)) dispatch(fetchData());
+  }, []);
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="form-container">
@@ -227,7 +239,7 @@ const FormVehiculoComponent = ({ vehiculoSelected, setOpenModal }) => {
             Sede
           </label>
           <div className="mt-2">
-            <input
+            <select
               type="text"
               name="sede"
               id="sede"
@@ -239,7 +251,12 @@ const FormVehiculoComponent = ({ vehiculoSelected, setOpenModal }) => {
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
-            />
+            >
+              <option value="">[ Seleecione ]</option>
+              {sedesCombo.map((sede) => (
+                <option value={sede.sede}>{sede.sede}</option>
+              ))}
+            </select>
             {formik.errors.sede && (
               <span className="form-container-group-content-span-error">
                 {formik.errors.sede}

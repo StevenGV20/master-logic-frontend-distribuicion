@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
+import { useSelector, useDispatch } from "react-redux";
+
+import { fetchData } from "../../redux/features/combos/sedeSlice";
 
 const FormDistanciaComponent = ({
     distanciaSelected,
@@ -31,6 +34,15 @@ const FormDistanciaComponent = ({
       return errors;
     },
   });
+
+  const sedesCombo = useSelector((state) => state.sede.lista);
+  const dispatch = useDispatch();
+
+  useEffect(() => {    
+    console.log("sedesCombo", sedesCombo);
+    if (!(sedesCombo.length > 0)) dispatch(fetchData());
+  }, []);
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="form-container">
@@ -46,7 +58,7 @@ const FormDistanciaComponent = ({
               type="text"
               name="sede"
               id="sede"
-              value={formik.values.codigoRuta}
+              value={formik.values.sede}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
@@ -56,8 +68,11 @@ const FormDistanciaComponent = ({
               }`}
             >
               <option value="">[ Seleecione ]</option>
-              <option value="ATE">ATE</option>
-              <option value="LURIN">LURIN</option>
+              {
+                sedesCombo.map(sede => (
+                  <option value={sede.sede}>{sede.sede}</option>
+                ))
+              }
             </select>
             {formik.errors.sede && (
               <span className="form-container-group-content-span-error">

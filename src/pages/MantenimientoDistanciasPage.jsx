@@ -3,7 +3,6 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CircularProgress } from "@mui/material";
-
 import { PAGE_MANTENIMIENTO_DISTANCIAS } from "../utils/titles";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import FilterComponent from "../components/FilterComponent";
@@ -49,9 +48,8 @@ const MantenimientoDistanciasPage = () => {
           throw new Error("Error al cargar el archivo JSON");
         }
         const data = await response.json();
-        console.log(data.distanciaDistritos);
-        setDistancias(data.distanciaDistritos);
         setLoadingTable(false);
+        setDistancias(data.distanciaDistritos);
       } catch (error) {
         console.error(error);
       }
