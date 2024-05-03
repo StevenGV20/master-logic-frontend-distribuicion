@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 import { PAGE_MANTENIMIENTO_RUTAS } from "../utils/titles";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import FilterComponent from "../components/FilterComponent";
@@ -10,12 +13,33 @@ import {
   URL_MASTERLOGIC_API,
 } from "../utils/general";
 import { CircularProgress } from "@mui/material";
+import FormRutasComponent from "../components/FormRutasComponent";
 
 const MantenimientoRutasPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
   const [rutas, setRutas] = useState([]);
+  const [rutaSelected, setRutaSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+
+  const handleNewRuta = () => {
+    setRutaSelected(null);
+    setOpenModal(true);
+  };
+  const handleSelectedRuta = (ruta) => {
+    setRutaSelected(ruta);
+    setOpenModal(true);
+  };
+
+  const handleSelectedDeleteRuta = (ruta) => {
+    setRutaSelected(ruta);
+    setOpenModalDelete(true);
+  };
+  const onDeleteRuta = () => {
+    alert(JSON.stringify(rutaSelected));
+    setOpenModalDelete(false);
+  };
 
   useEffect(() => {
     const fetchRutas = async () => {
@@ -43,7 +67,7 @@ const MantenimientoRutasPage = () => {
       <div className="w-full flex my-3">
         <div className="w-3/6 lg:w-9/12"></div>
         <button
-          onClick={() => setOpenModal(true)}
+          onClick={() => handleNewRuta()}
           className="w-2/6 lg:w-2/12 bg-black text-white py-4"
         >
           Nuevo
@@ -64,38 +88,28 @@ const MantenimientoRutasPage = () => {
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
-        title={"Mantenimiento de Vehiculos"}
+        title={rutaSelected ? "Editar Ruta" : "Nueva Ruta"}
         titleBtnAceptar={"Guardar"}
         onBtnAceptar={<></>}
+        showButtons={false}
       >
-        <form action="" className="modal-group-container">
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">Grupo:</label>
-              <div>
-                <input
-                  type="text"
-                  value={""}
-                  name="nombre"
-                  readOnly
-                  className="outline-none"
-                />
-              </div>
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Volumen (m3):</label>
-              <div className="flex">
-                <input
-                  type="text"
-                  value={""}
-                  name="nombre"
-                  readOnly
-                  className="outline-none max-w-10"
-                />
-              </div>
-            </div>
-          </div>
-        </form>
+        <FormRutasComponent
+          rutaSelected={rutaSelected}
+          setOpenModal={setOpenModal}
+        />
+      </ModalMessage>
+      <ModalMessage
+        open={openModalDelete}
+        setOpen={setOpenModalDelete}
+        title={"Eliminar Ruta"}
+        titleBtnAceptar={"Eliminar"}
+        onBtnAceptar={() => onDeleteRuta()}
+        showButtons={true}
+        isMessage={true}
+      >
+        <div className="w-full text-center text-lg p-0 font-semibold">
+          ¿Estas seguro de eliminar?
+        </div>
       </ModalMessage>
       <div>
         <TableCustom cols={MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP}>
@@ -109,11 +123,23 @@ const MantenimientoRutasPage = () => {
                 <td>{ruta.volumenMinimo}</td>
                 <td>{ruta.volumenMaximo}</td>
                 <td>{ruta.monto}</td>
+                <td className="space-x-2">
+                  <EditIcon
+                    className="text-gray-700 cursor-pointer"
+                    onClick={() => handleSelectedRuta(ruta)}
+                  />
+                  <DeleteIcon
+                    className="text-red-600 cursor-pointer"
+                    onClick={() => handleSelectedDeleteRuta(ruta)}
+                  />
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP.length}><CircularProgress /></td>
+              <td colSpan={MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP.length}>
+                <CircularProgress />
+              </td>
             </tr>
           )}
         </TableCustom>
