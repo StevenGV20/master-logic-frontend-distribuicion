@@ -21,14 +21,13 @@ const MantenimientoDistritosRutasPage = () => {
   const [rutaDistritos, setRutasDistritos] = useState([]);
   const [distritoSelected, setDistritoSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
-  const [vehiculoSelected, setVehiculoSelected] = useState(null);
   const [openModalDelete, setOpenModalDelete] = useState(false);
 
   const handleNewDistrito = () => {
     setDistritoSelected(null);
     setOpenModal(true);
   };
-  const handleSelectedDitrito = (distrito) => {
+  const handleSelectedDistrito = (distrito) => {
     setDistritoSelected(distrito);
     setOpenModal(true);
   };
@@ -89,7 +88,7 @@ const MantenimientoDistritosRutasPage = () => {
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
-        title={vehiculoSelected ? "Editar Vehiculo" : "Nuevo Vehiculo"}
+        title={distritoSelected ? "Editar Vehiculo" : "Nuevo Vehiculo"}
         titleBtnAceptar={"Guardar"}
         onBtnAceptar={() => <></>}
         showButtons={false}
@@ -126,7 +125,7 @@ const MantenimientoDistritosRutasPage = () => {
                 <td className="space-x-2">
                   <EditIcon
                     className="text-gray-700 cursor-pointer"
-                    onClick={() => handleSelectedDitrito(d)}
+                    onClick={() => handleSelectedDistrito(d)}
                   />
                   <DeleteIcon
                     className="text-red-600 cursor-pointer"
