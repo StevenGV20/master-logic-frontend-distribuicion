@@ -1,17 +1,46 @@
 import React, { useEffect, useState } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { CircularProgress } from "@mui/material";
+
 import { PAGE_MANTENIMIENTO_DISTRITOS_RUTAS } from "../utils/titles";
 import BreadcrumbComponent from "../components/BreadcrumbComponent";
 import FilterComponent from "../components/FilterComponent";
 import ModalMessage from "../components/ModalComponent";
 import TableCustom from "../components/TableComponent";
-import { MANTENIMIENTO_RUTAS_DISTRITOS_TABLE_COLS_DESKTOP, URL_MASTERLOGIC_API } from "../utils/general";
+import {
+  MANTENIMIENTO_RUTAS_DISTRITOS_TABLE_COLS_DESKTOP,
+  URL_MASTERLOGIC_API,
+} from "../utils/general";
+import FormDistritoRutaComponent from "../components/FormDistritoRutaComponent";
 
 const MantenimientoDistritosRutasPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
   const [rutaDistritos, setRutasDistritos] = useState([]);
+  const [distritoSelected, setDistritoSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
+  const [vehiculoSelected, setVehiculoSelected] = useState(null);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+
+  const handleNewDistrito = () => {
+    setDistritoSelected(null);
+    setOpenModal(true);
+  };
+  const handleSelectedDitrito = (distrito) => {
+    setDistritoSelected(distrito);
+    setOpenModal(true);
+  };
+
+  const handleSelectedDeleteDistrito = (distrito) => {
+    setDistritoSelected(distrito);
+    setOpenModalDelete(true);
+  };
+  const onDeleteDistrito = () => {
+    alert(JSON.stringify(distritoSelected));
+    setOpenModalDelete(false);
+  };
 
   useEffect(() => {
     const fetchRutaDistritos = async () => {
@@ -22,7 +51,7 @@ const MantenimientoDistritosRutasPage = () => {
         }
         const data = await response.json();
         console.log(data.rutaDistritos);
-        setRutasDistritos(data);
+        setRutasDistritos(data.rutaDistritos);
         setLoadingTable(false);
       } catch (error) {
         console.error(error);
@@ -60,43 +89,64 @@ const MantenimientoDistritosRutasPage = () => {
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
-        title={"Mantenimiento de Vehiculos"}
+        title={vehiculoSelected ? "Editar Vehiculo" : "Nuevo Vehiculo"}
         titleBtnAceptar={"Guardar"}
-        onBtnAceptar={<></>}
+        onBtnAceptar={() => <></>}
+        showButtons={false}
       >
-        <form action="" className="modal-group-container">
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">Grupo:</label>
-              <div>
-                <input
-                  type="text"
-                  value={""}
-                  name="nombre"
-                  readOnly
-                  className="outline-none"
-                />
-              </div>
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Volumen (m3):</label>
-              <div className="flex">
-                <input
-                  type="text"
-                  value={""}
-                  name="nombre"
-                  readOnly
-                  className="outline-none max-w-10"
-                />
-              </div>
-            </div>
-          </div>
-        </form>
+        <FormDistritoRutaComponent
+          distritoSelected={distritoSelected}
+          setDistritoSelected={setDistritoSelected}
+          setOpenModal={setOpenModal}
+        />
       </ModalMessage>
+
+      <ModalMessage
+        open={openModalDelete}
+        setOpen={setOpenModalDelete}
+        title={"Eliminar vehiculo"}
+        titleBtnAceptar={"Eliminar"}
+        onBtnAceptar={() => onDeleteDistrito()}
+        showButtons={true}
+        isMessage={true}
+      >
+        <div className="w-full text-center text-lg p-0 font-semibold">
+          ¿Estas seguro de eliminar?
+        </div>
+      </ModalMessage>
+
       <div>
-        <TableCustom
-          cols={MANTENIMIENTO_RUTAS_DISTRITOS_TABLE_COLS_DESKTOP}
-        ></TableCustom>
+        <TableCustom cols={MANTENIMIENTO_RUTAS_DISTRITOS_TABLE_COLS_DESKTOP}>
+          {!loadingTable ? (
+            rutaDistritos &&
+            rutaDistritos.map((d) => (
+              <tr key={d.id}>
+                <td>{d.codigoRuta}</td>
+                <td>{d.distrito}</td>
+                <td className="space-x-2">
+                  <EditIcon
+                    className="text-gray-700 cursor-pointer"
+                    onClick={() => handleSelectedDitrito(d)}
+                  />
+                  <DeleteIcon
+                    className="text-red-600 cursor-pointer"
+                    onClick={() => handleSelectedDeleteDistrito(d)}
+                  />
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={
+                  MANTENIMIENTO_RUTAS_DISTRITOS_TABLE_COLS_DESKTOP.length
+                }
+              >
+                <CircularProgress />
+              </td>
+            </tr>
+          )}
+        </TableCustom>
       </div>
     </div>
   );

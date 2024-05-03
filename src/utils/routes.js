@@ -68,7 +68,7 @@ const routesPages = [
     element: <MantenimientoRutasPage />,
   },
   {
-    path: "/mantenimiento/distancias_rutas",
+    path: "/mantenimiento/distritos-rutas",
     name: PAGE_MANTENIMIENTO_DISTRITOS_RUTAS,
     icon: <></>,
     element: <MantenimientoDistritosRutasPage/>,
