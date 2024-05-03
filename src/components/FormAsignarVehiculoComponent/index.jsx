@@ -31,6 +31,7 @@ const FormAsignarVehiculoComponent = ({
 
   const handleChange = (event) => {
     const v_selected = event.target.value;
+    console.log(v_selected);
     setVehiculoSelected(v_selected);
     formik.setFieldValue("vehiculo", v_selected.vehiculo);
   };
@@ -53,12 +54,12 @@ const FormAsignarVehiculoComponent = ({
       calcularVolumenAsignadoTotal(vehiculo.gruposAsignados);
     if (volDisponible < grupoVolumenTotal) {
       return (
-        <div className="block">
+        <>
           <div className="">{volAsigTotal}</div>
-          <div className="text-xs text-red-700">
+          <span className="form-container-group-content-span-error text-xs">
             Este grupo supera la capacidad disponible
-          </div>
-        </div>
+          </span>
+        </>
       );
     } else
       return (
@@ -105,41 +106,49 @@ const FormAsignarVehiculoComponent = ({
   });
 
   return (
-    <form className="modal-group-container" onSubmit={formik.handleSubmit}>
-      <div className="modal-group-control-container">
-        <div className="modal-group-item-container">
-          <label htmlFor="">Grupo:</label>
+    <form onSubmit={formik.handleSubmit}>
+      <div className="form-container">
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">Grupo:</label>
           <div>
             <input
               type="text"
               value={formik.values.nombre}
               name="nombre"
               readOnly
-              className="outline-none"
+              className="p-4"
             />
           </div>
         </div>
-        <div className="modal-group-item-container">
-          <label htmlFor="">Volumen (m3):</label>
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">
+            Volumen (m3):
+          </label>
           <div className="flex">
             <input
               type="text"
               value={formik.values.volumen}
               name="nombre"
               readOnly
-              className="outline-none max-w-10"
+              className="p-4"
             />
           </div>
         </div>
-      </div>
-      <div className="modal-group-control-container">
-        <div className="modal-group-item-container">
-          <label htmlFor="">Vehiculo:</label>
-          <FormControl fullWidth>
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">
+            Vehiculo:
+          </label>
+
+          <FormControl fullWidth className="form-container-group-content-input">
             <Select
-              style={{ border: "2px #0055B8 solid" }}
+              style={{
+                border: "0.5px #0055B8 solid",
+                boxShadow: "--tw-ring-color: #0055B8",
+                outline: "none",
+              }}
               value={vehiculoSelected}
               onChange={handleChange}
+              className="border-blue-200"
             >
               {vehiculos.length > 0 &&
                 vehiculos.map((v) => (
@@ -148,19 +157,18 @@ const FormAsignarVehiculoComponent = ({
                   </MenuItem>
                 ))}
             </Select>
-            {formik.errors.vehiculo ? (
-              <div className="text-xs text-red-500">
-                {formik.errors.vehiculo}
-              </div>
-            ) : null}
           </FormControl>
+          {formik.errors.vehiculo ? (
+            <div className="text-xs text-red-500">{formik.errors.vehiculo}</div>
+          ) : null}
         </div>
-        <div className="modal-group-item-container">
-          <label htmlFor="">Volumen Asignado:</label>
-          <div>
-            {vehiculoSelected &&
-              showMessageCapacidadDisponible(vehiculoSelected)}
-            {/* {vehiculoSelected &&
+
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">
+            Volumen Asignado:
+          </label>
+          {vehiculoSelected && showMessageCapacidadDisponible(vehiculoSelected)}
+          {/* {vehiculoSelected &&
               (vehiculoSelected.gruposAsignados &&
               vehiculoSelected.gruposAsignados.length > 0 ? (
                 calcularVolumenAsignadoTotal(vehiculoSelected.gruposAsignados)
@@ -169,12 +177,11 @@ const FormAsignarVehiculoComponent = ({
                   Este grupo supera la capacidad disponible
                 </span>
               ))} */}
-          </div>
         </div>
-      </div>
-      <div className="modal-group-control-container">
-        <div className="modal-group-item-container">
-          <label htmlFor="">Fecha de Salida:</label>
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">
+            Fecha de Salida:
+          </label>
           <DatePicker
             selected={formik.values.fechaSalida}
             value={formik.values.fechaSalida}
@@ -183,47 +190,58 @@ const FormAsignarVehiculoComponent = ({
             name="fechaSalida"
             dateFormat="dd/MM/yyyy"
             popperPlacement="bottom-end"
-            className="modal-group-input-md"
+            className="form-container-group-content-input border-blue-700"
           />
         </div>
-        <div className="modal-group-item-container">
-          <label htmlFor="">Hora de Salida:</label>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileTimePicker
-              defaultValue={formik.values.horaSalida}
-              onChange={(time) => formik.setFieldValue("horaSalida", time)}
-              name="horaSalida"
+
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">
+            Hora de Salida:
+          </label>
+          <div>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <MobileTimePicker
+                defaultValue={formik.values.horaSalida}
+                onChange={(time) => formik.setFieldValue("horaSalida", time)}
+                name="horaSalida"
+                className="form-container-group-content-input"
+              />
+            </LocalizationProvider>
+            {formik.errors.horaSalida ? (
+              <span className="text-xs text-red-500">
+                {formik.errors.horaSalida}
+              </span>
+            ) : null}
+          </div>
+        </div>
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">
+            Fecha de Carga:
+          </label>
+          <div className="w-full">
+            <DatePicker
+              selected={formik.values.fechaCarga}
+              value={formik.values.fechaCarga}
+              onChange={(time) => formik.setFieldValue("fechaCarga", time)}
+              locale="es"
+              name="fechaCarga"
+              dateFormat="dd/MM/yyyy"
+              popperPlacement="bottom-end"
+              className="form-container-group-content-input w-full"
             />
-          </LocalizationProvider>
-          {formik.errors.horaSalida ? (
-            <div className="text-xs text-red-500">
-              {formik.errors.horaSalida}
-            </div>
-          ) : null}
+          </div>
         </div>
-      </div>
-      <div className="modal-group-control-container">
-        <div className="modal-group-item-container">
-          <label htmlFor="">Fecha de Carga:</label>
-          <DatePicker
-            selected={formik.values.fechaCarga}
-            value={formik.values.fechaCarga}
-            onChange={(time) => formik.setFieldValue("fechaCarga", time)}
-            locale="es"
-            name="fechaCarga"
-            dateFormat="dd/MM/yyyy"
-            popperPlacement="bottom-end"
-            className="modal-group-input-md"
-          />
-        </div>
-        <div className="modal-group-item-container">
-          <label htmlFor="">Hora de Carga:</label>
+
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">
+            Hora de Carga:
+          </label>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <MobileTimePicker
               defaultValue={formik.values.horaCarga}
               name="horaCarga"
               onChange={(time) => formik.setFieldValue("horaCarga", time)}
-              className="modal-group-input-md"
+              className="form-container-group-content-input"
             />
           </LocalizationProvider>
           {formik.errors.horaCarga ? (
@@ -232,37 +250,37 @@ const FormAsignarVehiculoComponent = ({
             </div>
           ) : null}
         </div>
-      </div>
-      <div className="flex">
-        <div className="modal-group-item-container">
-          <label htmlFor="">N° Palets:</label>
+        <div className="form-container-group-content">
+          <label className="form-container-group-content-label">
+            N° Palets:
+          </label>
           <div>
             <input
               type="number"
-              className="modal-group-input-md -ml-1"
+              className="form-container-group-content-input"
               value={formik.values.numeroPalets}
               name="numeroPalets"
               onChange={formik.handleChange}
             />
             {formik.errors.numeroPalets ? (
-              <div className="text-xs text-red-500">
+              <span className="text-xs text-red-500">
                 {formik.errors.numeroPalets}
-              </div>
+              </span>
             ) : null}
           </div>
         </div>
-      </div>
-      <div className="w-full block">
-        <label htmlFor="" className="w-full">
-          Observacion:
-        </label>
-        <TextareaAutosize
-          minRows={4}
-          className="border-2 border-blue-800 outline-none px-4 py-2 mt-2 w-full"
-          value={formik.values.observacion}
-          name="observacion"
-          onChange={formik.handleChange}
-        />
+        <div className="form-container-group-content col-span-6">
+          <label htmlFor="" className="w-full">
+            Observacion:
+          </label>
+          <TextareaAutosize
+            minRows={4}
+            className="form-container-group-content-input"
+            value={formik.values.observacion}
+            name="observacion"
+            onChange={formik.handleChange}
+          />
+        </div>
       </div>
       <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
         <button

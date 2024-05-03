@@ -34,7 +34,7 @@ root.render(
     {/* <RouterProvider router={router} />     buscarCadena(listaModulos, route.path)*/}
     <BrowserRouter basename="/masterLogic/distribucion/">
       <Routes>
-        {routesPages.map((route) => {
+        {/*buscarCadena(listaModulos, route.path) &&*/routesPages.map((route) => {
           if (true) {
             return (
               <Route

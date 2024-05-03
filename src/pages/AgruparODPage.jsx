@@ -15,7 +15,6 @@ import FilterComponent from "../components/FilterComponent";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import { PAGE_AGRUPAR_OD } from "../utils/titles";
 import { URL_MASTERLOGIC_API } from "../utils/general";
-import { Checkbox } from "@mui/material";
 import ListODOsisComponent from "../components/ListODOsisComponent/TableCheckbox";
 import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacionODComponent";
 
@@ -39,11 +38,19 @@ const AgruparODPage = () => {
     setStartDate(date);
     setEndDate(null);
     setOpenEndDate(true);
+    setFiltrosOrdenesDespacho({
+      ...filtrosOrdenesDespacho,
+      fechaInicio: date,
+    });
   };
 
   const handleEndDateChange = (date) => {
     setEndDate(date);
     setOpenEndDate(false);
+    setFiltrosOrdenesDespacho({
+      ...filtrosOrdenesDespacho,
+      fechaFinal: date,
+    });
   };
 
   const [ordenesDespacho, setOrdenesDespacho] = useState([]);
@@ -59,7 +66,6 @@ const AgruparODPage = () => {
           throw new Error("Error al cargar el archivo JSON");
         }
         const data = await response.json();
-        console.log(data);
         setOrdenesDespacho(data);
         setLoadingTable(false);
       } catch (error) {
@@ -68,6 +74,58 @@ const AgruparODPage = () => {
     };
     fetchOrdenesDespacho();
   }, []);
+
+  const [filtrosOrdenesDespacho, setFiltrosOrdenesDespacho] = useState({
+    fechaInicio: new Date(),
+    fechaFinal: new Date(),
+    filtro1: "",
+    filtro2: "",
+    filtro3: "",
+    btnFechaSelected: "",
+  });
+
+  const handleChangeFechaButtonFiltro = (tipo) => {
+    if (filtrosOrdenesDespacho.btnFechaSelected === tipo)
+      setFiltrosOrdenesDespacho({
+        ...filtrosOrdenesDespacho,
+        btnFechaSelected: "",
+      });
+    else {
+      let fecha = new Date();
+      if (tipo === "btnFechaToday") {
+        fecha = new Date();
+      } else if (tipo === "btnFechaAyer") {
+        const fecToday = new Date();
+        fecha = new Date(fecToday.setDate(fecToday.getDate() - 1));
+      } else if (tipo === "btnFechaSemana") {
+        const fecToday = new Date();
+        fecha = new Date(fecToday.setDate(fecToday.getDate() - 7));
+      }
+      setStartDate(fecha);
+      setEndDate(fecha);
+      setFiltrosOrdenesDespacho({
+        ...filtrosOrdenesDespacho,
+        btnFechaSelected: tipo,
+        fechaInicio: fecha,
+        fechaFinal: fecha,
+      });
+    }
+  };
+
+  const onSearchFiltroOD = () => {
+    const filtros = filtrosOrdenesDespacho;
+    delete filtros.btnFechaSelected;
+    alert(JSON.stringify(filtros, null, 2));
+    /* 
+    setFiltrosOrdenesDespacho({
+      fechaInicio: new Date(),
+      fechaFinal: new Date(),
+      filtro1: "",
+      filtro2: "",
+      filtro3: "",
+      btnFechaSelected: "",
+    }); */
+  };
 
   const [carritoOrdenesDespacho, setCarritoOrdenesDespacho] = useState([]);
   const [openCarritoGrupos, setOpenCarritoGrupos] = useState(false);
@@ -259,33 +317,51 @@ const AgruparODPage = () => {
           <input
             type="text"
             className="modal-group-input w-full rounded-md border-blue-800 focus:border-blue-700 focus:shadow-md focus:shadow-blue-400"
+            onChange={(e) =>
+              setFiltrosOrdenesDespacho({
+                ...filtrosOrdenesDespacho,
+                filtro1: e.target.value,
+              })
+            }
           />
         </div>
 
         <div className="filter-group-container">
           <div className="filter-checkbox-container">
-            <input type="checkbox" id="checkboxToday" />
-            <label htmlFor="checkboxToday" className="filter-checkbox-label">
+            <button
+              className={`filter-checkbox-label ${
+                filtrosOrdenesDespacho.btnFechaSelected === "btnFechaToday"
+                  ? "bg-blue-800 text-white"
+                  : ""
+              }`}
+              onClick={() => handleChangeFechaButtonFiltro("btnFechaToday")}
+            >
               Hoy
-            </label>
+            </button>
           </div>
           <div className="filter-checkbox-container">
-            <input type="checkbox" id="checkboxYesterday" />
-            <label
-              htmlFor="checkboxYesterday"
-              className="filter-checkbox-label"
+            <button
+              className={`filter-checkbox-label ${
+                filtrosOrdenesDespacho.btnFechaSelected === "btnFechaAyer"
+                  ? "bg-blue-800 text-white"
+                  : ""
+              }`}
+              onClick={() => handleChangeFechaButtonFiltro("btnFechaAyer")}
             >
               Ayer
-            </label>
+            </button>
           </div>
           <div className="filter-checkbox-container">
-            <input type="checkbox" id="checkboxSevenDays" />
-            <label
-              htmlFor="checkboxSevenDays"
-              className="filter-checkbox-label"
+            <button
+              className={`filter-checkbox-label ${
+                filtrosOrdenesDespacho.btnFechaSelected === "btnFechaSemana"
+                  ? "bg-blue-800 text-white"
+                  : ""
+              }`}
+              onClick={() => handleChangeFechaButtonFiltro("btnFechaSemana")}
             >
               Hace 7 dias
-            </label>
+            </button>
           </div>
         </div>
 
@@ -324,20 +400,43 @@ const AgruparODPage = () => {
 
         <div className="filter-group-container">
           <div className="filter-checkbox-container">
-            <input type="checkbox" id="checkboxOpcion1" />
+            <input
+              type="checkbox"
+              id="checkboxOpcion1"
+              value={"opcion1"}
+              onChange={(e) =>
+                setFiltrosOrdenesDespacho({
+                  ...filtrosOrdenesDespacho,
+                  filtro2: e.target.checked ? e.target.value : "",
+                })
+              }
+            />
             <label htmlFor="checkboxOpcion1" className="filter-checkbox-label">
               Opción 1
             </label>
           </div>
           <div className="filter-checkbox-container">
-            <input type="checkbox" id="checkboxOpcion2" />
+            <input
+              type="checkbox"
+              id="checkboxOpcion2"
+              value={"opcion2"}
+              onChange={(e) =>
+                setFiltrosOrdenesDespacho({
+                  ...filtrosOrdenesDespacho,
+                  filtro3: e.target.checked ? e.target.value : "",
+                })
+              }
+            />
             <label htmlFor="checkboxOpcion2" className="filter-checkbox-label">
               Opción 2
             </label>
           </div>
         </div>
 
-        <button className="bg-black w-full py-2 text-white my-4 rounded-md">
+        <button
+          className="bg-black w-full py-2 text-white my-4 rounded-md"
+          onClick={() => onSearchFiltroOD()}
+        >
           Buscar
         </button>
       </FilterComponent>

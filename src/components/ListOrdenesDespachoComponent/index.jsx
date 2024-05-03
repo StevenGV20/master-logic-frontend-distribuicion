@@ -47,7 +47,7 @@ const ListOrdenesDespachoComponent = ({
   };
 
   const handleDeletedGroup = (orden) => {
-    console.log("group deleted", orden.grupo);
+    alert(orden.grupo);
   };
 
   return (
@@ -58,12 +58,12 @@ const ListOrdenesDespachoComponent = ({
             ordenesDespacho.map((orden) => (
               <tr
                 className={
-                  !orden.grupo &&
-                  titlePage.match(PAGE_AGRUPAR_OD) &&
+                  (!orden.grupo &&
+                  titlePage.match(PAGE_AGRUPAR_OD)) ?
                   (carritoOrdenesDespacho &&
                   carritoOrdenesDespacho.find((o) => o.item == orden.item)
                     ? "border-4 border-gray-800 bg-gray-200"
-                    : "hover:bg-gray-200")
+                    : "hover:bg-gray-200") : ""
                 }
                 key={orden.item}
               >
@@ -138,10 +138,7 @@ const ListOrdenesDespachoComponent = ({
                       <div className="flex space-x-2 justify-center w-full">
                         <div className="">{orden.grupo} </div>
                         {showButtonDelete && (
-                          <button
-                            onClick={() => handleDeletedGroup(orden)}
-                            className="z-50"
-                          >
+                          <button onClick={() => handleDeletedGroup(orden)}>
                             <DeleteIcon className="text-red-600" />
                           </button>
                         )}
@@ -219,7 +216,7 @@ const ListOrdenesDespachoComponent = ({
                       <div className="flex">
                         {orden.grupo}{" "}
                         {showButtonDelete && (
-                          <button>
+                          <button onClick={() => handleDeletedGroup(orden)}>
                             <DeleteIcon className={"text-red-700"} />
                           </button>
                         )}

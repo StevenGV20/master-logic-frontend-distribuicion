@@ -199,7 +199,7 @@ const AsignarVehiculoPage = () => {
         <div className="w-3/6 lg:w-9/12"></div>
         <button
           onClick={() => setOpenModalVehiculos(true)}
-          className="w-2/6 lg:w-2/12 bg-black text-white py-4"
+          className="w-2/6 lg:w-2/12 bg-black text-white py-4 px-2"
         >
           Ver Disponibilidad de Vehiculos
         </button>
