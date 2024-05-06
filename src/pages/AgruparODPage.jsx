@@ -8,10 +8,10 @@ import es from "date-fns/locale/es";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 
-import BreadcrumbComponent from "../components/BreadcrumbComponent";
-import ModalMessage from "../components/ModalComponent";
+import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
+import ModalMessage from "../components/widgets/ModalComponent";
 //import Pagination from "../components/PaginationComponent";
-import FilterComponent from "../components/FilterComponent";
+import FilterComponent from "../components/widgets/FilterComponent";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import { PAGE_AGRUPAR_OD } from "../utils/titles";
 import { URL_MASTERLOGIC_API } from "../utils/general";

@@ -1,19 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "./components/TableComponent/_.css";
-@import "./components/PaginationComponent/_.scss";
-@import "./components/ModalComponent/_.css";
+@import "./components/widgets/TableComponent/_.css";
+@import "./components/widgets/PaginationComponent/_.scss";
+@import "./components/widgets/ModalComponent/_.css";
 @import "./components/FormVehiculoComponent/_.css";
 
-:root{
-  --react-color-azulReyPlast: #0055B8;
+:root {
+  --react-color-azulReyPlast: #0055b8;
   --react-color-rojoReyPlast: #eb0029;
 }
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,45 +21,45 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-input{
+input {
   @apply outline-none;
 }
-.z-1000{
+.z-1000 {
   z-index: 1000;
 }
-.react-btn-base{
+.react-btn-base {
   @apply text-white bg-black py-2 px-4;
 }
 
-.text-color-azulReyPlast{
-  color: #0055B8;
+.text-color-azulReyPlast {
+  color: #0055b8;
 }
-.text-color-rojoReyPlast{
+.text-color-rojoReyPlast {
   color: #eb0029;
 }
-.bg-color-rojoReyPlast{
+.bg-color-rojoReyPlast {
   background-color: #eb0029;
 }
-.page-container{
+.page-container {
   @apply p-2 sm:p-4 lg:p-8 text-black;
 }
 
-.desktop{
+.desktop {
   @apply hidden md:block;
 }
 
-.mobile{
+.mobile {
   @apply block md:hidden;
 }
 
-.filter-group-container{
+.filter-group-container {
   @apply my-4 flex justify-center w-full text-black;
 }
 
-.filter-button{
+.filter-button {
   @apply py-2 px-4 border-2 border-blue-800;
 }
 
@@ -77,7 +77,41 @@ input{
   display: none;
 }
 
-.filter-checkbox-container input[type="checkbox"]:checked + .filter-checkbox-label {
+.filter-checkbox-container
+  input[type="checkbox"]:checked
+  + .filter-checkbox-label {
   @apply bg-blue-800;
   color: white;
+}
+
+.form-container {
+  @apply p-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 text-black;
+}
+.form-container-group-content {
+  @apply col-span-6 sm:col-span-3 text-black;
+}
+.form-container-group-content-label {
+  @apply block text-sm font-medium leading-6 text-gray-900;
+}
+
+.form-container-group-content-input {
+  @apply block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6;
+  @apply outline-none px-4 py-4 text-base ring-blue-700 text-black;
+}
+
+.form-container-group-content-input-error {
+  @apply ring-red-600 focus:ring-red-600;
+}
+.form-container-group-content-span-error {
+  @apply text-sm text-red-600 font-semibold;
+}
+
+.form-buttons-container {
+  @apply mt-6 flex items-center justify-end gap-x-6;
+}
+.form-buttons-container-btncancel {
+  @apply text-sm font-semibold leading-6 text-gray-900;
+}
+.form-buttons-container-btnaccept {
+  @apply rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600;
 }

@@ -5,10 +5,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { PAGE_MANTENIMIENTO_VEHICULOS } from "../utils/titles";
-import BreadcrumbComponent from "../components/BreadcrumbComponent";
-import FilterComponent from "../components/FilterComponent";
-import ModalMessage from "../components/ModalComponent";
-import TableCustom from "../components/TableComponent";
+import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
+import FilterComponent from "../components/widgets/FilterComponent";
+import ModalMessage from "../components/widgets/ModalComponent";
+import TableCustom from "../components/widgets/TableComponent";
 import {
   MANTENIMIENTO_VEHICULOS_TABLE_COLS_DESKTOP,
   URL_MASTERLOGIC_API,

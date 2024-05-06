@@ -3,10 +3,10 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import BreadcrumbComponent from "../components/BreadcrumbComponent";
+import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
 import { PAGE_ASIGNAR_VEHICULO } from "../utils/titles";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
-import ModalMessage from "../components/ModalComponent";
+import ModalMessage from "../components/widgets/ModalComponent";
 import { CircularProgress } from "@mui/material";
 import {
   GRUPOS_COLS_DESKTOP,
@@ -22,9 +22,9 @@ import {
   calcularVolumenAsignadoTotal,
   calcularVolumenTotal,
 } from "../utils/funciones";
-import TableCustom from "../components/TableComponent";
-import TableCollapseMUICustomComponent from "../components/TableComponent/TableCollapseMUICustomComponent";
-import TableMUICustomComponent from "../components/TableComponent/TableMUICustomComponent";
+import TableCustom from "../components/widgets/TableComponent";
+import TableCollapseMUICustomComponent from "../components/widgets/TableComponent/TableCollapseMUICustomComponent";
+import TableMUICustomComponent from "../components/widgets/TableComponent/TableMUICustomComponent";
 import FormAsignarVehiculoComponent from "../components/FormAsignarVehiculoComponent";
 
 function Row(props) {

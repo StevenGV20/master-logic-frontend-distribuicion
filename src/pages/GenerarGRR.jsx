@@ -6,11 +6,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
 
-import BreadcrumbComponent from "../components/BreadcrumbComponent";
+import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
 import { PAGE_GENERAR_GRR } from "../utils/titles";
 import { ordenesDespachoFake } from "../data/ordenesDespachoFake";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
-import FilterComponent from "../components/FilterComponent";
+import FilterComponent from "../components/widgets/FilterComponent";
 import { URL_MASTERLOGIC_API } from "../utils/general";
 
 const GenerarGRR = () => {

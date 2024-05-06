@@ -32,7 +32,7 @@ root.render(
       <BrowserRouter basename="/masterLogic/distribucion/">
         <Routes>
           {routesPages.map((route) => {
-            if (true /*buscarCadena(listaModulos, route.path) &&*/) {
+            if (/* buscarCadena(listaModulos, route.path) */true) {
               return (
                 <Route
                   key={route.path}
