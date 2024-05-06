@@ -1,3 +1,5 @@
+import { API_MAESTRO, URL_MASTERLOGIC_API } from "./general";
+
 export const calcularVolumenTotal = (ordenes) => {
   let totalVolumen = 0;
   for (let index = 0; index < ordenes.length; index++) {
@@ -81,4 +83,69 @@ export const convertirTimeStringToDate = (horaString) => {
   fechaHora.setMinutes(minutos);
 
   return fechaHora;
+};
+
+export const getFetchFunction = async (path, setLoadingTable, setData) => {
+  try {
+    const token = localStorage.getItem("USUARIO_TOKEN");
+    const response = await fetch(`${URL_MASTERLOGIC_API}${path}`);
+    if (!response.ok) {
+      throw new Error("Error al cargar el archivo JSON");
+    }
+    const data = await response.json();
+    setLoadingTable(false);
+    setData(data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const postFetchFunction = async (path, values,setOpenMessage) => {
+  try {
+    const token = localStorage.getItem("USUARIO_TOKEN");
+    const response = await fetch(`${URL_MASTERLOGIC_API}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(values, null, 2),
+    });
+    if (!response.ok) {
+      throw new Error("Error al cargar el archivo JSON");
+    }
+    const data = await response.json();
+    setOpenMessage({
+      state: true,
+      message: data.mensaje,
+      type: data.status.toLowerCase()
+    })
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const deleteFetchFunction = async (path, values,setOpenMessage) => {
+  try {
+    const token = localStorage.getItem("USUARIO_TOKEN");
+    const response = await fetch(`${URL_MASTERLOGIC_API}${path}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(values, null, 2),
+    });
+    if (!response.ok) {
+      throw new Error("Error al cargar el archivo JSON");
+    }
+    const data = await response.json();
+    setOpenMessage({
+      state: true,
+      message: data.mensaje,
+      type: data.status.toLowerCase()
+    })
+  } catch (error) {
+    console.error(error);
+  }
 };

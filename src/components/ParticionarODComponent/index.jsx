@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ModalMessage from "../ModalComponent";
+import ModalMessage from "../widgets/ModalComponent";
 
 const ParticionarODComponent = ({
   handleSelectOrden,

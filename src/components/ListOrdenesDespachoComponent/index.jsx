@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import TableCustom from "../TableComponent";
+import TableCustom from "../widgets/TableComponent";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { PAGE_AGRUPAR_OD } from "../../utils/titles";
 import { Checkbox, CircularProgress, MenuItem, Select } from "@mui/material";
-import ModalMessage from "../ModalComponent";
+import ModalMessage from "../widgets/ModalComponent";
 import ParticionarODComponent from "../ParticionarODComponent";
 
 const ListOrdenesDespachoComponent = ({

@@ -22,7 +22,9 @@ import {
   PAGE_MANTENIMIENTO_VEHICULOS,
   PAGE_MANTENIMIENTO_DISTRITOS_RUTAS,
   PAGE_MANTENIMIENTO_DISTANCIAS,
+  PAGE_MANTENIMIENTO_CHOFERES,
 } from "./titles";
+import MantenimientoChoferesPage from "../pages/MantenimientoChoferesPage";
 
 const routesPages = [
   {
@@ -78,6 +80,12 @@ const routesPages = [
     name: PAGE_MANTENIMIENTO_DISTANCIAS,
     icon: <></>,
     element: <MantenimientoDistanciasPage/>,
+  },
+  {
+    path: "/mantenimiento/choferes",
+    name: PAGE_MANTENIMIENTO_CHOFERES,
+    icon: <></>,
+    element: <MantenimientoChoferesPage/>,
   },
 ];
 
