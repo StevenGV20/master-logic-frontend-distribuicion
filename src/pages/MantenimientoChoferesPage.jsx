@@ -148,12 +148,13 @@ const MantenimientoChoferesPage = () => {
         open={openMessage.state}
         autoHideDuration={6000}
         onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
           onClose={handleClose}
           severity={openMessage.type}
           variant="filled"
-          sx={{ width: "100%" }}
+          sx={{ width: "100%", scale:"1.2", marginLeft: "1em" }}
         >
           {openMessage.message}
         </Alert>
@@ -165,6 +166,7 @@ const MantenimientoChoferesPage = () => {
             choferes &&
             choferes.result.map((d) => (
               <tr key={d.id}>
+              <td>{d.cho_codcho}</td>
                 <td>{d.cho_nombre}</td>
                 <td>{d.cho_nrolic}</td>
                 <td>{d.cho_indest}</td>
@@ -200,6 +202,7 @@ const MantenimientoChoferesPage = () => {
             choferes.result.map((d) => (
               <tr key={d.id}>
                 <td>
+                  <div>{d.cho_codcho}</div>
                   <div>{d.cho_nombre}</div>
                   <div>{d.cho_nrolic}</div>
                   <div>{d.cho_indest}</div>

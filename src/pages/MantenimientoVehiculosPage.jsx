@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import { Checkbox, CircularProgress } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Alert, CircularProgress, Snackbar } from "@mui/material";
 
 import { PAGE_MANTENIMIENTO_VEHICULOS } from "../utils/titles";
 import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
@@ -10,10 +10,12 @@ import FilterComponent from "../components/widgets/FilterComponent";
 import ModalMessage from "../components/widgets/ModalComponent";
 import TableCustom from "../components/widgets/TableComponent";
 import {
-  MANTENIMIENTO_VEHICULOS_TABLE_COLS_DESKTOP,
+  API_MAESTRO,
+  MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_DESKTOP,
   URL_MASTERLOGIC_API,
 } from "../utils/general";
-import FormVehiculoComponent from "../components/FormVehiculoComponent";
+import FormUnidadesTransporteComponent from "../components/FormVehiculoComponent";
+import { deleteFetchFunction, getFetchFunction } from "../utils/funciones";
 
 const MantenimientoVehiculosPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -22,6 +24,12 @@ const MantenimientoVehiculosPage = () => {
   const [vehiculos, setVehiculos] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
   const [vehiculoSelected, setVehiculoSelected] = useState(null);
+  const [refreshTable, setRefreshTable] = useState(false);
+  const [openMessage, setOpenMessage] = useState({
+    state: false,
+    message: "",
+    type: "success",
+  });
 
   const handleNewdVehiculo = (vehiculo) => {
     setVehiculoSelected(null);
@@ -37,25 +45,47 @@ const MantenimientoVehiculosPage = () => {
     setOpenModalDelete(true);
   };
   const onDeleteVehiculo = () => {
-    alert(JSON.stringify(vehiculoSelected));
+    //alert(JSON.stringify(vehiculoSelected));
+
+    const fetchUnidadTransporte = async () => {
+      try {
+        await deleteFetchFunction(
+          `${API_MAESTRO}/deleteMaestroUnidadesTransporteUTR?id=${vehiculoSelected.id}`,
+          "{}",
+          setOpenMessage
+        );
+        setRefreshTable((prev) => !prev);
+      } catch (error) {
+        console.error(error);
+      }
+      //await getFetchFunction(`${API_MAESTRO}/listarMaestroChoferesCho`,setLoadingTable,setChoferes);
+    };
+    fetchUnidadTransporte();
+    setOpenModalDelete(false);
+
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenMessage(false);
   };
 
   useEffect(() => {
     const fetchVehiculos = async () => {
       try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        setVehiculos(data.vehiculos);
-        setLoadingTable(false);
+        await getFetchFunction(
+          `${API_MAESTRO}/listarMaestroUnidadesTransporteUTR`,
+          setLoadingTable,
+          setVehiculos
+        );
       } catch (error) {
         console.error(error);
       }
     };
     fetchVehiculos();
-  }, []);
+  }, [refreshTable]);
 
   return (
     <div className="page-container">
@@ -91,10 +121,12 @@ const MantenimientoVehiculosPage = () => {
         onBtnAceptar={() => <></>}
         showButtons={false}
       >
-        <FormVehiculoComponent
+        <FormUnidadesTransporteComponent
           vehiculoSelected={vehiculoSelected}
           setVehiculoSelected={setVehiculoSelected}
           setOpenModal={setOpenModal}
+          setOpenMessage={setOpenMessage}
+          setRefreshTable={setRefreshTable}
         />
       </ModalMessage>
 
@@ -107,24 +139,45 @@ const MantenimientoVehiculosPage = () => {
         showButtons={true}
         isMessage={true}
       >
-        <div className="w-full text-center text-lg p-0 font-semibold">¿Estas seguro de eliminar?</div>
+        <div className="w-full text-center text-lg p-0 font-semibold">
+          ¿Estas seguro de eliminar?
+        </div>
       </ModalMessage>
 
+      <Snackbar
+        open={openMessage.state}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={openMessage.type}
+          variant="filled"
+          sx={{ width: "100%", scale:"1.2", marginLeft: "1em" }}
+        >
+          {openMessage.message}
+        </Alert>
+      </Snackbar>
+
       <div>
-        <TableCustom cols={MANTENIMIENTO_VEHICULOS_TABLE_COLS_DESKTOP}>
+        <TableCustom cols={MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_DESKTOP}>
           {!loadingTable ? (
             vehiculos &&
-            vehiculos.map((v) => (
+            vehiculos.result.map((v) => (
               <tr key={v.id}>
                 <td>{v.id}</td>
-                <td>{v.vehiculo}</td>
-                <td>{v.chofer}</td>
-                <td>{v.licencia}</td>
-                <td>{v.estado}</td>
-                <td>{v.propietario}</td>
-                <td>{v.sede}</td>
-                <td>{v.volumenMaximo}</td>
-                <td>{v.tipoVolumen}</td>
+                <td>{v.utr_codutr}</td>
+                <td>{v.utr_desutr}</td>
+                <td>{v.utr_plautr}</td>
+                <td>{v.utr_marutr}</td>
+                <td>{v.cho_codcho.length > 0 && v.cho_codcho}</td>
+                <td>{v.utr_indest}</td>
+                <td>{v.utr_codusu}</td>
+                <td>{v.utr_conrep}</td>
+                <td>{v.utr_tercero}</td>
+                <td>{v.utr_prvruc}</td>
+                <td>{v.utr_prvrso}</td>
                 <td></td>
                 <td className="space-x-2">
                   <EditIcon
@@ -140,7 +193,11 @@ const MantenimientoVehiculosPage = () => {
             ))
           ) : (
             <tr>
-              <td colSpan={MANTENIMIENTO_VEHICULOS_TABLE_COLS_DESKTOP.length}>
+              <td
+                colSpan={
+                  MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_DESKTOP.length
+                }
+              >
                 <CircularProgress />
               </td>
             </tr>

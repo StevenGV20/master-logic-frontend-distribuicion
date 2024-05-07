@@ -3,50 +3,93 @@ import { useFormik } from "formik";
 import { useSelector, useDispatch } from "react-redux";
 
 import { fetchData } from "../../redux/features/combos/sedeSlice";
+import { API_MAESTRO, COD_CIA } from "../../utils/general";
+import { postFetchFunction } from "../../utils/funciones";
 
-const FormVehiculoComponent = ({ vehiculoSelected, setOpenModal }) => {
+const FormUnidadesTransporteComponent = ({
+  vehiculoSelected,
+  setVehiculoSelected,
+  setOpenModal,
+  setOpenMessage,
+  setRefreshTable,
+}) => {
   const formik = useFormik({
     initialValues: {
-      codigo: vehiculoSelected ? vehiculoSelected.id : "",
-      placa: vehiculoSelected ? vehiculoSelected.vehiculo : "",
-      chofer: vehiculoSelected ? vehiculoSelected.chofer : "",
-      numeroLicencia: vehiculoSelected ? vehiculoSelected.licencia : "",
-      estado: vehiculoSelected ? vehiculoSelected.estado : "",
-      motivo: vehiculoSelected ? vehiculoSelected.motivo : "",
-      propietario: vehiculoSelected ? vehiculoSelected.propietario : "",
-      sede: vehiculoSelected ? vehiculoSelected.sede : "",
-      volumenMaximo: vehiculoSelected ? vehiculoSelected.volumenMaximo : "",
-      tara: vehiculoSelected ? vehiculoSelected.tara : "",
+      id: vehiculoSelected ? vehiculoSelected.id : 0,
+      cia_codcia: COD_CIA,
+      utr_codutr: vehiculoSelected ? vehiculoSelected.utr_codutr : "",
+      utr_desutr: vehiculoSelected ? vehiculoSelected.utr_desutr : "",
+      utr_plautr: vehiculoSelected ? vehiculoSelected.utr_plautr : "",
+      utr_nrocer: vehiculoSelected ? vehiculoSelected.utr_nrocer : "",
+      utr_marutr: vehiculoSelected ? vehiculoSelected.utr_marutr : "",
+      utr_config: vehiculoSelected ? vehiculoSelected.utr_config : "",
+      cho_codcho:
+        vehiculoSelected && vehiculoSelected.length > 0
+          ? vehiculoSelected.cho_codcho
+          : "",
+      utr_indest: vehiculoSelected ? vehiculoSelected.utr_indest : "",
+      utr_codusu: vehiculoSelected ? vehiculoSelected.utr_codusu : "",
+      utr_conrep: vehiculoSelected ? vehiculoSelected.utr_conrep : 0,
+      utr_coddec:
+        vehiculoSelected && vehiculoSelected.length > 0
+          ? vehiculoSelected.utr_coddec
+          : "",
+      tcv_codtcv:
+        vehiculoSelected && vehiculoSelected.length > 0
+          ? vehiculoSelected.tcv_codtcv
+          : 0,
+      utr_coduni: vehiculoSelected ? vehiculoSelected.utr_coduni : "",
+      utr_tercero: vehiculoSelected ? vehiculoSelected.utr_tercero : "",
+      utr_prvruc: vehiculoSelected ? vehiculoSelected.utr_prvruc : "",
+      utr_prvrso: vehiculoSelected ? vehiculoSelected.utr_prvrso : "",
     },
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      console.log(JSON.stringify(values, null, 2));
+
+      const postChofer = async () => {
+        const result = await postFetchFunction(
+          `${API_MAESTRO}/saveMaestroUnidadesTransporteUTR`,
+          values,
+          setOpenMessage
+        );
+        console.log("result postChofer", result);
+      };
+      postChofer();
+      setRefreshTable((prev) => !prev);
       setOpenModal(false);
+      setVehiculoSelected(null);
     },
     validate: (values) => {
       const errors = {};
-      if (!values.placa) {
-        errors.placa = "Debes ingresar la placa del vehiculo";
+      if (!values.utr_codutr) {
+        errors.utr_codutr = "Debes ingresar el utr_desutr del vehiculo";
       }
-      if (!values.chofer) {
-        errors.chofer = "Debes ingresar el nombre del chofer";
+      if (!values.utr_desutr) {
+        errors.utr_desutr = "Debes ingresar el utr_desutr del vehiculo";
       }
-      if (!values.numeroLicencia) {
-        errors.numeroLicencia = "Debes ingresar el numero de la licencia";
+      if (!values.utr_plautr) {
+        errors.utr_plautr = "Debes ingresar el utr_plautr del vehiculo";
       }
-      if (!values.estado) {
-        errors.estado = "Debes ingresar el estado del vehiculo";
+      if (!values.utr_nrocer) {
+        errors.utr_nrocer = "Debes ingresar el utr_nrocer del vehiculo";
       }
-      if (!values.motivo) {
-        errors.motivo = "Debes ingresar el motivo";
+      if (!values.utr_marutr) {
+        errors.utr_marutr = "Debes ingresar el utr_marutr del vehiculo";
       }
-      if (!values.propietario) {
-        errors.propietario = "Debes ingresar el propietario del vehiculo";
+      if (!values.utr_config) {
+        errors.utr_config = "Debes ingresar el utr_config del vehiculo";
       }
-      if (!values.sede) {
-        errors.sede = "Debes ingresar la sede del vehiculo";
+      if (!values.utr_indest) {
+        errors.utr_indest = "Debes ingresar el utr_indest del vehiculo";
       }
-      if (!values.volumenMaximo) {
-        errors.volumenMaximo = "Debes ingresar el volumen maximo del vehiculo";
+      if (!values.utr_codusu) {
+        errors.utr_codusu = "Debes ingresar el utr_codusu del vehiculo";
+      }
+      if (values.utr_conrep < 0) {
+        errors.utr_conrep = "Debes ingresar el utr_conrep del vehiculo";
+      }
+      if (!values.utr_tercero) {
+        errors.utr_tercero = "Debes ingresar el utr_tercero del vehiculo";
       }
       return errors;
     },
@@ -63,28 +106,217 @@ const FormVehiculoComponent = ({ vehiculoSelected, setOpenModal }) => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="form-container">
-        <input type="text" hidden name="codigo" value={formik.values.codigo} />
+        <input type="text" hidden name="id" defaultValue={formik.values.id} />
+        <input
+          type="text"
+          hidden
+          name="cia_codcia"
+          defaultValue={formik.values.cia_codcia}
+        />
+
         <div className="form-container-group-content">
           <label htmlFor="placa" className="form-container-group-content-label">
-            Placa
+            utr_codutr
           </label>
           <div className="mt-2">
             <input
               type="text"
-              name="placa"
-              id="idPlaca"
-              value={formik.values.placa}
+              name="utr_codutr"
+              id="utr_codutr"
+              value={formik.values.utr_codutr}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.placa
+                formik.errors.utr_codutr
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
             />
-            {formik.errors.placa && (
+            {formik.errors.utr_codutr && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.placa}
+                {formik.errors.utr_codutr}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label htmlFor="placa" className="form-container-group-content-label">
+            utr_desutr
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_desutr"
+              id="utr_desutr"
+              value={formik.values.utr_desutr}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_desutr
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_desutr && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_desutr}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label htmlFor="placa" className="form-container-group-content-label">
+            utr_plautr
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_plautr"
+              id="utr_plautr"
+              value={formik.values.utr_plautr}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_plautr
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_plautr && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_plautr}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label htmlFor="placa" className="form-container-group-content-label">
+            utr_nrocer
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_nrocer"
+              id="utr_nrocer"
+              value={formik.values.utr_nrocer}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_nrocer
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_nrocer && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_nrocer}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label htmlFor="placa" className="form-container-group-content-label">
+            utr_marutr
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_marutr"
+              id="utr_marutr"
+              value={formik.values.utr_marutr}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_marutr
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_marutr && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_marutr}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label htmlFor="placa" className="form-container-group-content-label">
+            utr_config
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_config"
+              id="utr_config"
+              value={formik.values.utr_config}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_config
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_config && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_config}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label htmlFor="placa" className="form-container-group-content-label">
+            cho_codcho
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="cho_codcho"
+              id="cho_codcho"
+              value={formik.values.cho_codcho}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.cho_codcho
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.cho_codcho && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.cho_codcho}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label htmlFor="placa" className="form-container-group-content-label">
+            utr_indest
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_indest"
+              id="utr_indest"
+              value={formik.values.utr_indest}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_indest
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_indest && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_indest}
               </span>
             )}
           </div>
@@ -92,220 +324,233 @@ const FormVehiculoComponent = ({ vehiculoSelected, setOpenModal }) => {
 
         <div className="form-container-group-content">
           <label
-            htmlFor="chofer"
+            htmlFor="utr_codusu"
             className="form-container-group-content-label"
           >
-            Chofer
+            utr_codusu
           </label>
           <div className="mt-2">
             <input
               type="text"
-              name="chofer"
-              id="idChofer"
-              value={formik.values.chofer}
+              name="utr_codusu"
+              id="utr_codusu"
+              value={formik.values.utr_codusu}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.chofer
+                formik.errors.utr_codusu
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
             />
-            {formik.errors.chofer && (
+            {formik.errors.utr_codusu && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.chofer}
+                {formik.errors.utr_codusu}
               </span>
             )}
           </div>
         </div>
+
         <div className="form-container-group-content">
           <label
-            htmlFor="chofer"
+            htmlFor="utr_conrep"
             className="form-container-group-content-label"
           >
-            Numero de Licencia
+            utr_conrep
           </label>
           <div className="mt-2">
             <input
-              type="text"
-              name="numeroLicencia"
-              id="numeroLicencia"
-              value={formik.values.numeroLicencia}
+              type="number"
+              name="utr_conrep"
+              id="utr_conrep"
+              value={formik.values.utr_conrep}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.numeroLicencia
+                formik.errors.utr_conrep
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
             />
-            {formik.errors.numeroLicencia && (
+            {formik.errors.utr_conrep && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.numeroLicencia}
+                {formik.errors.utr_conrep}
               </span>
             )}
           </div>
         </div>
+
         <div className="form-container-group-content">
           <label
-            htmlFor="estado"
+            htmlFor="utr_coddec"
             className="form-container-group-content-label"
           >
-            Estado
+            utr_coddec
           </label>
           <div className="mt-2">
-            <select
+            <input
               type="text"
-              name="estado"
-              id="estado"
-              value={formik.values.estado}
+              name="utr_coddec"
+              id="utr_coddec"
+              value={formik.values.utr_coddec}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.estado
+                formik.errors.utr_coddec
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
-            >
-              <option value="">[ Seleecione ]</option>
-              <option value="A">ACTIVO</option>
-              <option value="I">INACTIVO</option>
-            </select>
-            {formik.errors.estado && (
+            />
+            {formik.errors.utr_coddec && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.estado}
+                {formik.errors.utr_coddec}
               </span>
             )}
           </div>
         </div>
+
         <div className="form-container-group-content">
           <label
-            htmlFor="motivo"
+            htmlFor="tcv_codtcv"
             className="form-container-group-content-label"
           >
-            Motivo
+            tcv_codtcv
           </label>
           <div className="mt-2">
             <input
-              type="text"
-              name="motivo"
-              id="motivo"
-              value={formik.values.motivo}
+              type="number"
+              name="tcv_codtcv"
+              id="tcv_codtcv"
+              value={formik.values.tcv_codtcv}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.motivo
+                formik.errors.tcv_codtcv
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
             />
-            {formik.errors.motivo && (
+            {formik.errors.tcv_codtcv && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.motivo}
+                {formik.errors.tcv_codtcv}
               </span>
             )}
           </div>
         </div>
+
         <div className="form-container-group-content">
           <label
-            htmlFor="propietario"
+            htmlFor="utr_coduni"
             className="form-container-group-content-label"
           >
-            Propietario
+            utr_coduni
           </label>
           <div className="mt-2">
             <input
               type="text"
-              name="propietario"
-              id="propietario"
-              value={formik.values.propietario}
+              name="utr_coduni"
+              id="utr_coduni"
+              value={formik.values.utr_coduni}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.propietario
+                formik.errors.utr_coduni
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
             />
-            {formik.errors.propietario && (
+            {formik.errors.utr_coduni && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.propietario}
+                {formik.errors.utr_coduni}
               </span>
             )}
           </div>
         </div>
-        <div className="form-container-group-content">
-          <label htmlFor="sede" className="form-container-group-content-label">
-            Sede
-          </label>
-          <div className="mt-2">
-            <select
-              type="text"
-              name="sede"
-              id="sede"
-              value={formik.values.sede}
-              onChange={formik.handleChange}
-              autoComplete="given-name"
-              className={`form-container-group-content-input ${
-                formik.errors.sede
-                  ? "form-container-group-content-input-error"
-                  : ""
-              }`}
-            >
-              <option value="">[ Seleecione ]</option>
-              {sedesCombo.map((sede) => (
-                <option value={sede.sede}>{sede.sede}</option>
-              ))}
-            </select>
-            {formik.errors.sede && (
-              <span className="form-container-group-content-span-error">
-                {formik.errors.sede}
-              </span>
-            )}
-          </div>
-        </div>
+
         <div className="form-container-group-content">
           <label
-            htmlFor="volumenMaximo"
+            htmlFor="utr_tercero"
             className="form-container-group-content-label"
           >
-            Volumen Maximo
+            utr_tercero
           </label>
           <div className="mt-2">
             <input
               type="text"
-              name="volumenMaximo"
-              id="volumenMaximo"
-              value={formik.values.volumenMaximo}
+              name="utr_tercero"
+              id="utr_tercero"
+              value={formik.values.utr_tercero}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.volumenMaximo
+                formik.errors.utr_tercero
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
             />
-            {formik.errors.volumenMaximo && (
+            {formik.errors.utr_tercero && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.volumenMaximo}
+                {formik.errors.utr_tercero}
               </span>
             )}
           </div>
         </div>
+
         <div className="form-container-group-content">
-          <label htmlFor="tara" className="form-container-group-content-label">
-            Tara
+          <label
+            htmlFor="utr_prvruc"
+            className="form-container-group-content-label"
+          >
+            utr_prvruc
           </label>
           <div className="mt-2">
             <input
               type="text"
-              name="tara"
-              id="tara"
-              value={formik.values.tara}
+              name="utr_prvruc"
+              id="utr_prvruc"
+              value={formik.values.utr_prvruc}
               onChange={formik.handleChange}
               autoComplete="given-name"
-              className="form-container-group-content-input"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_tercero
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
             />
+            {formik.errors.utr_prvruc && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_prvruc}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label
+            htmlFor="utr_prvrso"
+            className="form-container-group-content-label"
+          >
+            utr_prvrso
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_prvrso"
+              id="utr_prvrso"
+              value={formik.values.utr_prvrso}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_prvrso
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_prvrso && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_prvrso}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -325,4 +570,4 @@ const FormVehiculoComponent = ({ vehiculoSelected, setOpenModal }) => {
   );
 };
 
-export default FormVehiculoComponent;
+export default FormUnidadesTransporteComponent;

@@ -140,6 +140,7 @@ export const deleteFetchFunction = async (path, values,setOpenMessage) => {
       throw new Error("Error al cargar el archivo JSON");
     }
     const data = await response.json();
+    console.log(data);
     setOpenMessage({
       state: true,
       message: data.mensaje,
