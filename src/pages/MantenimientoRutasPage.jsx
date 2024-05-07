@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useSelector, useDispatch } from "react-redux";
 
 import { PAGE_MANTENIMIENTO_RUTAS } from "../utils/titles";
 import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
@@ -9,11 +10,15 @@ import FilterComponent from "../components/widgets/FilterComponent";
 import ModalMessage from "../components/widgets/ModalComponent";
 import TableCustom from "../components/widgets/TableComponent";
 import {
+  API_DISTRIBUCION,
   MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP,
   URL_MASTERLOGIC_API,
 } from "../utils/general";
 import { CircularProgress } from "@mui/material";
 import FormRutasComponent from "../components/FormRutasComponent";
+import { deleteFetchFunction, getFetchFunction } from "../utils/funciones";
+import AlertMessage from "../components/widgets/AlertMessage";
+import { fetchData } from "../redux/features/combos/sedeSlice";
 
 const MantenimientoRutasPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -22,6 +27,13 @@ const MantenimientoRutasPage = () => {
   const [rutaSelected, setRutaSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+
+  const [refreshTable, setRefreshTable] = useState(false);
+  const [openMessage, setOpenMessage] = useState({
+    state: false,
+    message: "",
+    type: "success",
+  });
 
   const handleNewRuta = () => {
     setRutaSelected(null);
@@ -36,28 +48,47 @@ const MantenimientoRutasPage = () => {
     setRutaSelected(ruta);
     setOpenModalDelete(true);
   };
+
   const onDeleteRuta = () => {
-    alert(JSON.stringify(rutaSelected));
+    const deleteRuta = async () => {
+      try {
+        await deleteFetchFunction(
+          `${API_DISTRIBUCION}/deleteRuta?id=${rutaSelected.id}`,
+          "{}",
+          setOpenMessage
+        );
+        setRefreshTable((prev) => !prev);
+      } catch (error) {
+        console.error(error);
+      }
+      //await getFetchFunction(`${API_MAESTRO}/listarMaestroChoferesCho`,setLoadingTable,setChoferes);
+    };
+    deleteRuta();
     setOpenModalDelete(false);
   };
+
+  const sedesCombo = useSelector((state) => state.sede.lista);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log("sedesCombo", sedesCombo);
+    if (!(sedesCombo.length > 0)) dispatch(fetchData());
+  }, []);
 
   useEffect(() => {
     const fetchRutas = async () => {
       try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        console.log(data.rutas);
-        setRutas(data.rutas);
-        setLoadingTable(false);
+        await getFetchFunction(
+          `${API_DISTRIBUCION}/listaRutas`,
+          setLoadingTable,
+          setRutas
+        );
       } catch (error) {
         console.error(error);
       }
     };
     fetchRutas();
-  }, []);
+  }, [refreshTable]);
 
   return (
     <div className="page-container">
@@ -96,6 +127,8 @@ const MantenimientoRutasPage = () => {
         <FormRutasComponent
           rutaSelected={rutaSelected}
           setOpenModal={setOpenModal}
+          setOpenMessage={setOpenMessage}
+          setRefreshTable={setRefreshTable}
         />
       </ModalMessage>
       <ModalMessage
@@ -111,18 +144,19 @@ const MantenimientoRutasPage = () => {
           ¿Estas seguro de eliminar?
         </div>
       </ModalMessage>
+      <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage}/>
       <div>
         <TableCustom cols={MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP}>
           {!loadingTable ? (
             rutas &&
-            rutas.map((ruta) => (
+            rutas.result.map((ruta) => (
               <tr>
-                <td>{ruta.codigo}</td>
-                <td>{ruta.sede}</td>
-                <td>{ruta.descripcion}</td>
-                <td>{ruta.volumenMinimo}</td>
-                <td>{ruta.volumenMaximo}</td>
-                <td>{ruta.monto}</td>
+                <td>{ruta.rut_codigo}</td>
+                <td>{sedesCombo.find(s=>s.sed_codsed === ruta.sed_codsed).sed_descor}</td>
+                <td>{ruta.rut_descripcion}</td>
+                <td>{ruta.rut_volmin}</td>
+                <td>{ruta.rut_volmax}</td>
+                <td>{ruta.rut_precio}</td>
                 <td className="space-x-2">
                   <EditIcon
                     className="text-gray-700 cursor-pointer"

@@ -1,11 +1,12 @@
 // dataSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { API_DISTRIBUCION, URL_MASTERLOGIC_API } from "../../../utils/general";
 
 // Definir una acción asincrónica para cargar datos desde la API
 export const fetchData = createAsyncThunk("data/fetchData", async () => {
   const token = localStorage.getItem("USUARIO_TOKEN");
   const response = await fetch(
-    "http://localhost:5006/api/Solicitudes/lista/sedes",
+    `${URL_MASTERLOGIC_API}${API_DISTRIBUCION}/listaSedes`,
     {
       method: "GET",
       headers: {
@@ -15,7 +16,7 @@ export const fetchData = createAsyncThunk("data/fetchData", async () => {
     }
   );
   const data = await response.json();
-  return data;
+  return data.result;
 });
 
 export const sedeSlice = createSlice({
@@ -25,7 +26,8 @@ export const sedeSlice = createSlice({
     status: "idle",
     error: null,
   },
-  reducers: {},
+  reducers: {
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchData.pending, (state) => {
