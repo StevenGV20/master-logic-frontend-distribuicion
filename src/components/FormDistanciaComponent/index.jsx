@@ -3,33 +3,55 @@ import { useFormik } from "formik";
 import { useSelector, useDispatch } from "react-redux";
 
 import { fetchData } from "../../redux/features/combos/sedeSlice";
+import { API_DISTRIBUCION, USERNAME_LOCAL } from "../../utils/general";
+import ComboUbigeo from "../widgets/ComboUbigeo";
+import { postFetchFunction } from "../../utils/funciones";
 
 const FormDistanciaComponent = ({
-    distanciaSelected,
+  distanciaSelected,
   setDistanciaSelected,
   setOpenModal,
+  setOpenMessage,
+  setRefreshTable
 }) => {
   const formik = useFormik({
     initialValues: {
-      sede: distanciaSelected ? distanciaSelected.sede : "",
-      distrito: distanciaSelected ? distanciaSelected.distrito : "",
-      kilometros: distanciaSelected ? distanciaSelected.kilometros : "",
+      sed_codsed: distanciaSelected ? distanciaSelected.sed_codsed : "",
+      ubi_codubi: distanciaSelected ? distanciaSelected.ubi_codubi : "",
+      ubi_des: distanciaSelected ? distanciaSelected.ubi_des : "",
+      ruk_kilometros: distanciaSelected ? distanciaSelected.ruk_kilometros : "",
+      ruk_usuupd: USERNAME_LOCAL,
+      ubi_desdis: distanciaSelected ? distanciaSelected.ubi_codubi : "",
+      ubi_desprv: distanciaSelected ? distanciaSelected.ubi_des.split(", ")[1] : "",
+      ubi_desdep: distanciaSelected ? distanciaSelected.ubi_des.split(", ")[2] : "",
     },
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      //alert(JSON.stringify(values, null, 2));
+      const postRutaDistancia = async () => {
+        const result = await postFetchFunction(
+          `${API_DISTRIBUCION}/saveRutaDistancia`,
+          values,
+          setOpenMessage
+        );
+        setRefreshTable((prev) => !prev);
+        console.log("result postChofer", result);
+      };
+      postRutaDistancia();
       setOpenModal(false);
-      setDistanciaSelected(null);
+      setOpenMessage(true);
+      /* setOpenModal(false);
+      setDistanciaSelected(null); */
     },
     validate: (values) => {
       const errors = {};
-      if (!values.sede) {
+      if (!values.sed_codsed) {
         errors.sede = "Debes seleccionar una sede";
       }
-      if (!values.distrito) {
-        errors.distrito = "Debes ingresar un distrito";
+      if (!values.ubi_desdis) {
+        errors.ubi_desdis = "Debes escoger un distrito";
       }
-      if (!values.kilometros) {
-        errors.kilometros = "Debes ingresar los kilometros";
+      if (!values.ruk_kilometros) {
+        errors.ruk_kilometros = "Debes ingresar los kilometros";
       }
       return errors;
     },
@@ -38,7 +60,7 @@ const FormDistanciaComponent = ({
   const sedesCombo = useSelector((state) => state.sede.lista);
   const dispatch = useDispatch();
 
-  useEffect(() => {    
+  useEffect(() => {
     console.log("sedesCombo", sedesCombo);
     if (!(sedesCombo.length > 0)) dispatch(fetchData());
   }, []);
@@ -47,71 +69,41 @@ const FormDistanciaComponent = ({
     <form onSubmit={formik.handleSubmit}>
       <div className="form-container">
         <div className="form-container-group-content">
-          <label
-            htmlFor="sede"
-            className="form-container-group-content-label"
-          >
-            Codigo de Ruta
+          <label htmlFor="sed_codsed" className="form-container-group-content-label">
+            Sede
           </label>
           <div className="mt-2">
             <select
               type="text"
-              name="sede"
-              id="sede"
-              value={formik.values.sede}
+              name="sed_codsed"
+              id="sed_codsed"
+              value={formik.values.sed_codsed}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.sede
+                formik.errors.sed_codsed
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
             >
               <option value="">[ Seleecione ]</option>
-              {
-                sedesCombo && sedesCombo.length > 0 && sedesCombo.map(sede => (
-                  <option value={sede.sede}>{sede.sede}</option>
-                ))
-              }
+              {sedesCombo &&
+                sedesCombo.length > 0 &&
+                sedesCombo.map((sede) => (
+                  <option value={sede.sed_codsed}>{sede.sed_descor}</option>
+                ))}
             </select>
-            {formik.errors.sede && (
+            {formik.errors.sed_codsed && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.sede}
+                {formik.errors.sed_codsed}
               </span>
             )}
           </div>
         </div>
+        <ComboUbigeo formik={formik} />
         <div className="form-container-group-content">
           <label
-            htmlFor="distrito"
-            className="form-container-group-content-label"
-          >
-            Distrito
-          </label>
-          <div className="mt-2">
-            <input
-              type="text"
-              name="distrito"
-              id="distrito"
-              value={formik.values.distrito}
-              onChange={formik.handleChange}
-              autoComplete="given-name"
-              className={`form-container-group-content-input ${
-                formik.errors.distrito
-                  ? "form-container-group-content-input-error"
-                  : ""
-              }`}
-            />
-            {formik.errors.distrito && (
-              <span className="form-container-group-content-span-error">
-                {formik.errors.distrito}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="form-container-group-content">
-          <label
-            htmlFor="kilometros"
+            htmlFor="ruk_kilometros"
             className="form-container-group-content-label"
           >
             Kilometros
@@ -119,20 +111,20 @@ const FormDistanciaComponent = ({
           <div className="mt-2">
             <input
               type="text"
-              name="kilometros"
-              id="kilometros"
-              value={formik.values.kilometros}
+              name="ruk_kilometros"
+              id="ruk_kilometros"
+              value={formik.values.ruk_kilometros}
               onChange={formik.handleChange}
               autoComplete="given-name"
               className={`form-container-group-content-input ${
-                formik.errors.kilometros
+                formik.errors.ruk_kilometros
                   ? "form-container-group-content-input-error"
                   : ""
               }`}
             />
-            {formik.errors.kilometros && (
+            {formik.errors.ruk_kilometros && (
               <span className="form-container-group-content-span-error">
-                {formik.errors.kilometros}
+                {formik.errors.ruk_kilometros}
               </span>
             )}
           </div>

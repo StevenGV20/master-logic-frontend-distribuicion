@@ -10,10 +10,13 @@ import FilterComponent from "../components/widgets/FilterComponent";
 import ModalMessage from "../components/widgets/ModalComponent";
 import TableCustom from "../components/widgets/TableComponent";
 import {
+  API_DISTRIBUCION,
   MANTENIMIENTO_DISTANCIAS_TABLE_COLS_DESKTOP,
   URL_MASTERLOGIC_API,
 } from "../utils/general";
 import FormDistanciaComponent from "../components/FormDistanciaComponent";
+import { deleteFetchFunction, getFetchFunction } from "../utils/funciones";
+import AlertMessage from "../components/widgets/AlertMessage";
 
 const MantenimientoDistanciasPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -22,6 +25,8 @@ const MantenimientoDistanciasPage = () => {
   const [distanciaSelected, setDistanciaSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [refreshTable, setRefreshTable] = useState(false);
+  const [openMessage, setOpenMessage] = useState(false);
 
   const handleNewDistancia = () => {
     setDistanciaSelected(null);
@@ -37,26 +42,37 @@ const MantenimientoDistanciasPage = () => {
     setOpenModalDelete(true);
   };
   const onDeleteDistancia = () => {
-    alert(JSON.stringify(distanciaSelected));
+    const deleteDistancia = async () => {
+      try {
+        await deleteFetchFunction(
+          `${API_DISTRIBUCION}/deleteRutaDistancia?id=${distanciaSelected.id}`,
+          "{}",
+          setOpenMessage
+        );
+        setRefreshTable((prev) => !prev);
+      } catch (error) {
+        console.error(error);
+      }
+      //await getFetchFunction(`${API_MAESTRO}/listarMaestroChoferesCho`,setLoadingTable,setChoferes);
+    };
+    deleteDistancia();
     setOpenModalDelete(false);
   };
 
   useEffect(() => {
     const fetchDistancias = async () => {
       try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        setLoadingTable(false);
-        setDistancias(data.distanciaDistritos);
+        await getFetchFunction(
+          `${API_DISTRIBUCION}/listaRutasDistancias`,
+          setLoadingTable,
+          setDistancias
+        );
       } catch (error) {
         console.error(error);
       }
     };
     fetchDistancias();
-  }, []);
+  }, [refreshTable]);
 
   return (
     <div className="page-container">
@@ -96,6 +112,8 @@ const MantenimientoDistanciasPage = () => {
           distanciaSelected={distanciaSelected}
           setDistanciaSelected={setDistanciaSelected}
           setOpenModal={setOpenModal}
+          setOpenMessage={setOpenMessage}
+          setRefreshTable={setRefreshTable}
         />
       </ModalMessage>
 
@@ -113,15 +131,17 @@ const MantenimientoDistanciasPage = () => {
         </div>
       </ModalMessage>
 
+      <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage} />
+
       <div>
         <TableCustom cols={MANTENIMIENTO_DISTANCIAS_TABLE_COLS_DESKTOP}>
           {!loadingTable ? (
             distancias &&
-            distancias.map((d) => (
+            distancias.result.map((d) => (
               <tr key={d.id}>
-                <td>{d.sede}</td>
-                <td>{d.distrito}</td>
-                <td>{d.kilometros}</td>
+                <td>{d.sed_descor}</td>
+                <td>{d.ubi_des}</td>
+                <td>{(d.ruk_kilometros).toFixed(2)}</td>
                 <td className="space-x-2">
                   <EditIcon
                     className="text-gray-700 cursor-pointer"

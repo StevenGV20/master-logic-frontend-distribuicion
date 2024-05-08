@@ -5,6 +5,7 @@ const URL_MASTERLOGIC_API = "http://192.168.25.42:5006";
 const API_MAESTRO = "/api/Maestro";
 const API_DISTRIBUCION = "/api/Distribucion";
 const COD_CIA = "01";
+const USERNAME_LOCAL = localStorage.getItem("USERNAME");
 
 const GRUPOS_COLS_MODAL_DESKTOP = [
   "GRUPO",
@@ -111,4 +112,5 @@ export {
   API_MAESTRO,
   API_DISTRIBUCION,
   COD_CIA,
+  USERNAME_LOCAL,
 };

@@ -12,7 +12,9 @@ import {
   API_DISTRIBUCION,
   API_MAESTRO,
   MANTENIMIENTO_RUTAS_DISTRITOS_TABLE_COLS_DESKTOP,
+  USERNAME_LOCAL,
 } from "../../utils/general";
+import ComboUbigeo from "../widgets/ComboUbigeo";
 import { getFetchFunction, postFetchFunction } from "../../utils/funciones";
 
 const FormAgregarDistritosToRutaComponent = ({
@@ -21,62 +23,8 @@ const FormAgregarDistritosToRutaComponent = ({
   setOpenMessage,
 }) => {
   const [rutaDistritos, setRutasDistritos] = useState([]);
-  const [departamentos, setDepartamentos] = useState([]);
-  const [provincias, setProvincias] = useState([]);
-  const [distritos, setDistritos] = useState([]);
   const [distritoSelected, setDistritoSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
-  const [loadingDepartaments, setLoadingDepartaments] = useState(true);
-  const [loadingProvincias, setLoadingProvincias] = useState(true);
-  const [loadingDistritos, setLoadingDistritos] = useState(true);
-
-  const handleSelectedDepartamento = (e) => {
-    const departamento = e.target.value;
-    formik.setFieldValue("ubi_desdep", departamento);
-    setProvincias([]);
-    setDistritos([]);
-    setLoadingProvincias(true);
-    setLoadingDistritos(true);
-    const fetchProvincias = async () => {
-      try {
-        await getFetchFunction(
-          `${API_MAESTRO}/listaProvinciasByDepartamento?departamento=${departamento}`,
-          setLoadingProvincias,
-          setProvincias
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchProvincias();
-  };
-
-  const handleSelectedProvincias = (e) => {
-    const provincia = e.target.value;
-    formik.setFieldValue("ubi_desprv", provincia);
-    setDistritos([]);
-    setLoadingDistritos(true);
-
-    const fetchDistritos = async () => {
-      try {
-        await getFetchFunction(
-          `${API_MAESTRO}/listaDistritosByProvincia?provincia=${provincia}`,
-          setLoadingDistritos,
-          setDistritos
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchDistritos();
-  };
-
-  const handleSelectedDistrito = (e) => {
-    //setDistritoSelected(distrito);
-    const distrito = e.target.value;
-    formik.setFieldValue("ubi_desdis", distrito);
-    formik.setFieldValue("ubi_codubi", distrito);
-  };
 
   const onDeleteDistrito = (distrito) => {
     //console.log("distrito to deleted",JSON.stringify(distrito));
@@ -117,7 +65,7 @@ const FormAgregarDistritosToRutaComponent = ({
       id: distritoSelected ? distritoSelected.id : 0,
       rut_codigo: ruta.rut_codigo,
       rud_indest: "01",
-      rud_usuupd: "steven.guadana",
+      rud_usuupd: USERNAME_LOCAL,
       pai_codpai: distritoSelected ? distritoSelected.pai_codpai : 0,
       ubi_codubi: distritoSelected ? distritoSelected.ubi_codubi : "0",
       ubi_desdis: distritoSelected ? distritoSelected.ubi_desdis : "",
@@ -125,7 +73,7 @@ const FormAgregarDistritosToRutaComponent = ({
       ubi_desdep: distritoSelected ? distritoSelected.ubi_desdep : "",
     },
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      //alert(JSON.stringify(values, null, 2));
       const listDistritosRutas = rutaDistritos.result;
       setRutasDistritos({
         ...rutaDistritos,
@@ -143,11 +91,6 @@ const FormAgregarDistritosToRutaComponent = ({
       formik.setFieldValue("ubi_desdep", "");
       formik.setFieldValue("ubi_desprv", "");
       formik.setFieldValue("ubi_desdis", "");
-      formik.setErrors([]);
-      setProvincias([]);
-      setDistritos([]);
-      setLoadingProvincias(true);
-      setLoadingDistritos(true);
     },
     validate: (values) => {
       const errors = {};
@@ -172,12 +115,6 @@ const FormAgregarDistritosToRutaComponent = ({
           setLoadingTable,
           setRutasDistritos
         );
-
-        await getFetchFunction(
-          `${API_MAESTRO}/listaDepartamentos`,
-          setLoadingDepartaments,
-          setDepartamentos
-        );
       } catch (error) {
         console.error(error);
       }
@@ -189,129 +126,7 @@ const FormAgregarDistritosToRutaComponent = ({
     <div>
       <form onSubmit={formik.handleSubmit}>
         <div className="form-container">
-          <div className="form-container-group-content">
-            <label
-              htmlFor="ubi_desdep"
-              className="form-container-group-content-label"
-            >
-              Departamento
-            </label>
-            <div className="mt-2">
-              <input
-                type="text"
-                hidden
-                defaultValue={formik.values.ruta}
-                name="rut_codigo"
-              />
-              <input
-                type="text"
-                hidden
-                defaultValue={formik.values.rud_usuupd}
-                name="rud_usuupd"
-              />
-
-              <select
-                type="text"
-                name="ubi_desdep"
-                id="ubi_desdep"
-                value={formik.values.ubi_desdep}
-                onChange={(e) => handleSelectedDepartamento(e)}
-                autoComplete="given-name"
-                className={`form-container-group-content-input ${
-                  formik.errors.ubi_desdep
-                    ? "form-container-group-content-input-error"
-                    : ""
-                }`}
-              >
-                <option value="">[Seleccione ]</option>
-                {!loadingDepartaments &&
-                  departamentos.result.map((d) => (
-                    <option key={d.ubi_desdep} value={d.ubi_desdep}>
-                      {d.ubi_desdep}
-                    </option>
-                  ))}
-              </select>
-              {formik.errors.ubi_desdep && (
-                <span className="form-container-group-content-span-error">
-                  {formik.errors.ubi_desdep}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="form-container-group-content">
-            <label
-              htmlFor="ubi_desprv"
-              className="form-container-group-content-label"
-            >
-              Provincia
-            </label>
-            <div className="mt-2">
-              <select
-                type="text"
-                name="ubi_desprv"
-                id="ubi_desprv"
-                value={formik.values.ubi_desprv}
-                onChange={(e) => handleSelectedProvincias(e)}
-                autoComplete="given-name"
-                className={`form-container-group-content-input ${
-                  formik.errors && formik.errors.ubi_desprv
-                    ? "form-container-group-content-input-error"
-                    : ""
-                }`}
-              >
-                <option value="">[Seleccione ]</option>
-                {!loadingProvincias &&
-                  provincias.result.map((p) => (
-                    <option key={p.ubi_desprv} value={p.ubi_desprv}>
-                      {p.ubi_desprv}
-                    </option>
-                  ))}
-              </select>
-              {formik.errors && formik.errors.ubi_desprv && (
-                <span className="form-container-group-content-span-error">
-                  {formik.errors.ubi_desprv}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="form-container-group-content">
-            <label
-              htmlFor="ubi_desdis"
-              className="form-container-group-content-label"
-            >
-              Distrito
-            </label>
-            <div className="mt-2">
-              <select
-                type="text"
-                name="ubi_desdis"
-                id="ubi_desdis"
-                value={formik.values.ubi_desdis}
-                onChange={(e) => handleSelectedDistrito(e)}
-                autoComplete="given-name"
-                className={`form-container-group-content-input ${
-                  formik.errors && formik.errors.ubi_desdis
-                    ? "form-container-group-content-input-error"
-                    : ""
-                }`}
-              >
-                <option value={-1}>[Seleccione ]</option>
-                {!loadingDistritos &&
-                  distritos.result.map((p) => (
-                    <option key={p.ubi_desdis} value={p.ubi_codubi}>
-                      {p.ubi_desdis}
-                    </option>
-                  ))}
-              </select>
-              {formik.errors && formik.errors.ubi_desdis && (
-                <span className="form-container-group-content-span-error">
-                  {formik.errors.ubi_desdis}
-                </span>
-              )}
-            </div>
-          </div>
+          <ComboUbigeo formik={formik}/>
 
           <div className="form-container-group-content">
             <label

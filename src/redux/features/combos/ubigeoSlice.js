@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { API_MAESTRO, URL_MASTERLOGIC_API } from "../../../utils/general";
 
-export const fetchDepartamentos = createAsyncThunk("data/fetchData", async () => {
+export const fetchDepartamentos = createAsyncThunk("data/fetchDepartamentos", async () => {
   const token = localStorage.getItem("USUARIO_TOKEN");
   const response = await fetch(
     `${URL_MASTERLOGIC_API}${API_MAESTRO}/listaDepartamentos`,
@@ -18,7 +18,7 @@ export const fetchDepartamentos = createAsyncThunk("data/fetchData", async () =>
   return data.result;
 });
 
-export const fetchProvincias = createAsyncThunk("data/fetchData", async (departamento='') => {
+export const fetchProvincias = createAsyncThunk("data/fetchProvincias", async (departamento='') => {
   const token = localStorage.getItem("USUARIO_TOKEN");
   const response = await fetch(
     `${URL_MASTERLOGIC_API}${API_MAESTRO}/listaProvinciasByDepartamento?departamento=${departamento}`,
@@ -34,7 +34,7 @@ export const fetchProvincias = createAsyncThunk("data/fetchData", async (departa
   return data.result;
 });
 
-export const fetchDistritos = createAsyncThunk("data/fetchData", async (provincia) => {
+export const fetchDistritos = createAsyncThunk("data/fetchDistritos", async (provincia='') => {
   const token = localStorage.getItem("USUARIO_TOKEN");
   const response = await fetch(
     `${URL_MASTERLOGIC_API}${API_MAESTRO}/listaDistritosByProvincia?provincia=${provincia}`,
@@ -50,8 +50,8 @@ export const fetchDistritos = createAsyncThunk("data/fetchData", async (provinci
   return data.result;
 });
 
-export const sedeSlice = createSlice({
-  name: "sede",
+export const ubigeoSlice = createSlice({
+  name: "ubigeo",
   initialState: {
     departamentos: [],
     provincias: [],
@@ -106,4 +106,4 @@ export const getDepartamentos = (state) => state.departamentos;
 export const getProvincias = (state) => state.provincias;
 export const getDistritos = (state) => state.distritos;
 
-export default sedeSlice.reducer;
+export default ubigeoSlice.reducer;

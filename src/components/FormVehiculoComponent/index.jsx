@@ -52,10 +52,10 @@ const FormUnidadesTransporteComponent = ({
           values,
           setOpenMessage
         );
+        setRefreshTable((prev) => !prev);
         console.log("result postChofer", result);
       };
       postChofer();
-      setRefreshTable((prev) => !prev);
       setOpenModal(false);
       setVehiculoSelected(null);
     },

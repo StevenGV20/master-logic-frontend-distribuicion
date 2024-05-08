@@ -68,13 +68,13 @@ const routesPages = [
     name: PAGE_MANTENIMIENTO_RUTAS,
     icon: <></>,
     element: <MantenimientoRutasPage />,
-  },
+  },/* 
   {
     path: "/mantenimiento/distritos-rutas",
     name: PAGE_MANTENIMIENTO_DISTRITOS_RUTAS,
     icon: <></>,
     element: <MantenimientoDistritosRutasPage/>,
-  },
+  }, */
   {
     path: "/mantenimiento/distancias",
     name: PAGE_MANTENIMIENTO_DISTANCIAS,

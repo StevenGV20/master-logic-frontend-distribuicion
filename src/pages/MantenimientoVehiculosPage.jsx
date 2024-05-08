@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Alert, CircularProgress, Snackbar } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 import { PAGE_MANTENIMIENTO_VEHICULOS } from "../utils/titles";
 import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
@@ -12,7 +12,6 @@ import TableCustom from "../components/widgets/TableComponent";
 import {
   API_MAESTRO,
   MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_DESKTOP,
-  URL_MASTERLOGIC_API,
 } from "../utils/general";
 import FormUnidadesTransporteComponent from "../components/FormVehiculoComponent";
 import { deleteFetchFunction, getFetchFunction } from "../utils/funciones";
@@ -32,7 +31,7 @@ const MantenimientoVehiculosPage = () => {
     type: "success",
   });
 
-  const handleNewdVehiculo = (vehiculo) => {
+  const handleNewdVehiculo = () => {
     setVehiculoSelected(null);
     setOpenModal(true);
   };
@@ -64,13 +63,6 @@ const MantenimientoVehiculosPage = () => {
     fetchUnidadTransporte();
     setOpenModalDelete(false);
 
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenMessage(false);
   };
 
   useEffect(() => {
