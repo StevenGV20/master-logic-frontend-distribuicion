@@ -1,24 +1,16 @@
 import React, { useEffect, useState } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useSelector, useDispatch } from "react-redux";
 
 import { PAGE_MANTENIMIENTO_RUTAS } from "../utils/titles";
 import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
 import FilterComponent from "../components/widgets/FilterComponent";
 import ModalMessage from "../components/widgets/ModalComponent";
-import TableCustom from "../components/widgets/TableComponent";
-import {
-  API_DISTRIBUCION,
-  MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP,
-  URL_MASTERLOGIC_API,
-} from "../utils/general";
-import { CircularProgress } from "@mui/material";
+import { API_DISTRIBUCION } from "../utils/general";
 import FormRutasComponent from "../components/FormRutasComponent";
 import { deleteFetchFunction, getFetchFunction } from "../utils/funciones";
 import AlertMessage from "../components/widgets/AlertMessage";
-import { fetchData } from "../redux/features/combos/sedeSlice";
+import ListRutasComponent from "../components/ListRutasComponent";
+import FormAgregarDistritosToRutaComponent from "../components/FormAgregarDistritosToRutaComponent";
 
 const MantenimientoRutasPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -67,14 +59,6 @@ const MantenimientoRutasPage = () => {
     setOpenModalDelete(false);
   };
 
-  const sedesCombo = useSelector((state) => state.sede.lista);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log("sedesCombo", sedesCombo);
-    if (!(sedesCombo.length > 0)) dispatch(fetchData());
-  }, []);
-
   useEffect(() => {
     const fetchRutas = async () => {
       try {
@@ -90,11 +74,18 @@ const MantenimientoRutasPage = () => {
     fetchRutas();
   }, [refreshTable]);
 
+  const [openModalAsignDistrito, setOpenModalAsignDistrito] = useState(false);
+  const handleSelectedRutaToDistrito = (ruta) => {
+    setRutaSelected(ruta);
+    setOpenModalAsignDistrito(true);
+  };
+
   return (
     <div className="page-container">
       <div className="w-2/3">
         <BreadcrumbComponent message={PAGE_MANTENIMIENTO_RUTAS} />
       </div>
+
       <div className="w-full flex my-3">
         <div className="w-3/6 lg:w-9/12"></div>
         <button
@@ -116,6 +107,7 @@ const MantenimientoRutasPage = () => {
           ></FilterComponent>
         </div>
       </div>
+
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
@@ -131,6 +123,7 @@ const MantenimientoRutasPage = () => {
           setRefreshTable={setRefreshTable}
         />
       </ModalMessage>
+
       <ModalMessage
         open={openModalDelete}
         setOpen={setOpenModalDelete}
@@ -144,40 +137,27 @@ const MantenimientoRutasPage = () => {
           ¿Estas seguro de eliminar?
         </div>
       </ModalMessage>
-      <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage}/>
-      <div>
-        <TableCustom cols={MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP}>
-          {!loadingTable ? (
-            rutas &&
-            rutas.result.map((ruta) => (
-              <tr>
-                <td>{ruta.rut_codigo}</td>
-                <td>{sedesCombo.find(s=>s.sed_codsed === ruta.sed_codsed).sed_descor}</td>
-                <td>{ruta.rut_descripcion}</td>
-                <td>{ruta.rut_volmin}</td>
-                <td>{ruta.rut_volmax}</td>
-                <td>{ruta.rut_precio}</td>
-                <td className="space-x-2">
-                  <EditIcon
-                    className="text-gray-700 cursor-pointer"
-                    onClick={() => handleSelectedRuta(ruta)}
-                  />
-                  <DeleteIcon
-                    className="text-red-600 cursor-pointer"
-                    onClick={() => handleSelectedDeleteRuta(ruta)}
-                  />
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP.length}>
-                <CircularProgress />
-              </td>
-            </tr>
-          )}
-        </TableCustom>
-      </div>
+
+      <ModalMessage
+        open={openModalAsignDistrito}
+        setOpen={setOpenModalAsignDistrito}
+        title={"Asignar Distritos"}
+        titleBtnAceptar={"Guardar"}
+        onBtnAceptar={<></>}
+        showButtons={false}
+      >
+        <FormAgregarDistritosToRutaComponent ruta={rutaSelected} setOpenModal={setOpenModalAsignDistrito} setOpenMessage={setOpenMessage}/>
+      </ModalMessage>
+
+      <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage} />
+
+      <ListRutasComponent
+        loadingTable={loadingTable}
+        rutas={rutas}
+        handleSelectedRuta={handleSelectedRuta}
+        handleSelectedDeleteRuta={handleSelectedDeleteRuta}
+        handleSelectedRutaToDistrito={handleSelectedRutaToDistrito}
+      />
     </div>
   );
 };

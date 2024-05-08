@@ -16,6 +16,7 @@ import {
 } from "../utils/general";
 import FormUnidadesTransporteComponent from "../components/FormVehiculoComponent";
 import { deleteFetchFunction, getFetchFunction } from "../utils/funciones";
+import AlertMessage from "../components/widgets/AlertMessage";
 
 const MantenimientoVehiculosPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -144,21 +145,7 @@ const MantenimientoVehiculosPage = () => {
         </div>
       </ModalMessage>
 
-      <Snackbar
-        open={openMessage.state}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleClose}
-          severity={openMessage.type}
-          variant="filled"
-          sx={{ width: "100%", scale:"1.2", marginLeft: "1em" }}
-        >
-          {openMessage.message}
-        </Alert>
-      </Snackbar>
+      <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage}/>
 
       <div>
         <TableCustom cols={MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_DESKTOP}>
