@@ -55,8 +55,8 @@ const ComboUbigeo = ({ formik }) => {
   const handleSelectedDistrito = (e) => {
     //setDistritoSelected(distrito);
     const distrito = e.target.value;
-    formik.setFieldValue("ubi_desdis", distrito);
-    formik.setFieldValue("ubi_codubi", distrito);
+    formik.setFieldValue("ubi_desdis", distrito.split("|")[1]);
+    formik.setFieldValue("ubi_codubi", distrito.split("|")[0]);
   };
 
   return (
@@ -160,7 +160,7 @@ const ComboUbigeo = ({ formik }) => {
             type="text"
             name="ubi_desdis"
             id="ubi_desdis"
-            value={formik.values.ubi_desdis}
+            value={formik.values.ubi_codubi+"|"+formik.values.ubi_desdis}
             onChange={(e) => handleSelectedDistrito(e)}
             autoComplete="given-name"
             className={`form-container-group-content-input ${
@@ -172,7 +172,7 @@ const ComboUbigeo = ({ formik }) => {
             <option value={-1}>[Seleccione ]</option>
             {!loadingDistritos &&
               distritos.map((p) => (
-                <option key={p.ubi_desdis} value={p.ubi_codubi}>
+                <option key={p.ubi_codubi} value={p.ubi_codubi+"|"+p.ubi_desdis}>
                   {p.ubi_desdis}
                 </option>
               ))}

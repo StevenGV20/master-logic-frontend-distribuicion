@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import { CircularProgress } from "@mui/material";
 
 import TableCustom from "../widgets/TableComponent";
 import {
   API_DISTRIBUCION,
-  API_MAESTRO,
   MANTENIMIENTO_RUTAS_DISTRITOS_TABLE_COLS_DESKTOP,
   USERNAME_LOCAL,
 } from "../../utils/general";
@@ -29,7 +24,7 @@ const FormAgregarDistritosToRutaComponent = ({
   const onDeleteDistrito = (distrito) => {
     //console.log("distrito to deleted",JSON.stringify(distrito));
     const newDistritos = rutaDistritos.result.filter(
-      (d) => d.ubi_codubi != distrito.ubi_codubi
+      (d) => d.ubi_codubi !== distrito.ubi_codubi
     );
     console.log("newDistritos", newDistritos);
     console.log("rutaDistritos", rutaDistritos);
@@ -82,9 +77,10 @@ const FormAgregarDistritosToRutaComponent = ({
           {
             id: 0,
             rut_codigo: values.rut_codigo,
-            ubi_codubi: values.ubi_codubi,
+            ubi_codubi: values.ubi_codubi.split("|")[0],
             rud_indest: values.rud_indest,
             rud_usuupd: values.rud_usuupd,
+            ubi_desdis: values.ubi_desdis,
           },
         ],
       });
@@ -128,34 +124,7 @@ const FormAgregarDistritosToRutaComponent = ({
         <div className="form-container">
           <ComboUbigeo formik={formik}/>
 
-          <div className="form-container-group-content">
-            <label
-              htmlFor="rud_indest"
-              className="form-container-group-content-label"
-            >
-              rud_indest
-            </label>
-            <div className="mt-2">
-              <input
-                type="text"
-                name="rud_indest"
-                id="rud_indest"
-                value={formik.values.rud_indest}
-                onChange={formik.handleChange}
-                autoComplete="given-name"
-                className={`form-container-group-content-input ${
-                  formik.errors.rud_indest
-                    ? "form-container-group-content-input-error"
-                    : ""
-                }`}
-              />
-              {formik.errors.rud_indest && (
-                <span className="form-container-group-content-span-error">
-                  {formik.errors.rud_indest}
-                </span>
-              )}
-            </div>
-          </div>
+          <input type="text" hidden defaultValue={formik.values.rud_indest} />
         </div>
         <div className="form-buttons-container">
           <button type="submit" className="form-buttons-container-btnaccept">
@@ -169,7 +138,7 @@ const FormAgregarDistritosToRutaComponent = ({
           rutaDistritos.result.map((d) => (
             <tr key={d.ubi_codubi}>
               <td>{d.ubi_codubi}</td>
-              <td>{d.rud_indest}</td>
+              <td>{d.ubi_desdis}</td>
               <td className="space-x-2">
                 <DeleteIcon
                   className="text-red-600 cursor-pointer"

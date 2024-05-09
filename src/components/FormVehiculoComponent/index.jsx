@@ -27,7 +27,7 @@ const FormUnidadesTransporteComponent = ({
         vehiculoSelected && vehiculoSelected.length > 0
           ? vehiculoSelected.cho_codcho
           : "",
-      utr_indest: vehiculoSelected ? vehiculoSelected.utr_indest : "",
+      utr_indest: vehiculoSelected ? vehiculoSelected.utr_indest : "1",
       utr_codusu: vehiculoSelected ? vehiculoSelected.utr_codusu : "",
       utr_conrep: vehiculoSelected ? vehiculoSelected.utr_conrep : 0,
       utr_coddec:
@@ -78,9 +78,6 @@ const FormUnidadesTransporteComponent = ({
       }
       if (!values.utr_config) {
         errors.utr_config = "Debes ingresar el utr_config del vehiculo";
-      }
-      if (!values.utr_indest) {
-        errors.utr_indest = "Debes ingresar el utr_indest del vehiculo";
       }
       if (!values.utr_codusu) {
         errors.utr_codusu = "Debes ingresar el utr_codusu del vehiculo";
@@ -296,31 +293,7 @@ const FormUnidadesTransporteComponent = ({
           </div>
         </div>
 
-        <div className="form-container-group-content">
-          <label htmlFor="placa" className="form-container-group-content-label">
-            utr_indest
-          </label>
-          <div className="mt-2">
-            <input
-              type="text"
-              name="utr_indest"
-              id="utr_indest"
-              value={formik.values.utr_indest}
-              onChange={formik.handleChange}
-              autoComplete="given-name"
-              className={`form-container-group-content-input ${
-                formik.errors.utr_indest
-                  ? "form-container-group-content-input-error"
-                  : ""
-              }`}
-            />
-            {formik.errors.utr_indest && (
-              <span className="form-container-group-content-span-error">
-                {formik.errors.utr_indest}
-              </span>
-            )}
-          </div>
-        </div>
+        <input type="text" hidden defaultValue={formik.values.utr_indest} />
 
         <div className="form-container-group-content">
           <label

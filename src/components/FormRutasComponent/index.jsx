@@ -31,7 +31,7 @@ const FormRutasComponent = ({
       rut_volmin: rutaSelected ? rutaSelected.rut_volmin : 0,
       rut_volmax: rutaSelected ? rutaSelected.rut_volmax : 0,
       rut_precio: rutaSelected ? rutaSelected.rut_precio : 0,
-      rut_indest: rutaSelected ? rutaSelected.rut_indest : "0",
+      rut_indest: rutaSelected ? rutaSelected.rut_indest : "1",
       rut_usuupd: "steve.guadana",      
     },
     onSubmit: (values) => {
@@ -69,9 +69,6 @@ const FormRutasComponent = ({
       }
       if (!values.rut_precio) {
         errors.rut_precio = "Debes ingresar el monto";
-      }
-      if (!values.rut_indest) {
-        errors.rut_indest = "Debes ingresar el monto";
       }
       return errors;
     },
@@ -254,34 +251,7 @@ const FormRutasComponent = ({
           </div>
         </div>
 
-        <div className="form-container-group-content">
-          <label
-            htmlFor="rut_indest"
-            className="form-container-group-content-label"
-          >
-            rut_indest
-          </label>
-          <div className="mt-2">
-            <input
-              type="text"
-              name="rut_indest"
-              id="rut_indest"
-              value={formik.values.rut_indest}
-              onChange={formik.handleChange}
-              autoComplete="given-name"
-              className={`form-container-group-content-input ${
-                formik.errors.rut_indest
-                  ? "form-container-group-content-input-error"
-                  : ""
-              }`}
-            />
-            {formik.errors.rut_indest && (
-              <span className="form-container-group-content-span-error">
-                {formik.errors.rut_indest}
-              </span>
-            )}
-          </div>
-        </div>
+        <input type="text" hidden defaultValue={formik.values.rut_indest} />
 
       </div>
       <div className="form-buttons-container">

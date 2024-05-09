@@ -169,7 +169,6 @@ const MantenimientoChoferesPage = () => {
               <td>{d.cho_codcho}</td>
                 <td>{d.cho_nombre}</td>
                 <td>{d.cho_nrolic}</td>
-                <td>{d.cho_indest}</td>
                 <td>{d.cho_codusu}</td>
                 <td>{d.cho_codemp}</td>
                 <td>{d.cho_nrodoc}</td>
@@ -205,7 +204,6 @@ const MantenimientoChoferesPage = () => {
                   <div>{d.cho_codcho}</div>
                   <div>{d.cho_nombre}</div>
                   <div>{d.cho_nrolic}</div>
-                  <div>{d.cho_indest}</div>
                   <div>{d.cho_codemp}</div>
                   <div>{d.cho_nrodoc}</div>
                 </td>

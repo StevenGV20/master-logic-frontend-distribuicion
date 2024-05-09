@@ -6,7 +6,7 @@ export default function TableCustom({cols,children}) {
         <div className="table-container-p">
           <div className="table-container-content">
             <table className="table-container-tb">
-              <thead className="bg-gray-100">
+              <thead className="table-container-thead">
                 <tr>
                   {cols && cols.map(col => (
                     <th

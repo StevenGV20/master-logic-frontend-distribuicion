@@ -19,7 +19,7 @@ const FormChoferesComponent = ({
       cho_codcho: choferSelected ? choferSelected.cho_codcho : "",
       cho_nombre: choferSelected ? choferSelected.cho_nombre : "",
       cho_nrolic: choferSelected ? choferSelected.cho_nrolic : "",
-      cho_indest: choferSelected ? choferSelected.cho_indest : "",
+      cho_indest: choferSelected ? choferSelected.cho_indest : "01",
       cho_codusu: choferSelected ? choferSelected.cho_codusu : "",
       cho_codemp: choferSelected ? choferSelected.cho_codemp : "",
       cho_nrodoc: choferSelected ? choferSelected.cho_nrodoc : "",
@@ -49,9 +49,6 @@ const FormChoferesComponent = ({
       }
       if (!values.cho_nrolic) {
         errors.cho_nrolic = "Debes ingresar su número de licencia";
-      }
-      if (!values.cho_indest) {
-        errors.cho_indest = "Debes ingresar su cho_indest";
       }
       if (!values.cho_codusu) {
         errors.cho_codusu = "Debes ingresar su codigo de usuario";
@@ -152,34 +149,7 @@ const FormChoferesComponent = ({
           </div>
         </div>
 
-        <div className="form-container-group-content">
-          <label
-            htmlFor="cho_indest"
-            className="form-container-group-content-label"
-          >
-            Indest
-          </label>
-          <div className="mt-2">
-            <input
-              type="text"
-              name="cho_indest"
-              id="cho_indest"
-              value={formik.values.cho_indest}
-              onChange={formik.handleChange}
-              autoComplete="given-name"
-              className={`form-container-group-content-input ${
-                formik.errors.cho_indest
-                  ? "form-container-group-content-input-error"
-                  : ""
-              }`}
-            />
-            {formik.errors.cho_indest && (
-              <span className="form-container-group-content-span-error">
-                {formik.errors.cho_indest}
-              </span>
-            )}
-          </div>
-        </div>
+        <input type="text" hidden defaultValue={formik.values.cho_indest} />
 
         <div className="form-container-group-content">
           <label

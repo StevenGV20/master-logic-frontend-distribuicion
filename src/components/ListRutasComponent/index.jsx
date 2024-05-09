@@ -125,17 +125,11 @@ const ListRutasComponent = ({
                         </IconButton>
                       </Tooltip>
                     }
-                    <IconButton>
-                      <EditIcon
-                        className="text-gray-700 cursor-pointer"
-                        onClick={() => handleSelectedRuta(ruta)}
-                      />
+                    <IconButton onClick={() => handleSelectedRuta(ruta)}>
+                      <EditIcon className="text-gray-700 cursor-pointer" />
                     </IconButton>
-                    <IconButton>
-                      <DeleteIcon
-                        className="text-red-600 cursor-pointer"
-                        onClick={() => handleSelectedDeleteRuta(ruta)}
-                      />
+                    <IconButton onClick={() => handleSelectedDeleteRuta(ruta)}>
+                      <DeleteIcon className="text-red-600 cursor-pointer" />
                     </IconButton>
                   </div>
                 </td>
