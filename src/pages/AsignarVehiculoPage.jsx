@@ -369,9 +369,11 @@ const AsignarVehiculoPage = () => {
               />
             ))
           ) : (
-            <td colSpan={GRUPOS_COLS_DESKTOP.length}>
-              <CircularProgress />
-            </td>
+            <TableRow>
+              <TableCell colSpan={GRUPOS_COLS_DESKTOP.length}>
+                <CircularProgress />
+              </TableCell>
+            </TableRow>
           )}
         </TableMUICustomComponent>
       </div>

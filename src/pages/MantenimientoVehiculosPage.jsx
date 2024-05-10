@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { CircularProgress, Pagination, Stack } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 import { PAGE_MANTENIMIENTO_VEHICULOS } from "../utils/titles";
 import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
@@ -66,22 +66,22 @@ const MantenimientoVehiculosPage = () => {
     setOpenModalDelete(false);
   };
 
-  useEffect(() => {
-    const fetchVehiculos = async () => {
-      try {
-        await getFetchFunction(
-          `${API_MAESTRO}/listarMaestroUnidadesTransporteUTR`,
-          setLoadingTable,
-          setVehiculos
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchVehiculos();
-  }, [refreshTable]);
+  const fetchVehiculos = async (page, limit) => {
+    try {
+      await getFetchFunction(
+        `${API_MAESTRO}/listaMaestroUnidadesTransporteUTRPaginado?page=${page}&sizePage=${limit}`,
+        setLoadingTable,
+        setVehiculos
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const [limit, setLimit] = useState(10);
+  useEffect(() => {
+    fetchVehiculos(1, 10);
+    //setTotalRows(data.result[0].totalfilas);
+  }, [refreshTable]);
 
   return (
     <div className="page-container">
@@ -143,45 +143,51 @@ const MantenimientoVehiculosPage = () => {
 
       <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage} />
 
-      <PaginationCustom data={vehiculos.result}>
+      <PaginationCustom
+        totalRows={vehiculos.result && vehiculos.result[0].totalfilas}
+        fetchData={fetchVehiculos}
+      >
         <div className="desktop">
           <TableCustom
             cols={MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_DESKTOP}
           >
             {!loadingTable ? (
               vehiculos &&
-              vehiculos.result.map((v) => (
-                <tr key={v.id}>
-                  <td>{v.id}</td>
-                  <td>
-                    <div>{v.utr_codutr}</div>
-                    <div>{v.utr_desutr}</div>
-                    <div>{v.utr_plautr}</div>
-                    <div>{v.utr_marutr}</div>
-                  </td>
-                  <td>
-                    <div>{v.cho_nombre}</div>
-                    <div>{v.utr_codusu}</div>
-                  </td>
-                  <td>
-                    <div>{v.utr_conrep}</div>
-                    <div>{v.utr_tercero}</div>
-                    <div>{v.utr_prvruc}</div>
-                    <div>{v.utr_prvrso}</div>
-                  </td>
-                  <td></td>
-                  <td className="space-x-2">
-                    <EditIcon
-                      className="text-gray-700 cursor-pointer"
-                      onClick={() => handleSelectedVehiculo(v)}
-                    />
-                    <DeleteIcon
-                      className="text-red-600 cursor-pointer"
-                      onClick={() => handleSelectedDeleteVehiculo(v)}
-                    />
-                  </td>
-                </tr>
-              ))
+              vehiculos.result.map(
+                (v, index) =>
+                  index !== 0 && (
+                    <tr key={v.id}>
+                      <td>{v.id}</td>
+                      <td>
+                        <div>{v.utr_codutr}</div>
+                        <div>{v.utr_desutr}</div>
+                        <div>{v.utr_plautr}</div>
+                        <div>{v.utr_marutr}</div>
+                      </td>
+                      <td>
+                        <div>{v.cho_nombre}</div>
+                        <div>{v.utr_codusu}</div>
+                      </td>
+                      <td>
+                        <div>{v.utr_conrep}</div>
+                        <div>{v.utr_tercero}</div>
+                        <div>{v.utr_prvruc}</div>
+                        <div>{v.utr_prvrso}</div>
+                      </td>
+                      <td></td>
+                      <td className="space-x-2">
+                        <EditIcon
+                          className="text-gray-700 cursor-pointer"
+                          onClick={() => handleSelectedVehiculo(v)}
+                        />
+                        <DeleteIcon
+                          className="text-red-600 cursor-pointer"
+                          onClick={() => handleSelectedDeleteVehiculo(v)}
+                        />
+                      </td>
+                    </tr>
+                  )
+              )
             ) : (
               <tr>
                 <td
@@ -200,7 +206,7 @@ const MantenimientoVehiculosPage = () => {
           <TableCustom cols={MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_MOBILE}>
             {!loadingTable ? (
               vehiculos &&
-              vehiculos.result.map((v) => (
+              vehiculos.result.map((v,index) => index !== 0 && (
                 <tr key={v.id}>
                   <td>
                     <div>{v.id}</div>
@@ -208,7 +214,7 @@ const MantenimientoVehiculosPage = () => {
                     <div>{v.utr_desutr}</div>
                     <div>{v.utr_plautr}</div>
                     <div>{v.utr_marutr}</div>
-                    <div>{v.cho_codcho.length > 0 && v.cho_codcho}</div>
+                    <div>{v.cho_codcho}</div>
                     <div>{v.utr_codusu}</div>
                     <div>{v.utr_conrep}</div>
                     <div>{v.utr_tercero}</div>

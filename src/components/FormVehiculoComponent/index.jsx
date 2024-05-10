@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useSelector, useDispatch } from "react-redux";
 
 import { fetchData } from "../../redux/features/combos/sedeSlice";
 import { API_MAESTRO, COD_CIA } from "../../utils/general";
-import { postFetchFunction } from "../../utils/funciones";
+import { getFetchFunction, postFetchFunction } from "../../utils/funciones";
 
 const FormUnidadesTransporteComponent = ({
   vehiculoSelected,
@@ -46,7 +46,7 @@ const FormUnidadesTransporteComponent = ({
     onSubmit: (values) => {
       console.log(JSON.stringify(values, null, 2));
 
-      const postChofer = async () => {
+      const postVehiculo = async () => {
         const result = await postFetchFunction(
           `${API_MAESTRO}/saveMaestroUnidadesTransporteUTR`,
           values,
@@ -55,7 +55,7 @@ const FormUnidadesTransporteComponent = ({
         setRefreshTable((prev) => !prev);
         console.log("result postChofer", result);
       };
-      postChofer();
+      postVehiculo();
       setOpenModal(false);
       setVehiculoSelected(null);
     },
@@ -95,9 +95,25 @@ const FormUnidadesTransporteComponent = ({
   const sedesCombo = useSelector((state) => state.sede.lista);
   const dispatch = useDispatch();
 
+  const [choferes, setChoferes] = useState([]);
+  const [loadingChoferes, setLoadingChoferes] = useState(true);
+
   useEffect(() => {
     console.log("sedesCombo", sedesCombo);
     if (!(sedesCombo.length > 0)) dispatch(fetchData());
+
+    const fetchChoferes = async () => {
+      try {
+        await getFetchFunction(
+          `${API_MAESTRO}/listarMaestroChoferesCho?orderby=nombre`,
+          setLoadingChoferes,
+          setChoferes
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchChoferes();
   }, []);
 
   return (
@@ -268,7 +284,7 @@ const FormUnidadesTransporteComponent = ({
         </div>
 
         <div className="form-container-group-content">
-          <label htmlFor="placa" className="form-container-group-content-label">
+          <label htmlFor="cho_codcho" className="form-container-group-content-label">
             cho_codcho
           </label>
           <div className="mt-2">
@@ -285,6 +301,40 @@ const FormUnidadesTransporteComponent = ({
                   : ""
               }`}
             />
+            {formik.errors.cho_codcho && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.cho_codcho}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label htmlFor="cho_codcho" className="form-container-group-content-label">
+            cho_codcho
+          </label>
+          <div className="mt-2">
+            <select
+              type="text"
+              name="cho_codcho"
+              id="cho_codcho"
+              value={formik.values.cho_codcho}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.cho_codcho
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            >
+              <option value="">[Seleccione]</option>
+              {
+                loadingChoferes ? <></> : 
+                choferes && choferes.result.map(c => (
+                  <option value={c.cho_codcho}>{c.cho_nombre}</option>
+                ))
+              }
+            </select>
             {formik.errors.cho_codcho && (
               <span className="form-container-group-content-span-error">
                 {formik.errors.cho_codcho}

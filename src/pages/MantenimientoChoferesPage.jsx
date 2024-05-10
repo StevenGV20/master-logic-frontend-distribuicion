@@ -7,7 +7,6 @@ import {
   API_MAESTRO,
   MANTENIMIENTO_CHOFERES_TABLE_COLS_DESKTOP,
   MANTENIMIENTO_CHOFERES_TABLE_COLS_MOBILE,
-  URL_MASTERLOGIC_API,
 } from "../utils/general";
 import { PAGE_MANTENIMIENTO_CHOFERES } from "../utils/titles";
 import { deleteFetchFunction, getFetchFunction } from "../utils/funciones";
@@ -16,6 +15,7 @@ import FilterComponent from "../components/widgets/FilterComponent";
 import ModalMessage from "../components/widgets/ModalComponent";
 import FormChoferesComponent from "../components/FormChoferesComponent";
 import TableCustom from "../components/widgets/TableComponent";
+import PaginationCustom from "../components/widgets/PaginationComponent/PaginationCustom";
 
 const MantenimientoChoferesPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -70,23 +70,26 @@ const MantenimientoChoferesPage = () => {
     setOpenMessage(false);
   };
 
-  useEffect(() => {
-    const fetchDistancias = async () => {
-      try {
-        await getFetchFunction(
-          `${API_MAESTRO}/listarMaestroChoferesCho`,
-          setLoadingTable,
-          setChoferes
-        );
-      } catch (error) {
-        console.error(error);
-      }
+  const fetchChoferes = async (page, limit, orderBy = "") => {
+    try {
+      await getFetchFunction(
+        `${API_MAESTRO}/listaMaestroChoferesChoPaginado?page=${page}&sizePage=${limit}&orderBy=${orderBy}`,
+        setLoadingTable,
+        setChoferes
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-      //await getFetchFunction(`${API_MAESTRO}/listarMaestroChoferesCho`,setLoadingTable,setChoferes);
-    };
-    fetchDistancias();
+  useEffect(() => {
+    fetchChoferes(1, 10, "");
   }, [refreshTable]);
 
+  const orderByChoferes = [
+    { value: "id", name: "ID" },
+    { value: "nombre", name: "Nombre" },
+  ];
   return (
     <div className="page-container">
       <div className="w-2/3">
@@ -148,86 +151,97 @@ const MantenimientoChoferesPage = () => {
         open={openMessage.state}
         autoHideDuration={6000}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={handleClose}
           severity={openMessage.type}
           variant="filled"
-          sx={{ width: "100%", scale:"1.2", marginLeft: "1em" }}
+          sx={{ width: "100%", scale: "1.2", marginLeft: "1em" }}
         >
           {openMessage.message}
         </Alert>
       </Snackbar>
-
-      <div className="desktop">
-        <TableCustom cols={MANTENIMIENTO_CHOFERES_TABLE_COLS_DESKTOP}>
-          {!loadingTable ? (
-            choferes &&
-            choferes.result.map((d) => (
-              <tr key={d.id}>
-              <td>{d.cho_codcho}</td>
-                <td>{d.cho_nombre}</td>
-                <td>{d.cho_nrolic}</td>
-                <td>{d.cho_codusu}</td>
-                <td>{d.cho_codemp}</td>
-                <td>{d.cho_nrodoc}</td>
-                <td className="space-x-2">
-                  <EditIcon
-                    className="text-gray-700 cursor-pointer"
-                    onClick={() => handleSelectedDistancia(d)}
-                  />
-                  <DeleteIcon
-                    className="text-red-600 cursor-pointer"
-                    onClick={() => handleSelectedDeleteDChofer(d)}
-                  />
+      <PaginationCustom
+        fetchData={fetchChoferes}
+        totalRows={choferes.result && choferes.result[0].totalrows}
+        orderByList={orderByChoferes}
+      >
+        <div className="desktop">
+          <TableCustom cols={MANTENIMIENTO_CHOFERES_TABLE_COLS_DESKTOP}>
+            {!loadingTable ? (
+              choferes &&
+              choferes.result.map(
+                (d, index) =>
+                  index !== 0 && (
+                    <tr key={d.id}>
+                      <td>{d.cho_codcho}</td>
+                      <td>{d.cho_nombre}</td>
+                      <td>{d.cho_nrolic}</td>
+                      <td>{d.cho_codusu}</td>
+                      <td>{d.cho_codemp}</td>
+                      <td>{d.cho_nrodoc}</td>
+                      <td className="space-x-2">
+                        <EditIcon
+                          className="text-gray-700 cursor-pointer"
+                          onClick={() => handleSelectedDistancia(d)}
+                        />
+                        <DeleteIcon
+                          className="text-red-600 cursor-pointer"
+                          onClick={() => handleSelectedDeleteDChofer(d)}
+                        />
+                      </td>
+                    </tr>
+                  )
+              )
+            ) : (
+              <tr>
+                <td colSpan={MANTENIMIENTO_CHOFERES_TABLE_COLS_DESKTOP.length}>
+                  <CircularProgress />
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={MANTENIMIENTO_CHOFERES_TABLE_COLS_DESKTOP.length}>
-                <CircularProgress />
-              </td>
-            </tr>
-          )}
-        </TableCustom>
-      </div>
+            )}
+          </TableCustom>
+        </div>
 
-      <div className="mobile">
-        <TableCustom cols={MANTENIMIENTO_CHOFERES_TABLE_COLS_MOBILE}>
-          {!loadingTable ? (
-            choferes &&
-            choferes.result.map((d) => (
-              <tr key={d.id}>
-                <td>
-                  <div>{d.cho_codcho}</div>
-                  <div>{d.cho_nombre}</div>
-                  <div>{d.cho_nrolic}</div>
-                  <div>{d.cho_codemp}</div>
-                  <div>{d.cho_nrodoc}</div>
-                </td>
-                <td className="space-x-2">
-                  <EditIcon
-                    className="text-gray-700 cursor-pointer"
-                    onClick={() => handleSelectedDistancia(d)}
-                  />
-                  <DeleteIcon
-                    className="text-red-600 cursor-pointer"
-                    onClick={() => handleSelectedDeleteDChofer(d)}
-                  />
+        <div className="mobile">
+          <TableCustom cols={MANTENIMIENTO_CHOFERES_TABLE_COLS_MOBILE}>
+            {!loadingTable ? (
+              choferes &&
+              choferes.result.map(
+                (d, index) =>
+                  index !== 0 && (
+                    <tr key={d.id}>
+                      <td>
+                        <div>{d.cho_codcho}</div>
+                        <div>{d.cho_nombre}</div>
+                        <div>{d.cho_nrolic}</div>
+                        <div>{d.cho_codemp}</div>
+                        <div>{d.cho_nrodoc}</div>
+                      </td>
+                      <td className="space-x-2">
+                        <EditIcon
+                          className="text-gray-700 cursor-pointer"
+                          onClick={() => handleSelectedDistancia(d)}
+                        />
+                        <DeleteIcon
+                          className="text-red-600 cursor-pointer"
+                          onClick={() => handleSelectedDeleteDChofer(d)}
+                        />
+                      </td>
+                    </tr>
+                  )
+              )
+            ) : (
+              <tr>
+                <td colSpan={MANTENIMIENTO_CHOFERES_TABLE_COLS_DESKTOP.length}>
+                  <CircularProgress />
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={MANTENIMIENTO_CHOFERES_TABLE_COLS_DESKTOP.length}>
-                <CircularProgress />
-              </td>
-            </tr>
-          )}
-        </TableCustom>
-      </div>
+            )}
+          </TableCustom>
+        </div>
+      </PaginationCustom>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { API_MAESTRO, URL_MASTERLOGIC_API } from "./general";
+import { URL_MASTERLOGIC_API } from "./general";
 
 export const calcularVolumenTotal = (ordenes) => {
   let totalVolumen = 0;
@@ -88,19 +88,27 @@ export const convertirTimeStringToDate = (horaString) => {
 export const getFetchFunction = async (path, setLoadingTable, setData) => {
   try {
     const token = localStorage.getItem("USUARIO_TOKEN");
-    const response = await fetch(`${URL_MASTERLOGIC_API}${path}`);
+    const response = await fetch(`${URL_MASTERLOGIC_API}${path}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (!response.ok) {
       throw new Error("Error al cargar el archivo JSON");
     }
     const data = await response.json();
     setLoadingTable(false);
     setData(data);
+    return data;
   } catch (error) {
     console.error(error);
+    return error;
   }
 };
 
-export const postFetchFunction = async (path, values,setOpenMessage) => {
+export const postFetchFunction = async (path, values, setOpenMessage) => {
   try {
     const token = localStorage.getItem("USUARIO_TOKEN");
     const response = await fetch(`${URL_MASTERLOGIC_API}${path}`, {
@@ -118,14 +126,14 @@ export const postFetchFunction = async (path, values,setOpenMessage) => {
     setOpenMessage({
       state: true,
       message: data.mensaje,
-      type: data.status.toLowerCase()
-    })
+      type: data.status.toLowerCase(),
+    });
   } catch (error) {
     console.error(error);
   }
 };
 
-export const deleteFetchFunction = async (path, values,setOpenMessage) => {
+export const deleteFetchFunction = async (path, values, setOpenMessage) => {
   try {
     const token = localStorage.getItem("USUARIO_TOKEN");
     const response = await fetch(`${URL_MASTERLOGIC_API}${path}`, {
@@ -144,8 +152,8 @@ export const deleteFetchFunction = async (path, values,setOpenMessage) => {
     setOpenMessage({
       state: true,
       message: data.mensaje,
-      type: data.status.toLowerCase()
-    })
+      type: data.status.toLowerCase(),
+    });
   } catch (error) {
     console.error(error);
   }

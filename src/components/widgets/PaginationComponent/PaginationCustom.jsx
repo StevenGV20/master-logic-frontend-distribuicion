@@ -1,47 +1,133 @@
-import { MenuItem, Pagination, Select, Stack } from "@mui/material";
+import {
+  MenuItem,
+  Pagination,
+  Select,
+  Stack,
+  TablePagination,
+} from "@mui/material";
 import React, { useState } from "react";
 
-const PaginationCustom = ({ data,children }) => {
+const PaginationCustom = ({ totalRows, children, fetchData, orderByList }) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = React.useState(1);
+  const [orderBy, setOrderBy] = useState("0");
 
   const handleChange = (event, value) => {
+    console.log(value);
     setPage(value);
-    //findOrdenesDespacho(value, limit);
+    fetchData(parseInt(value) === 0 ? 1 : value, limit, orderBy);
   };
+
+  const handleChangeMobile = (event, value) => {
+    console.log(value);
+    setPage(value);
+    fetchData(parseInt(value) + 1, limit, orderBy);
+  };
+
   const handleChangeLimit = (e) => {
     setLimit(e.target.value);
-    //findOrdenesDespacho(page, e.target.value);
+    setPage(1);
+    fetchData(1, e.target.value, orderBy);
   };
+
+  const handleChangeOrderBy = (e) => {
+    setOrderBy(e.target.value);
+    fetchData(page, limit, e.target.value);
+  };
+
+  const handleChangeOrderByMoble = (e) => {
+    setOrderBy(e.target.value);
+    fetchData(page + 1, limit, e.target.value);
+  };
+
+  const handleChangeLimitMobile = (e) => {
+    setLimit(e.target.value);
+    setPage(0);
+    fetchData(1, e.target.value, orderBy);
+  };
+
+  const PaginationPartial = () => (
+    <>
+      <div className="flex desktop">
+        <div className="flex space-x-4 place-items-center">
+          <div className="flex space-x-4 place-items-center">
+            <div>Mostrar:</div>
+            <Select
+              value={limit}
+              id="demo-select-small"
+              onChange={(e) => handleChangeLimit(e)}
+            >
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </div>
+          <div className="grow flex justify-center">
+            <Stack spacing={2}>
+              <Pagination
+                count={totalRows && Math.ceil(totalRows / limit)}
+                color="primary"
+                showFirstButton
+                showLastButton
+                page={page}
+                onChange={handleChange}
+              />
+            </Stack>
+          </div>
+
+          {orderByList && (
+            <div className="flex space-x-4 place-items-center left-0">
+              <div>Ordenar por:</div>
+              <Select
+                value={orderBy}
+                id="demo-select-small"
+                onChange={(e) => handleChangeOrderBy(e)}
+              >
+                <MenuItem value={"0"}>[Seleccione]</MenuItem>
+                {orderByList.map((o) => (
+                  <MenuItem value={o.value}>{o.name}</MenuItem>
+                ))}
+              </Select>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="w-full flex justify-center mobile">
+        <TablePagination
+          component="div"
+          count={totalRows}
+          page={page}
+          rowsPerPage={limit}
+          onPageChange={handleChangeMobile}
+          onRowsPerPageChange={handleChangeLimitMobile}
+          labelRowsPerPage={"Mostrar"}
+        />
+        {orderByList && (
+          <div className="w-full flex space-x-4 items-center px-2">
+            <div>Ordenar por:</div>
+            <select
+              value={orderBy}
+              id="demo-select-small"
+              onChange={(e) => handleChangeOrderByMoble(e)}
+              className="border-b-2 border-gray-500 px-2 py-1"
+            >
+              <option value={"0"}>[Seleccione]</option>
+              {orderByList.map((o) => (
+                <option value={o.value}>{o.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+    </>
+  );
 
   return (
     <div>
-      <div className="flex space-x-4 place-items-center">
-        <div>Mostrar:</div>
-        <Select
-          value={limit}
-          id="demo-select-small"
-          onChange={(e) => handleChangeLimit(e)}
-        >
-          <MenuItem value={10}>10</MenuItem>
-          <MenuItem value={25}>25</MenuItem>
-          <MenuItem value={50}>50</MenuItem>
-          <MenuItem value={100}>100</MenuItem>
-        </Select>
-      </div>
+      <PaginationPartial />
       {children}
-      <div className="w-full flex justify-center">
-        <Stack spacing={2}>
-          <Pagination
-            count={data && Math.ceil(data.length / limit)}
-            color="primary"
-            showFirstButton
-            showLastButton
-            page={page}
-            onChange={handleChange}
-          />
-        </Stack>
-      </div>
+      <PaginationPartial />
     </div>
   );
 };

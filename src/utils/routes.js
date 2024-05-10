@@ -1,9 +1,14 @@
 import App from "../App";
 import {
-  Agrupamiento,
-  AsignVehiculo,
-  GuiaRemitente,
-  GuiaTransporte,
+  IconAgrupamiento,
+  IconAsignVehiculo,
+  IconCamiones,
+  IconCargarVehiculo,
+  IconChofer,
+  IconDistancias,
+  IconGuiaRemitente,
+  IconGuiaTransporte,
+  IconRutas,
 } from "../icons/icons-svg";
 import AgruparODPage from "../pages/AgruparODPage";
 import AsignarVehiculoPage from "../pages/AsignarVehiculoPage";
@@ -36,37 +41,37 @@ const routesPages = [
   {
     path: "/agrupar-orden-despacho",
     name: PAGE_AGRUPAR_OD,
-    icon: <Agrupamiento />,
+    icon: <IconAgrupamiento />,
     element: <AgruparODPage />,
   },
   {
     path: "/asignar-vehiculo",
     name: PAGE_ASIGNAR_VEHICULO,
-    icon: <AsignVehiculo />,
+    icon: <IconCargarVehiculo />,
     element: <AsignarVehiculoPage />,
   },
   {
     path: "/generar-grr",
     name: PAGE_GENERAR_GRR,
-    icon: <GuiaRemitente />,
+    icon: <IconGuiaRemitente />,
     element: <GenerarGRR />,
   },
   {
     path: "/generar-ot-grt",
     name: PAGE_GENERAR_OT_Y_GRT,
-    icon: <GuiaTransporte />,
+    icon: <IconGuiaTransporte />,
     element: <GenerarOTyGRT />,
   },
   {
     path: "/mantenimiento/vehiculos",
     name: PAGE_MANTENIMIENTO_VEHICULOS,
-    icon: <></>,
+    icon: <IconCamiones/>,
     element: <MantenimientoVehiculosPage />,
   },
   {
     path: "/mantenimiento/rutas",
     name: PAGE_MANTENIMIENTO_RUTAS,
-    icon: <></>,
+    icon: <IconRutas/>,
     element: <MantenimientoRutasPage />,
   },/* 
   {
@@ -78,13 +83,13 @@ const routesPages = [
   {
     path: "/mantenimiento/distancias",
     name: PAGE_MANTENIMIENTO_DISTANCIAS,
-    icon: <></>,
+    icon: <IconDistancias/>,
     element: <MantenimientoDistanciasPage/>,
   },
   {
     path: "/mantenimiento/choferes",
     name: PAGE_MANTENIMIENTO_CHOFERES,
-    icon: <></>,
+    icon: <IconChofer/>,
     element: <MantenimientoChoferesPage/>,
   },
 ];

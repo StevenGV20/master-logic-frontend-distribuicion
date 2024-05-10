@@ -14,9 +14,10 @@ import ModalMessage from "../components/widgets/ModalComponent";
 import FilterComponent from "../components/widgets/FilterComponent";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import { PAGE_AGRUPAR_OD } from "../utils/titles";
-import { URL_MASTERLOGIC_API } from "../utils/general";
+import { API_DISTRIBUCION, URL_MASTERLOGIC_API } from "../utils/general";
 import ListODOsisComponent from "../components/ListODOsisComponent/TableCheckbox";
 import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacionODComponent";
+import { getFetchFunction } from "../utils/funciones";
 
 const AgruparODPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -59,15 +60,11 @@ const AgruparODPage = () => {
   useEffect(() => {
     const fetchOrdenesDespacho = async () => {
       try {
-        const response = await fetch(
-          `${URL_MASTERLOGIC_API}/ordenesDespacho_small.json?limit=10&page=1`
+        await getFetchFunction(
+          `${API_DISTRIBUCION}/listaOrdenDespacho`,
+          setLoadingTable,
+          setOrdenesDespacho
         );
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        setOrdenesDespacho(data);
-        setLoadingTable(false);
       } catch (error) {
         console.error(error);
       }
@@ -78,15 +75,11 @@ const AgruparODPage = () => {
   const findOrdenesDespacho = (page,limit) => {
     const fetchOrdenesDespacho = async () => {
       try {
-        const response = await fetch(
-          `${URL_MASTERLOGIC_API}/ordenesDespacho_small.json?page=${page}&limit=${limit}`
+        await getFetchFunction(
+          `${API_DISTRIBUCION}/listaOrdenDespacho?page=${page}&limit=${limit}`,
+          setLoadingTable,
+          setOrdenesDespacho
         );
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        setOrdenesDespacho(data);
-        setLoadingTable(false);
       } catch (error) {
         console.error(error);
       }
@@ -231,7 +224,8 @@ const AgruparODPage = () => {
           <AppRegistrationIcon sx={{ fontSize: 25 }} />
         </button>
       </div>
-
+      
+      {/*importar desde OSIS/SAP */}
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
@@ -328,6 +322,7 @@ const AgruparODPage = () => {
         <ListODOsisComponent data={ordenesDespachoOsis} />
       </ModalMessage>
 
+      {/*filtro de busqueda */}
       <FilterComponent
         open={openFilter}
         setOpen={setOpenFilter}
@@ -461,6 +456,7 @@ const AgruparODPage = () => {
         </button>
       </FilterComponent>
 
+      {/*carrito de compras */}
       <FilterComponent
         open={openCarritoGrupos}
         setOpen={setOpenCarritoGrupos}
