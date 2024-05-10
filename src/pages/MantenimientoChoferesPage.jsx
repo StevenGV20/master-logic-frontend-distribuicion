@@ -16,6 +16,7 @@ import ModalMessage from "../components/widgets/ModalComponent";
 import FormChoferesComponent from "../components/FormChoferesComponent";
 import TableCustom from "../components/widgets/TableComponent";
 import PaginationCustom from "../components/widgets/PaginationComponent/PaginationCustom";
+import AlertMessage from "../components/widgets/AlertMessage";
 
 const MantenimientoChoferesPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -102,12 +103,12 @@ const MantenimientoChoferesPage = () => {
         >
           Nuevo
         </button>
-        <FilterComponent title={"Filtrar Distancias"}></FilterComponent>
+        <FilterComponent title={"Filtrar Choferes"}></FilterComponent>
       </div>
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
-        title={choferSelected ? "Editar Chofer" : "Nueva Chofer"}
+        title={choferSelected ? "Editar Chofer" : "Nuevo Chofer"}
         titleBtnAceptar={"Guardar"}
         onBtnAceptar={() => <></>}
         showButtons={false}
@@ -135,21 +136,7 @@ const MantenimientoChoferesPage = () => {
         </div>
       </ModalMessage>
 
-      <Snackbar
-        open={openMessage.state}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleClose}
-          severity={openMessage.type}
-          variant="filled"
-          sx={{ width: "100%", scale: "1.2", marginLeft: "1em" }}
-        >
-          {openMessage.message}
-        </Alert>
-      </Snackbar>
+      <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage} />
       <PaginationCustom
         fetchData={fetchChoferes}
         totalRows={choferes.result && choferes.result[0].totalrows}

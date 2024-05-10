@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useSelector, useDispatch } from "react-redux";
 import { CircularProgress } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import IconButton from "@mui/material/IconButton";
@@ -12,8 +11,6 @@ import {
   MANTENIMIENTO_RUTAS_TABLE_COLS_DESKTOP,
   MANTENIMIENTO_RUTAS_TABLE_COLS_MOBILE,
 } from "../../utils/general";
-import { fetchData } from "../../redux/features/combos/sedeSlice";
-
 const ListRutasComponent = ({
   loadingTable,
   rutas,
@@ -21,16 +18,6 @@ const ListRutasComponent = ({
   handleSelectedDeleteRuta,
   handleSelectedRutaToDistrito,
 }) => {
-  const sedesCombo = useSelector((state) => state.sede.lista);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log("sedesCombo", sedesCombo);
-    if (!(sedesCombo.length > 0)) {
-      dispatch(fetchData());
-    }
-  }, []);
-
   return (
     <>
       <div className="desktop">
@@ -40,12 +27,7 @@ const ListRutasComponent = ({
             rutas.result.map((ruta) => (
               <tr key={ruta.id}>
                 <td>{ruta.rut_codigo}</td>
-                <td>
-                  {sedesCombo && sedesCombo.length > 0
-                    ? sedesCombo.find((s) => s.sed_codsed === ruta.sed_codsed)
-                        .sed_descor
-                    : ruta.sed_codsed}
-                </td>
+                <td>{ruta.sed_descor}</td>
                 <td>{ruta.rut_descripcion}</td>
                 <td>{ruta.rut_volmin}</td>
                 <td>{ruta.rut_volmax}</td>
@@ -97,12 +79,7 @@ const ListRutasComponent = ({
               <tr key={ruta.id + "-mobile"}>
                 <td>
                   <div>{ruta.rut_codigo}</div>
-                  <div>
-                    {sedesCombo && sedesCombo.length > 0
-                      ? sedesCombo.find((s) => s.sed_codsed === ruta.sed_codsed)
-                          .sed_descor
-                      : ruta.sed_codsed}
-                  </div>
+                  <div>{ruta.sed_descor}</div>
                   <div>{ruta.rut_descripcion}</div>
                   <div>{ruta.rut_volmin}</div>
                   <div>{ruta.rut_volmax}</div>

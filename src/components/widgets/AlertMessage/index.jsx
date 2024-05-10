@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert, Snackbar } from "@mui/material";
 
-const AlertMessage = ({openMessage,setOpenMessage}) => {
+const AlertMessage = ({ openMessage, setOpenMessage }) => {
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -10,23 +10,42 @@ const AlertMessage = ({openMessage,setOpenMessage}) => {
   };
 
   return (
-    <div>
-      <Snackbar
-        open={openMessage.state}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
+    <>
+      <div className="desktop">
+        <Snackbar
+          open={openMessage.state}
+          autoHideDuration={6000}
           onClose={handleClose}
-          severity={openMessage.type || 'success'}
-          variant="filled"
-          sx={{ width: "100%", scale: "1.2", marginLeft: "1em" }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
-          {openMessage.message}
-        </Alert>
-      </Snackbar>
-    </div>
+          <Alert
+            onClose={handleClose}
+            severity={openMessage.type || "success"}
+            variant="filled"
+            sx={{ width: "100%", scale: "1.2", marginLeft: "1em" }}
+          >
+            {openMessage.message}
+          </Alert>
+        </Snackbar>
+      </div>
+      <div className="mobile">
+        <Snackbar
+          open={openMessage.state}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleClose}
+            severity={openMessage.type || "success"}
+            variant="filled"
+            sx={{ width: "100%", scale: "1", marginLeft: "1em" }}
+          >
+            {openMessage.message}
+          </Alert>
+        </Snackbar>
+      </div>
+    </>
   );
 };
 

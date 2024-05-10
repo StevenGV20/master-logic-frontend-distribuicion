@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
-import { useSelector, useDispatch } from "react-redux";
-
-import { fetchData } from "../../redux/features/combos/sedeSlice";
 import { postFetchFunction } from "../../utils/funciones";
 import { API_DISTRIBUCION } from "../../utils/general";
+import ComboSedes from "../widgets/ComboSedes";
 
 const FormRutasComponent = ({
   rutaSelected,
@@ -12,14 +10,6 @@ const FormRutasComponent = ({
   setOpenMessage,
   setRefreshTable,
 }) => {
-  const sedesCombo = useSelector((state) => state.sede.lista);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log("sedesCombo", sedesCombo);
-    if (!(sedesCombo.length > 0)) dispatch(fetchData());
-  }, []);
-
   const formik = useFormik({
     initialValues: {
       id: rutaSelected ? rutaSelected.id : 0,
@@ -104,36 +94,7 @@ const FormRutasComponent = ({
             )}
           </div>
         </div>
-        <div className="form-container-group-content">
-          <label htmlFor="sed_codsed" className="form-container-group-content-label">
-            Sede
-          </label>
-          <div className="mt-2">
-            <select
-              type="text"
-              name="sed_codsed"
-              id="sed_codsed"
-              value={formik.values.sed_codsed}
-              onChange={formik.handleChange}
-              autoComplete="given-name"
-              className={`form-container-group-content-input ${
-                formik.errors.sed_codsed
-                  ? "form-container-group-content-input-error"
-                  : ""
-              }`}
-            >
-              <option value="">[ Seleecione ]</option>
-              {sedesCombo.map((sede) => (
-                <option value={sede.sed_codsed}>{sede.sed_descor}</option>
-              ))}
-            </select>
-            {formik.errors.sed_codsed && (
-              <span className="form-container-group-content-span-error">
-                {formik.errors.sed_codsed}
-              </span>
-            )}
-          </div>
-        </div>
+        <ComboSedes formik={formik}/>
 
         <div className="form-container-group-content">
           <label

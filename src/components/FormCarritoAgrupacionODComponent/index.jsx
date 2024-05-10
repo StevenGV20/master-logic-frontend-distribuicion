@@ -28,7 +28,6 @@ const FormCarritoAgrupacionODComponent = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("sedesCombo", sedesCombo);
     if (!(sedesCombo.length > 0)) dispatch(fetchData());
   }, []);
 

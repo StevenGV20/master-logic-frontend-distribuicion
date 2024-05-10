@@ -62,11 +62,12 @@ const PaginationCustom = ({ totalRows, children, fetchData, orderByList }) => {
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
             </Select>
+            <div>{((limit*(page-1))+1)} - {limit*page > totalRows ? totalRows : limit*page} de {totalRows} filas</div>
           </div>
           <div className="grow flex justify-center">
             <Stack spacing={2}>
               <Pagination
-                count={totalRows && Math.ceil(totalRows / limit)}
+                count={totalRows ? Math.ceil(totalRows / limit) : 1}
                 color="primary"
                 showFirstButton
                 showLastButton
@@ -96,8 +97,8 @@ const PaginationCustom = ({ totalRows, children, fetchData, orderByList }) => {
       <div className="w-full flex justify-center mobile">
         <TablePagination
           component="div"
-          count={totalRows}
-          page={page}
+          count={totalRows ? totalRows : 1}
+          page={totalRows ? page : 0}
           rowsPerPage={limit}
           onPageChange={handleChangeMobile}
           onRowsPerPageChange={handleChangeLimitMobile}

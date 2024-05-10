@@ -44,7 +44,7 @@ const ModalMessage = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className={`relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 mx-2 md:mx-8 w-full sm:w-4/5 ${isMessage ? 'md:w-1/3' : 'md:w-11/12 lg:w-4/5 xl:w-2/3 2xl:w-1/2'}`}>
+              <Dialog.Panel className={`relative transform overflow-hidden rounded-lg bg-white text-black text-left shadow-xl transition-all sm:my-8 mx-2 md:mx-8 w-full sm:w-4/5 ${isMessage ? 'md:w-1/3' : 'md:w-11/12 lg:w-4/5 xl:w-2/3 2xl:w-1/2'}`}>
                 <div className="bg-color-rojoReyPlast modal-header">
                   <h1>{title}</h1>
                 </div>
@@ -60,7 +60,7 @@ const ModalMessage = ({
                     </button>
                     <button
                       type="button"
-                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                      className="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                       onClick={() => setOpen(false)}
                       ref={cancelButtonRef}
                     >

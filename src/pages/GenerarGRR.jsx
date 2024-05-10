@@ -12,6 +12,7 @@ import { ordenesDespachoFake } from "../data/ordenesDespachoFake";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import FilterComponent from "../components/widgets/FilterComponent";
 import { URL_MASTERLOGIC_API } from "../utils/general";
+import { objOrdenesDespachoEntity } from "../api/ordenesDespachoApi";
 
 const GenerarGRR = () => {
   registerLocale("es", es);
@@ -26,7 +27,7 @@ const GenerarGRR = () => {
     "GRUPO",
     "",
   ];
-  const [ordenesDespacho, setOrdenesDespacho] = useState([]);
+  const [ordenesDespacho, setOrdenesDespacho] = useState(objOrdenesDespachoEntity);
   const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
@@ -169,7 +170,7 @@ const GenerarGRR = () => {
       </div>
       <ListOrdenesDespachoComponent
         cols_desktop={cols_desktop}
-        ordenesDespacho={ordenesDespacho.result}
+        ordenesDespacho={ordenesDespacho}
         setOrdenesDespacho={setOrdenesDespacho}
         showButtonDelete={false}
         titlePage=""

@@ -8,13 +8,15 @@ import { PAGE_AGRUPAR_OD } from "../../utils/titles";
 import { Checkbox, CircularProgress, MenuItem, Select } from "@mui/material";
 import ModalMessage from "../widgets/ModalComponent";
 import ParticionarODComponent from "../ParticionarODComponent";
+import { ORDENES_DESPACHO_TABLE_COLS_DESKTOP } from "../../utils/general";
+import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
 
 const ListOrdenesDespachoComponent = ({
-  ordenesDespacho,
+  ordenesDespacho=objOrdenesDespachoEntity,
   setOrdenesDespacho,
   showButtonDelete,
   showPagination,
-  carritoOrdenesDespacho,
+  carritoOrdenesDespacho=objOrdenesDespachoEntity.result,
   setCarritoOrdenesDespacho,
   titlePage = "",
   loadingTable,
@@ -31,16 +33,6 @@ const ListOrdenesDespachoComponent = ({
     setLimit(e.target.value)
     findOrdenesDespacho(page, e.target.value);
   }
-
-  const cols_desktop = [
-    "Item",
-    "Pedido",
-    "Ord. Despacho",
-    "Canal",
-    "Cliente",
-    "Carga",
-    "GRUPO",
-  ];
 
   const [ordenSelected, setOrdenSelected] = useState({
     canal: "",
@@ -74,19 +66,19 @@ const ListOrdenesDespachoComponent = ({
         </Select>
       </div>
       <div className="desktop my-6">
-        <TableCustom cols={cols_desktop}>
+        <TableCustom cols={ORDENES_DESPACHO_TABLE_COLS_DESKTOP}>
           {!loadingTable ? (
-            ordenesDespacho.map((orden) => (
+            ordenesDespacho.result.map((orden) => (
               <tr
                 className={
                   !orden.grupo && titlePage.match(PAGE_AGRUPAR_OD)
                     ? carritoOrdenesDespacho &&
-                      carritoOrdenesDespacho.find((o) => o.item == orden.item)
+                      carritoOrdenesDespacho.find((o) => o.odc_numodc === orden.odc_numodc)
                       ? "border-4 border-gray-800 bg-gray-200"
                       : "hover:bg-gray-200"
                     : ""
                 }
-                key={orden.item}
+                key={orden.odc_numodc}
               >
                 <td
                   onClick={() =>
@@ -182,7 +174,7 @@ const ListOrdenesDespachoComponent = ({
             ))
           ) : (
             <tr>
-              <td colSpan={cols_desktop.length}>
+              <td colSpan={ORDENES_DESPACHO_TABLE_COLS_DESKTOP.length}>
                 <CircularProgress />
               </td>
             </tr>
@@ -192,8 +184,8 @@ const ListOrdenesDespachoComponent = ({
       <div className="mobile">
         <TableCustom cols={[]}>
           {!loadingTable ? (
-            ordenesDespacho.map((orden) => (
-              <tr className="grid grid-cols-6" key={orden.item}>
+            ordenesDespacho.result.map((orden) => (
+              <tr className="grid grid-cols-6" key={orden.odc_numodc}>
                 <td className="col-span-4">
                   <div className="td-group-mobile">
                     <label className="w-full text-left">{orden.item}</label>
@@ -286,7 +278,7 @@ const ListOrdenesDespachoComponent = ({
             ))
           ) : (
             <tr>
-              <td colSpan={cols_desktop.length}>
+              <td colSpan={ORDENES_DESPACHO_TABLE_COLS_DESKTOP.length}>
                 <CircularProgress />
               </td>
             </tr>
@@ -298,7 +290,7 @@ const ListOrdenesDespachoComponent = ({
         <div className="w-full flex justify-center">
           <Stack spacing={2}>
             <Pagination
-              count={ordenesDespacho && Math.ceil(ordenesDespacho.length / limit)}
+              count={ordenesDespacho && Math.ceil(ordenesDespacho.result.length / limit)}
               color="primary"
               showFirstButton
               showLastButton

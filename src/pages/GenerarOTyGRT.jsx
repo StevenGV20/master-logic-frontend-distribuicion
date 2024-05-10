@@ -10,6 +10,7 @@ import { PAGE_GENERAR_OT_Y_GRT } from "../utils/titles";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import FilterComponent from "../components/widgets/FilterComponent";
 import { URL_MASTERLOGIC_API } from "../utils/general";
+import { objOrdenesDespachoEntity } from "../api/ordenesDespachoApi";
 
 const GenerarOTyGRT = () => {
   registerLocale("es", es);
@@ -24,7 +25,7 @@ const GenerarOTyGRT = () => {
     "GRUPO",
     "",
   ];
-  const [ordenesDespacho, setOrdenesDespacho] = useState([]);
+  const [ordenesDespacho, setOrdenesDespacho] = useState(objOrdenesDespachoEntity);
   const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
@@ -165,7 +166,7 @@ const GenerarOTyGRT = () => {
       </div>
       <ListOrdenesDespachoComponent
         cols_desktop={cols_desktop}
-        ordenesDespacho={ordenesDespacho.result}
+        ordenesDespacho={ordenesDespacho}
         setOrdenesDespacho={setOrdenesDespacho}
         showButtonDelete={false}
         titlePage=""

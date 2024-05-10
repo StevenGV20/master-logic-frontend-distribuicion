@@ -42,7 +42,7 @@ const routesPages = [
   {
     path: "/agrupar-orden-despacho",
     name: PAGE_AGRUPAR_OD,
-    icon: <IconAgrupamiento />,
+    icon: (<div className="scale-110"><IconAgrupamiento /></div>),
     element: <AgruparODPage />,
   },
   {
@@ -66,7 +66,7 @@ const routesPages = [
   {
     path: "/mantenimiento/vehiculos",
     name: PAGE_MANTENIMIENTO_VEHICULOS,
-    icon: <IconCamiones/>,
+    icon: (<div className="scale-95"><IconCamiones/></div>),
     element: <MantenimientoVehiculosPage />,
   },
   {
@@ -84,7 +84,7 @@ const routesPages = [
   {
     path: "/mantenimiento/distancias",
     name: PAGE_MANTENIMIENTO_DISTANCIAS,
-    icon: true ? (<div className="scale-50 mb-4"><IconDistanciaKM /></div>) : <IconDistancias/>,
+    icon: true ? (<div className="-mt-8" style={{scale: "0.4"}}><IconDistanciaKM /></div>) : <IconDistancias/>,
     element: <MantenimientoDistanciasPage/>,
   },
   {

@@ -14,7 +14,7 @@ import {
   MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_DESKTOP,
   MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_MOBILE,
 } from "../utils/general";
-import FormUnidadesTransporteComponent from "../components/FormVehiculoComponent";
+import FormUnidadesTransporteComponent from "../components/FormUnidadesTransporteComponent";
 import { deleteFetchFunction, getFetchFunction } from "../utils/funciones";
 import AlertMessage from "../components/widgets/AlertMessage";
 import PaginationCustom from "../components/widgets/PaginationComponent/PaginationCustom";
@@ -95,13 +95,13 @@ const MantenimientoVehiculosPage = () => {
         >
           Nuevo
         </button>
-        <FilterComponent title={"Filtrar Vehiculos"}></FilterComponent>
+        <FilterComponent title={"Filtrar Unidades de transporte"}></FilterComponent>
       </div>
 
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
-        title={vehiculoSelected ? "Editar Vehiculo" : "Nuevo Vehiculo"}
+        title={vehiculoSelected ? "Editar Unidad de transporte" : "Nueva Unidad de transporte"}
         titleBtnAceptar={"Guardar"}
         onBtnAceptar={() => <></>}
         showButtons={false}
@@ -145,14 +145,15 @@ const MantenimientoVehiculosPage = () => {
                 (v, index) =>
                   index !== 0 && (
                     <tr key={v.id}>
-                      <td>{v.id}</td>
+                    <td>{v.id}</td>
+                      <td>{v.utr_codutr}</td>
                       <td>
-                        <div>{v.utr_codutr}</div>
                         <div>{v.utr_desutr}</div>
                         <div>{v.utr_plautr}</div>
                         <div>{v.utr_marutr}</div>
                       </td>
                       <td>
+                        <div>{v.cho_codcho}</div>
                         <div>{v.cho_nombre}</div>
                         <div>{v.utr_codusu}</div>
                       </td>

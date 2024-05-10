@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useSelector, useDispatch } from "react-redux";
+import { Popover, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 import { fetchData } from "../../redux/features/combos/sedeSlice";
 import { API_MAESTRO, COD_CIA } from "../../utils/general";
@@ -62,31 +64,31 @@ const FormUnidadesTransporteComponent = ({
     validate: (values) => {
       const errors = {};
       if (!values.utr_codutr) {
-        errors.utr_codutr = "Debes ingresar el utr_desutr del vehiculo";
+        errors.utr_codutr = "Debes ingresar el codigo de la unidad de transporte";
       }
       if (!values.utr_desutr) {
-        errors.utr_desutr = "Debes ingresar el utr_desutr del vehiculo";
+        errors.utr_desutr = "Debes ingresar la descripcion de la unidad de transporte";
       }
       if (!values.utr_plautr) {
-        errors.utr_plautr = "Debes ingresar el utr_plautr del vehiculo";
+        errors.utr_plautr = "Debes ingresar la placa de la unidad de transporte";
       }
       if (!values.utr_nrocer) {
-        errors.utr_nrocer = "Debes ingresar el utr_nrocer del vehiculo";
+        errors.utr_nrocer = "Debes ingresar el utr_nrocer de la unidad de transporte";
       }
       if (!values.utr_marutr) {
-        errors.utr_marutr = "Debes ingresar el utr_marutr del vehiculo";
+        errors.utr_marutr = "Debes ingresar el utr_marutr de la unidad de transporte";
       }
       if (!values.utr_config) {
-        errors.utr_config = "Debes ingresar el utr_config del vehiculo";
+        errors.utr_config = "Debes ingresar el utr_config de la unidad de transporte";
       }
       if (!values.utr_codusu) {
-        errors.utr_codusu = "Debes ingresar el utr_codusu del vehiculo";
+        errors.utr_codusu = "Debes ingresar el utr_codusu de la unidad de transporte";
       }
       if (values.utr_conrep < 0) {
-        errors.utr_conrep = "Debes ingresar el utr_conrep del vehiculo";
+        errors.utr_conrep = "Debes ingresar el utr_conrep de la unidad de transporte";
       }
       if (!values.utr_tercero) {
-        errors.utr_tercero = "Debes ingresar el utr_tercero del vehiculo";
+        errors.utr_tercero = "Debes ingresar el utr_tercero de la unidad de transporte";
       }
       return errors;
     },
@@ -99,7 +101,6 @@ const FormUnidadesTransporteComponent = ({
   const [loadingChoferes, setLoadingChoferes] = useState(true);
 
   useEffect(() => {
-    console.log("sedesCombo", sedesCombo);
     if (!(sedesCombo.length > 0)) dispatch(fetchData());
 
     const fetchChoferes = async () => {
@@ -129,7 +130,7 @@ const FormUnidadesTransporteComponent = ({
 
         <div className="form-container-group-content">
           <label htmlFor="placa" className="form-container-group-content-label">
-            utr_codutr
+            Codigo
           </label>
           <div className="mt-2">
             <input
@@ -155,7 +156,7 @@ const FormUnidadesTransporteComponent = ({
 
         <div className="form-container-group-content">
           <label htmlFor="placa" className="form-container-group-content-label">
-            utr_desutr
+            Descripcion
           </label>
           <div className="mt-2">
             <input
@@ -181,7 +182,7 @@ const FormUnidadesTransporteComponent = ({
 
         <div className="form-container-group-content">
           <label htmlFor="placa" className="form-container-group-content-label">
-            utr_plautr
+            Placa
           </label>
           <div className="mt-2">
             <input
@@ -207,7 +208,7 @@ const FormUnidadesTransporteComponent = ({
 
         <div className="form-container-group-content">
           <label htmlFor="placa" className="form-container-group-content-label">
-            utr_nrocer
+            NroCer
           </label>
           <div className="mt-2">
             <input
@@ -284,34 +285,19 @@ const FormUnidadesTransporteComponent = ({
         </div>
 
         <div className="form-container-group-content">
-          <label htmlFor="cho_codcho" className="form-container-group-content-label">
-            cho_codcho
-          </label>
-          <div className="mt-2">
-            <input
-              type="text"
-              name="cho_codcho"
-              id="cho_codcho"
-              value={formik.values.cho_codcho}
-              onChange={formik.handleChange}
-              autoComplete="given-name"
-              className={`form-container-group-content-input ${
-                formik.errors.cho_codcho
-                  ? "form-container-group-content-input-error"
-                  : ""
-              }`}
-            />
-            {formik.errors.cho_codcho && (
-              <span className="form-container-group-content-span-error">
-                {formik.errors.cho_codcho}
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="form-container-group-content">
-          <label htmlFor="cho_codcho" className="form-container-group-content-label">
-            cho_codcho
+          <input
+            type="text"
+            name="cho_codcho"
+            id="cho_codcho"
+            value={formik.values.cho_codcho}
+            hidden
+            readOnly
+          />
+          <label
+            htmlFor="cho_codcho"
+            className="form-container-group-content-label"
+          >
+            Codigo Chofer
           </label>
           <div className="mt-2">
             <select
@@ -328,12 +314,16 @@ const FormUnidadesTransporteComponent = ({
               }`}
             >
               <option value="">[Seleccione]</option>
-              {
-                loadingChoferes ? <></> : 
-                choferes && choferes.result.map(c => (
-                  <option value={c.cho_codcho}>{c.cho_nombre}</option>
+              {loadingChoferes ? (
+                <></>
+              ) : (
+                choferes &&
+                choferes.result.map((c) => (
+                  <option key={c.cho_codcho} value={c.cho_codcho}>
+                    {c.cho_nombre}
+                  </option>
                 ))
-              }
+              )}
             </select>
             {formik.errors.cho_codcho && (
               <span className="form-container-group-content-span-error">

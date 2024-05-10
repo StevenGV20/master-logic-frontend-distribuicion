@@ -4,7 +4,7 @@
 @import "./components/widgets/TableComponent/_.css";
 @import "./components/widgets/PaginationComponent/_.scss";
 @import "./components/widgets/ModalComponent/_.css";
-@import "./components/FormVehiculoComponent/_.css";
+@import "./components/FormUnidadesTransporteComponent/_.css";
 
 :root {
   --react-color-azulReyPlast: #0055b8;

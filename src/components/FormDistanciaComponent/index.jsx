@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
-import { useSelector, useDispatch } from "react-redux";
 
-import { fetchData } from "../../redux/features/combos/sedeSlice";
 import { API_DISTRIBUCION, USERNAME_LOCAL } from "../../utils/general";
 import ComboUbigeo from "../widgets/ComboUbigeo";
 import { postFetchFunction } from "../../utils/funciones";
+import ComboSedes from "../widgets/ComboSedes";
 
 const FormDistanciaComponent = ({
   distanciaSelected,
@@ -45,61 +44,25 @@ const FormDistanciaComponent = ({
     validate: (values) => {
       const errors = {};
       if (!values.sed_codsed) {
-        errors.sede = "Debes seleccionar una sede";
+        errors.sed_codsed = "Debes seleccionar una sede";
       }
-      if (!values.ubi_desdis) {
+      if (values.ubi_desdis==="") {
         errors.ubi_desdis = "Debes escoger un distrito";
       }
       if (!values.ruk_kilometros) {
         errors.ruk_kilometros = "Debes ingresar los kilometros";
       }
+      else if (!(values.ruk_kilometros > 0)) {
+        errors.ruk_kilometros = "Debes ingresar kilometros mayor a 0";
+      }
       return errors;
     },
   });
 
-  const sedesCombo = useSelector((state) => state.sede.lista);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log("sedesCombo", sedesCombo);
-    if (!(sedesCombo.length > 0)) dispatch(fetchData());
-  }, []);
-
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="form-container">
-        <div className="form-container-group-content">
-          <label htmlFor="sed_codsed" className="form-container-group-content-label">
-            Sede
-          </label>
-          <div className="mt-2">
-            <select
-              type="text"
-              name="sed_codsed"
-              id="sed_codsed"
-              value={formik.values.sed_codsed}
-              onChange={formik.handleChange}
-              autoComplete="given-name"
-              className={`form-container-group-content-input ${
-                formik.errors.sed_codsed
-                  ? "form-container-group-content-input-error"
-                  : ""
-              }`}
-            >
-              <option value="">[ Seleecione ]</option>
-              {sedesCombo &&
-                sedesCombo.length > 0 &&
-                sedesCombo.map((sede) => (
-                  <option value={sede.sed_codsed}>{sede.sed_descor}</option>
-                ))}
-            </select>
-            {formik.errors.sed_codsed && (
-              <span className="form-container-group-content-span-error">
-                {formik.errors.sed_codsed}
-              </span>
-            )}
-          </div>
-        </div>
+        <ComboSedes formik={formik}/>
         <ComboUbigeo formik={formik} />
         <div className="form-container-group-content">
           <label
@@ -110,7 +73,7 @@ const FormDistanciaComponent = ({
           </label>
           <div className="mt-2">
             <input
-              type="text"
+              type="number"
               name="ruk_kilometros"
               id="ruk_kilometros"
               value={formik.values.ruk_kilometros}

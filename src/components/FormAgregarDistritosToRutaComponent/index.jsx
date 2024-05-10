@@ -119,7 +119,7 @@ const FormAgregarDistritosToRutaComponent = ({
   }, []);
 
   return (
-    <div>
+    <div className="text-black">
       <form onSubmit={formik.handleSubmit}>
         <div className="form-container">
           <ComboUbigeo formik={formik}/>
@@ -136,7 +136,7 @@ const FormAgregarDistritosToRutaComponent = ({
         {!loadingTable ? (
           rutaDistritos &&
           rutaDistritos.result.map((d) => (
-            <tr key={d.ubi_codubi}>
+            <tr key={d.ubi_codubi} className="text-black">
               <td>{d.ubi_codubi}</td>
               <td>{d.ubi_desdis}</td>
               <td className="space-x-2">

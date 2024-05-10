@@ -19,6 +19,7 @@ import ListODOsisComponent from "../components/ListODOsisComponent/TableCheckbox
 import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacionODComponent";
 import { getFetchFunction } from "../utils/funciones";
 import SlideOverComponent from "../components/widgets/SlideOverComponent";
+import { objOrdenesDespachoEntity } from "../api/ordenesDespachoApi";
 
 const AgruparODPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -55,7 +56,7 @@ const AgruparODPage = () => {
     });
   };
 
-  const [ordenesDespacho, setOrdenesDespacho] = useState([]);
+  const [ordenesDespacho, setOrdenesDespacho] = useState(objOrdenesDespachoEntity);
   const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
@@ -332,7 +333,7 @@ const AgruparODPage = () => {
         </FilterComponent>
       </div>
       <ListOrdenesDespachoComponent
-        ordenesDespacho={ordenesDespacho.result}
+        ordenesDespacho={ordenesDespacho}
         setOrdenesDespacho={setOrdenesDespacho}
         showButtonDelete={true}
         showPagination={true}
