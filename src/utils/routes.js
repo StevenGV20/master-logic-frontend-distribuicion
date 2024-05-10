@@ -5,6 +5,7 @@ import {
   IconCamiones,
   IconCargarVehiculo,
   IconChofer,
+  IconDistanciaKM,
   IconDistancias,
   IconGuiaRemitente,
   IconGuiaTransporte,
@@ -83,7 +84,7 @@ const routesPages = [
   {
     path: "/mantenimiento/distancias",
     name: PAGE_MANTENIMIENTO_DISTANCIAS,
-    icon: <IconDistancias/>,
+    icon: true ? (<div className="scale-50 mb-4"><IconDistanciaKM /></div>) : <IconDistancias/>,
     element: <MantenimientoDistanciasPage/>,
   },
   {

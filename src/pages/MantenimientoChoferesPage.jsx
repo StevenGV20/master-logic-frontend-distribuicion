@@ -19,7 +19,6 @@ import PaginationCustom from "../components/widgets/PaginationComponent/Paginati
 
 const MantenimientoChoferesPage = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
   const [choferes, setChoferes] = useState([]);
   const [choferSelected, setChoferSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
@@ -103,18 +102,7 @@ const MantenimientoChoferesPage = () => {
         >
           Nuevo
         </button>
-        <div className="w-1/6 lg:w-1/12 text-center content-center grid justify-items-center">
-          <div className="w-5 ml-4">
-            <button onClick={() => setOpenFilter(true)}>
-              <FilterAltIcon />
-            </button>
-          </div>
-          <FilterComponent
-            open={openFilter}
-            setOpen={setOpenFilter}
-            title={"Filtrar Choferes"}
-          ></FilterComponent>
-        </div>
+        <FilterComponent title={"Filtrar Distancias"}></FilterComponent>
       </div>
       <ModalMessage
         open={openModal}

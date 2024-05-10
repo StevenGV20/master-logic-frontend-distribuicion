@@ -18,6 +18,7 @@ import { API_DISTRIBUCION, URL_MASTERLOGIC_API } from "../utils/general";
 import ListODOsisComponent from "../components/ListODOsisComponent/TableCheckbox";
 import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacionODComponent";
 import { getFetchFunction } from "../utils/funciones";
+import SlideOverComponent from "../components/widgets/SlideOverComponent";
 
 const AgruparODPage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -72,7 +73,7 @@ const AgruparODPage = () => {
     fetchOrdenesDespacho();
   }, []);
 
-  const findOrdenesDespacho = (page,limit) => {
+  const findOrdenesDespacho = (page, limit) => {
     const fetchOrdenesDespacho = async () => {
       try {
         await getFetchFunction(
@@ -194,13 +195,141 @@ const AgruparODPage = () => {
         >
           Importar OD
         </button>
-        <div className="w-1/6 lg:w-1/12 text-center content-center grid justify-items-center">
-          <div className="w-5 ml-4">
-            <button onClick={() => setOpenFilter(true)}>
-              <FilterAltIcon />
-            </button>
+        {/*filtro de busqueda */}
+        <FilterComponent title={"Filtrar Ordenes de Despacho"}>
+          <div>
+            <input
+              type="text"
+              className="modal-group-input w-full rounded-md border-blue-800 focus:border-blue-700 focus:shadow-md focus:shadow-blue-400"
+              onChange={(e) =>
+                setFiltrosOrdenesDespacho({
+                  ...filtrosOrdenesDespacho,
+                  filtro1: e.target.value,
+                })
+              }
+            />
           </div>
-        </div>
+
+          <div className="filter-group-container">
+            <div className="filter-checkbox-container">
+              <button
+                className={`filter-checkbox-label ${
+                  filtrosOrdenesDespacho.btnFechaSelected === "btnFechaToday"
+                    ? "bg-blue-800 text-white"
+                    : ""
+                }`}
+                onClick={() => handleChangeFechaButtonFiltro("btnFechaToday")}
+              >
+                Hoy
+              </button>
+            </div>
+            <div className="filter-checkbox-container">
+              <button
+                className={`filter-checkbox-label ${
+                  filtrosOrdenesDespacho.btnFechaSelected === "btnFechaAyer"
+                    ? "bg-blue-800 text-white"
+                    : ""
+                }`}
+                onClick={() => handleChangeFechaButtonFiltro("btnFechaAyer")}
+              >
+                Ayer
+              </button>
+            </div>
+            <div className="filter-checkbox-container">
+              <button
+                className={`filter-checkbox-label ${
+                  filtrosOrdenesDespacho.btnFechaSelected === "btnFechaSemana"
+                    ? "bg-blue-800 text-white"
+                    : ""
+                }`}
+                onClick={() => handleChangeFechaButtonFiltro("btnFechaSemana")}
+              >
+                Hace 7 dias
+              </button>
+            </div>
+          </div>
+
+          <div className="filter-group-container">
+            <div className="w-1/2">
+              <label>Fecha de inicio: </label>
+              <DatePicker
+                selected={startDate}
+                onChange={handleStartDateChange}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                locale="es"
+                dateFormat="dd/MM/yyyy"
+                popperPlacement="bottom-end"
+                className="z-10 px-4 py-2 border-2 w-full rounded-l-md modal-group-input-md"
+              />
+            </div>
+            <div className="w-1/2">
+              <label>Fecha de fin: </label>
+              <DatePicker
+                selected={endDate}
+                onChange={handleEndDateChange}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                locale="es"
+                open={openEndDate}
+                dateFormat="dd/MM/yyyy"
+                popperPlacement="bottom-start"
+                className="px-4 py-2 border-2 w-full rounded-r-md modal-group-input-md"
+              />
+            </div>
+          </div>
+
+          <div className="filter-group-container">
+            <div className="filter-checkbox-container">
+              <input
+                type="checkbox"
+                id="checkboxOpcion1"
+                value={"opcion1"}
+                onChange={(e) =>
+                  setFiltrosOrdenesDespacho({
+                    ...filtrosOrdenesDespacho,
+                    filtro2: e.target.checked ? e.target.value : "",
+                  })
+                }
+              />
+              <label
+                htmlFor="checkboxOpcion1"
+                className="filter-checkbox-label"
+              >
+                Opción 1
+              </label>
+            </div>
+            <div className="filter-checkbox-container">
+              <input
+                type="checkbox"
+                id="checkboxOpcion2"
+                value={"opcion2"}
+                onChange={(e) =>
+                  setFiltrosOrdenesDespacho({
+                    ...filtrosOrdenesDespacho,
+                    filtro3: e.target.checked ? e.target.value : "",
+                  })
+                }
+              />
+              <label
+                htmlFor="checkboxOpcion2"
+                className="filter-checkbox-label"
+              >
+                Opción 2
+              </label>
+            </div>
+          </div>
+
+          <button
+            className="bg-black w-full py-2 text-white my-4 rounded-md"
+            onClick={() => onSearchFiltroOD()}
+          >
+            Buscar
+          </button>
+        </FilterComponent>
       </div>
       <ListOrdenesDespachoComponent
         ordenesDespacho={ordenesDespacho.result}
@@ -215,16 +344,6 @@ const AgruparODPage = () => {
         findOrdenesDespacho={findOrdenesDespacho}
       />
 
-      <div className="relative">
-        <button
-          onClick={() => setOpenCarritoGrupos(true)}
-          className="z-50 fixed right-6 bottom-6 bg-gray-300 rounded-full py-6 px-6 scale-100 
-                      sm:scale-110 hover:scale-125  hover:ring-gray-400 hover:ring-2 shadow-md shadow-gray-600"
-        >
-          <AppRegistrationIcon sx={{ fontSize: 25 }} />
-        </button>
-      </div>
-      
       {/*importar desde OSIS/SAP */}
       <ModalMessage
         open={openModal}
@@ -322,142 +441,19 @@ const AgruparODPage = () => {
         <ListODOsisComponent data={ordenesDespachoOsis} />
       </ModalMessage>
 
-      {/*filtro de busqueda */}
-      <FilterComponent
-        open={openFilter}
-        setOpen={setOpenFilter}
-        title={"Filtros"}
-      >
-        <div>
-          <input
-            type="text"
-            className="modal-group-input w-full rounded-md border-blue-800 focus:border-blue-700 focus:shadow-md focus:shadow-blue-400"
-            onChange={(e) =>
-              setFiltrosOrdenesDespacho({
-                ...filtrosOrdenesDespacho,
-                filtro1: e.target.value,
-              })
-            }
-          />
-        </div>
-
-        <div className="filter-group-container">
-          <div className="filter-checkbox-container">
-            <button
-              className={`filter-checkbox-label ${
-                filtrosOrdenesDespacho.btnFechaSelected === "btnFechaToday"
-                  ? "bg-blue-800 text-white"
-                  : ""
-              }`}
-              onClick={() => handleChangeFechaButtonFiltro("btnFechaToday")}
-            >
-              Hoy
-            </button>
-          </div>
-          <div className="filter-checkbox-container">
-            <button
-              className={`filter-checkbox-label ${
-                filtrosOrdenesDespacho.btnFechaSelected === "btnFechaAyer"
-                  ? "bg-blue-800 text-white"
-                  : ""
-              }`}
-              onClick={() => handleChangeFechaButtonFiltro("btnFechaAyer")}
-            >
-              Ayer
-            </button>
-          </div>
-          <div className="filter-checkbox-container">
-            <button
-              className={`filter-checkbox-label ${
-                filtrosOrdenesDespacho.btnFechaSelected === "btnFechaSemana"
-                  ? "bg-blue-800 text-white"
-                  : ""
-              }`}
-              onClick={() => handleChangeFechaButtonFiltro("btnFechaSemana")}
-            >
-              Hace 7 dias
-            </button>
-          </div>
-        </div>
-
-        <div className="filter-group-container">
-          <div className="w-1/2">
-            <label>Fecha de inicio: </label>
-            <DatePicker
-              selected={startDate}
-              onChange={handleStartDateChange}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              locale="es"
-              dateFormat="dd/MM/yyyy"
-              popperPlacement="bottom-end"
-              className="z-10 px-4 py-2 border-2 w-full rounded-l-md modal-group-input-md"
-            />
-          </div>
-          <div className="w-1/2">
-            <label>Fecha de fin: </label>
-            <DatePicker
-              selected={endDate}
-              onChange={handleEndDateChange}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              locale="es"
-              open={openEndDate}
-              dateFormat="dd/MM/yyyy"
-              popperPlacement="bottom-start"
-              className="px-4 py-2 border-2 w-full rounded-r-md modal-group-input-md"
-            />
-          </div>
-        </div>
-
-        <div className="filter-group-container">
-          <div className="filter-checkbox-container">
-            <input
-              type="checkbox"
-              id="checkboxOpcion1"
-              value={"opcion1"}
-              onChange={(e) =>
-                setFiltrosOrdenesDespacho({
-                  ...filtrosOrdenesDespacho,
-                  filtro2: e.target.checked ? e.target.value : "",
-                })
-              }
-            />
-            <label htmlFor="checkboxOpcion1" className="filter-checkbox-label">
-              Opción 1
-            </label>
-          </div>
-          <div className="filter-checkbox-container">
-            <input
-              type="checkbox"
-              id="checkboxOpcion2"
-              value={"opcion2"}
-              onChange={(e) =>
-                setFiltrosOrdenesDespacho({
-                  ...filtrosOrdenesDespacho,
-                  filtro3: e.target.checked ? e.target.value : "",
-                })
-              }
-            />
-            <label htmlFor="checkboxOpcion2" className="filter-checkbox-label">
-              Opción 2
-            </label>
-          </div>
-        </div>
-
-        <button
-          className="bg-black w-full py-2 text-white my-4 rounded-md"
-          onClick={() => onSearchFiltroOD()}
-        >
-          Buscar
-        </button>
-      </FilterComponent>
-
       {/*carrito de compras */}
-      <FilterComponent
+
+      <div className="relative">
+        <button
+          onClick={() => setOpenCarritoGrupos(true)}
+          className="z-50 fixed right-6 bottom-6 bg-gray-300 rounded-full py-6 px-6 scale-100 
+                      sm:scale-110 hover:scale-125  hover:ring-gray-400 hover:ring-2 shadow-md shadow-gray-600"
+        >
+          <AppRegistrationIcon sx={{ fontSize: 25 }} />
+        </button>
+      </div>
+
+      <SlideOverComponent
         open={openCarritoGrupos}
         setOpen={setOpenCarritoGrupos}
         title={"Ordenes de Despacho Selecionadas"}
@@ -478,7 +474,7 @@ const AgruparODPage = () => {
             </>
           )}
         </div>
-      </FilterComponent>
+      </SlideOverComponent>
     </div>
   );
 };

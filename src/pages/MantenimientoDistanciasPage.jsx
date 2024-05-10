@@ -20,7 +20,6 @@ import AlertMessage from "../components/widgets/AlertMessage";
 
 const MantenimientoDistanciasPage = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
   const [distancias, setDistancias] = useState([]);
   const [distanciaSelected, setDistanciaSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
@@ -87,18 +86,7 @@ const MantenimientoDistanciasPage = () => {
         >
           Nuevo
         </button>
-        <div className="w-1/6 lg:w-1/12 text-center content-center grid justify-items-center">
-          <div className="w-5 ml-4">
-            <button onClick={() => setOpenFilter(true)}>
-              <FilterAltIcon />
-            </button>
-          </div>
-          <FilterComponent
-            open={openFilter}
-            setOpen={setOpenFilter}
-            title={"Filtrar Distancias"}
-          ></FilterComponent>
-        </div>
+        <FilterComponent title={"Filtrar Distancias"}></FilterComponent>
       </div>
       <ModalMessage
         open={openModal}
@@ -141,7 +129,7 @@ const MantenimientoDistanciasPage = () => {
               <tr key={d.id}>
                 <td>{d.sed_descor}</td>
                 <td>{d.ubi_des}</td>
-                <td>{(d.ruk_kilometros).toFixed(2)}</td>
+                <td>{d.ruk_kilometros.toFixed(2)}</td>
                 <td className="space-x-2">
                   <EditIcon
                     className="text-gray-700 cursor-pointer"

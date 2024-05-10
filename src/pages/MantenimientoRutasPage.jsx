@@ -14,7 +14,6 @@ import FormAgregarDistritosToRutaComponent from "../components/FormAgregarDistri
 
 const MantenimientoRutasPage = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
   const [rutas, setRutas] = useState([]);
   const [rutaSelected, setRutaSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
@@ -94,18 +93,9 @@ const MantenimientoRutasPage = () => {
         >
           Nuevo
         </button>
-        <div className="w-1/6 lg:w-1/12 text-center content-center grid justify-items-center">
-          <div className="w-5 ml-4">
-            <button onClick={() => setOpenFilter(true)}>
-              <FilterAltIcon />
-            </button>
-          </div>
-          <FilterComponent
-            open={openFilter}
-            setOpen={setOpenFilter}
-            title={"Filtrar Vehiculos"}
-          ></FilterComponent>
-        </div>
+        <FilterComponent
+          title={"Filtrar Rutas"}
+        ></FilterComponent>
       </div>
 
       <ModalMessage
@@ -146,7 +136,11 @@ const MantenimientoRutasPage = () => {
         onBtnAceptar={<></>}
         showButtons={false}
       >
-        <FormAgregarDistritosToRutaComponent ruta={rutaSelected} setOpenModal={setOpenModalAsignDistrito} setOpenMessage={setOpenMessage}/>
+        <FormAgregarDistritosToRutaComponent
+          ruta={rutaSelected}
+          setOpenModal={setOpenModalAsignDistrito}
+          setOpenMessage={setOpenMessage}
+        />
       </ModalMessage>
 
       <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage} />

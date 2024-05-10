@@ -17,7 +17,6 @@ import FormDistritoRutaComponent from "../components/FormDistritoRutaComponent";
 
 const MantenimientoDistritosRutasPage = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
   const [rutaDistritos, setRutasDistritos] = useState([]);
   const [distritoSelected, setDistritoSelected] = useState(null);
   const [loadingTable, setLoadingTable] = useState(true);
@@ -72,18 +71,9 @@ const MantenimientoDistritosRutasPage = () => {
         >
           Nuevo
         </button>
-        <div className="w-1/6 lg:w-1/12 text-center content-center grid justify-items-center">
-          <div className="w-5 ml-4">
-            <button onClick={() => setOpenFilter(true)}>
-              <FilterAltIcon />
-            </button>
-          </div>
-          <FilterComponent
-            open={openFilter}
-            setOpen={setOpenFilter}
-            title={"Filtrar Vehiculos"}
-          ></FilterComponent>
-        </div>
+        <FilterComponent
+          title={"Filtrar Vehiculos"}
+        ></FilterComponent>
       </div>
       <ModalMessage
         open={openModal}

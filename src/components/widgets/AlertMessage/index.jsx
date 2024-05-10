@@ -19,7 +19,7 @@ const AlertMessage = ({openMessage,setOpenMessage}) => {
       >
         <Alert
           onClose={handleClose}
-          severity={openMessage.type}
+          severity={openMessage.type || 'success'}
           variant="filled"
           sx={{ width: "100%", scale: "1.2", marginLeft: "1em" }}
         >

@@ -22,7 +22,6 @@ import PaginationCustom from "../components/widgets/PaginationComponent/Paginati
 const MantenimientoVehiculosPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
   const [vehiculos, setVehiculos] = useState([]);
   const [loadingTable, setLoadingTable] = useState(true);
   const [vehiculoSelected, setVehiculoSelected] = useState(null);
@@ -96,18 +95,7 @@ const MantenimientoVehiculosPage = () => {
         >
           Nuevo
         </button>
-        <div className="w-1/6 lg:w-1/12 text-center content-center grid justify-items-center">
-          <div className="w-5 ml-4">
-            <button onClick={() => setOpenFilter(true)}>
-              <FilterAltIcon />
-            </button>
-          </div>
-          <FilterComponent
-            open={openFilter}
-            setOpen={setOpenFilter}
-            title={"Filtrar Vehiculos"}
-          ></FilterComponent>
-        </div>
+        <FilterComponent title={"Filtrar Vehiculos"}></FilterComponent>
       </div>
 
       <ModalMessage
@@ -206,33 +194,36 @@ const MantenimientoVehiculosPage = () => {
           <TableCustom cols={MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_MOBILE}>
             {!loadingTable ? (
               vehiculos &&
-              vehiculos.result.map((v,index) => index !== 0 && (
-                <tr key={v.id}>
-                  <td>
-                    <div>{v.id}</div>
-                    <div>{v.utr_codutr}</div>
-                    <div>{v.utr_desutr}</div>
-                    <div>{v.utr_plautr}</div>
-                    <div>{v.utr_marutr}</div>
-                    <div>{v.cho_codcho}</div>
-                    <div>{v.utr_codusu}</div>
-                    <div>{v.utr_conrep}</div>
-                    <div>{v.utr_tercero}</div>
-                    <div>{v.utr_prvruc}</div>
-                    <div>{v.utr_prvrso}</div>
-                  </td>
-                  <td className="space-y-4">
-                    <EditIcon
-                      className="text-gray-700 cursor-pointer mb-6"
-                      onClick={() => handleSelectedVehiculo(v)}
-                    />
-                    <DeleteIcon
-                      className="text-red-600 cursor-pointer"
-                      onClick={() => handleSelectedDeleteVehiculo(v)}
-                    />
-                  </td>
-                </tr>
-              ))
+              vehiculos.result.map(
+                (v, index) =>
+                  index !== 0 && (
+                    <tr key={v.id}>
+                      <td>
+                        <div>{v.id}</div>
+                        <div>{v.utr_codutr}</div>
+                        <div>{v.utr_desutr}</div>
+                        <div>{v.utr_plautr}</div>
+                        <div>{v.utr_marutr}</div>
+                        <div>{v.cho_codcho}</div>
+                        <div>{v.utr_codusu}</div>
+                        <div>{v.utr_conrep}</div>
+                        <div>{v.utr_tercero}</div>
+                        <div>{v.utr_prvruc}</div>
+                        <div>{v.utr_prvrso}</div>
+                      </td>
+                      <td className="space-y-4">
+                        <EditIcon
+                          className="text-gray-700 cursor-pointer mb-6"
+                          onClick={() => handleSelectedVehiculo(v)}
+                        />
+                        <DeleteIcon
+                          className="text-red-600 cursor-pointer"
+                          onClick={() => handleSelectedDeleteVehiculo(v)}
+                        />
+                      </td>
+                    </tr>
+                  )
+              )
             ) : (
               <tr>
                 <td
