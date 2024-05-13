@@ -10,6 +10,7 @@ import ModalMessage from "../widgets/ModalComponent";
 import ParticionarODComponent from "../ParticionarODComponent";
 import { ORDENES_DESPACHO_TABLE_COLS_DESKTOP } from "../../utils/general";
 import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
+import { convertirDateTimeToDate } from "../../utils/funciones";
 
 const ListOrdenesDespachoComponent = ({
   ordenesDespacho=objOrdenesDespachoEntity,
@@ -86,7 +87,7 @@ const ListOrdenesDespachoComponent = ({
                     (orden.grupo ? <></> : handleSelectRow(orden))
                   }
                 >
-                  {orden.item}
+                  {orden.odc_numodc.trim()}
                 </td>
                 <td
                   onClick={() =>
@@ -95,8 +96,7 @@ const ListOrdenesDespachoComponent = ({
                   }
                 >
                   <div className="td-group">
-                    <div>{orden.numeroPedido}</div>
-                    <div>{orden.emisionPedido}</div>
+                    <div>{orden.ppc_numppc.trim()}</div>
                   </div>
                 </td>
                 <td
@@ -106,10 +106,10 @@ const ListOrdenesDespachoComponent = ({
                   }
                 >
                   <div className="td-group">
-                    <div>{orden.numeroOrdenDespacho}</div>
+                    <div>{orden.odc_numodc.trim()}</div>
                   </div>
                   <div className="td-group">
-                    <div>{orden.emisionOrden}</div>
+                    <div>{convertirDateTimeToDate(orden.odc_fecdoc.trim())}</div>
                   </div>
                 </td>
                 <td
@@ -118,7 +118,7 @@ const ListOrdenesDespachoComponent = ({
                     (orden.grupo ? <></> : handleSelectRow(orden))
                   }
                 >
-                  {orden.canal}
+                  {orden.odc_obsodc.trim()}
                 </td>
                 <td
                   onClick={() =>
@@ -127,9 +127,9 @@ const ListOrdenesDespachoComponent = ({
                   }
                 >
                   <div className="td-group">
-                    <div>{orden.cliente}</div>
-                    <div>{orden.direccionEntrega}</div>
-                    <div>{orden.ubigeo}</div>
+                    <div><label htmlFor="">Almacen: </label>{orden.alm_codalm}</div>
+                    <div>{orden.pro_codpro}</div>
+                    <div>{orden.alm_codtra}</div>
                   </div>
                 </td>
                 <td
@@ -250,7 +250,7 @@ const ListOrdenesDespachoComponent = ({
                             checked={
                               carritoOrdenesDespacho &&
                               carritoOrdenesDespacho.find(
-                                (o) => o.item === orden.item
+                                (o) => o.odc_numdoc === orden.odc_numdoc
                               )
                                 ? true
                                 : false

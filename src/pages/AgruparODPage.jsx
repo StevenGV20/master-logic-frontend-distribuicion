@@ -17,7 +17,7 @@ import { PAGE_AGRUPAR_OD } from "../utils/titles";
 import { API_DISTRIBUCION, URL_MASTERLOGIC_API } from "../utils/general";
 import ListODOsisComponent from "../components/ListODOsisComponent/TableCheckbox";
 import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacionODComponent";
-import { getFetchFunction } from "../utils/funciones";
+import { convertirDateTimeToDate, getFetchFunction } from "../utils/funciones";
 import SlideOverComponent from "../components/widgets/SlideOverComponent";
 import { objOrdenesDespachoEntity } from "../api/ordenesDespachoApi";
 
@@ -145,15 +145,19 @@ const AgruparODPage = () => {
   const [openCarritoGrupos, setOpenCarritoGrupos] = useState(false);
 
   const handleSelectRow = async (orden) => {
-    const od = carritoOrdenesDespacho.find((o) => o.item === orden.item);
+    console.log(orden);
+    console.log(carritoOrdenesDespacho);
+    const od = carritoOrdenesDespacho.find((o) => o.odc_numodc === orden.odc_numodc);
     if (!od) {
       setCarritoOrdenesDespacho([...carritoOrdenesDespacho, orden]);
     } else {
       const newLista = carritoOrdenesDespacho.filter(
-        (o) => o.item != orden.item
+        (o) => o.odc_numodc != orden.odc_numodc
       );
+      console.log(newLista);
       setCarritoOrdenesDespacho(newLista);
     }
+    
   };
 
   const [ordenesDespachoOsis, setOrdenesDespachoOsis] = useState([]);
@@ -165,17 +169,17 @@ const AgruparODPage = () => {
     numeroOrden: "",
     emisionOrden: "",
   });
-
+  const [loadingTableOsis, setLoadingTableOsis] = useState(true);
+  
   const onSearchOsis = () => {
-    const fetchOrdenesDespachoOsis = async (filtros) => {
+    const fetchOrdenesDespachoOsis = async () => {
       try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/db.json`);
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        console.log(data);
-        setOrdenesDespachoOsis(data.ordenesDespachoOsis);
+        await getFetchFunction(
+          `${API_DISTRIBUCION}/listaOrdenDespachoFromOsis?fecppc=${convertirDateTimeToDate(filtrosOsis.emisionPedido)}&fecodc=${convertirDateTimeToDate(filtrosOsis.emisionOrden)}&numODC=${filtrosOsis.numeroOrden}&numPPC=${filtrosOsis.numeroPedido}&cia=01`,
+          setLoadingTableOsis,
+          setOrdenesDespachoOsis
+        );
+        
       } catch (error) {
         console.error(error);
       }
@@ -439,7 +443,7 @@ const AgruparODPage = () => {
             </button>
           </div>
         </div>
-        <ListODOsisComponent data={ordenesDespachoOsis} />
+        <ListODOsisComponent data={ordenesDespachoOsis.result} loadingTableOsis={loadingTableOsis}/>
       </ModalMessage>
 
       {/*carrito de compras */}

@@ -15,10 +15,12 @@ import {
   calcularMontoTotal,
   calcularPesoTotal,
   calcularVolumenTotal,
+  convertirDateTimeToDate,
 } from "../../utils/funciones";
+import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
 
 const FormCarritoAgrupacionODComponent = ({
-  carritoOrdenesDespacho,
+  carritoOrdenesDespacho=objOrdenesDespachoEntity.result,
   handleSelectRow,
 }) => {
   registerLocale("es", es);
@@ -68,15 +70,15 @@ const FormCarritoAgrupacionODComponent = ({
             <div>
               <label>Pedido:</label>
               <div className="flex space-x-4">
-                <div>{orden.numeroPedido}</div>
+                <div>{orden.ppc_numppc}</div>
                 <div>{orden.emisionPedido}</div>
               </div>
             </div>
             <div>
               <label>Orden de Despacho:</label>
               <div className="flex space-x-4">
-                <div>{orden.numeroOrdenDespacho}</div>
-                <div>{orden.emisionOrdenDespacho}</div>
+                <div>{orden.odc_numodc}</div>
+                <div>{convertirDateTimeToDate(orden.odc_fecdoc)}</div>
               </div>
             </div>
             <div>
@@ -126,7 +128,7 @@ const FormCarritoAgrupacionODComponent = ({
         >
           <option value="">[ Seleecione ]</option>
           {sedesCombo.map((sede) => (
-            <option value={sede.sede}>{sede.sede}</option>
+            <option value={sede.sed_codsed}>{sede.sed_descor}</option>
           ))}
         </select>
         <label htmlFor="">ENTREGA</label>

@@ -21,33 +21,7 @@ import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
-
-function createData(id, name, calories, fat, carbs, protein) {
-  return {
-    id,
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-  };
-}
-
-const rows = [
-  createData(1, "Cupcake", 305, 3.7, 67, 4.3),
-  createData(2, "Donut", 452, 25.0, 51, 4.9),
-  createData(3, "Eclair", 262, 16.0, 24, 6.0),
-  createData(4, "Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData(5, "Gingerbread", 356, 16.0, 49, 3.9),
-  createData(6, "Honeycomb", 408, 3.2, 87, 6.5),
-  createData(7, "Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData(8, "Jelly Bean", 375, 0.0, 94, 0.0),
-  createData(9, "KitKat", 518, 26.0, 65, 7.0),
-  createData(10, "Lollipop", 392, 0.2, 98, 0.0),
-  createData(11, "Marshmallow", 318, 0, 81, 2.0),
-  createData(12, "Nougat", 360, 19.0, 9, 37.0),
-  createData(13, "Oreo", 437, 18.0, 63, 4.0),
-];
+import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -234,7 +208,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function ListODOsisComponent({ data }) {
+export default function ListODOsisComponent({ data=objOrdenesDespachoEntity.result }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -249,7 +223,7 @@ export default function ListODOsisComponent({ data }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = data.map((n) => n.item);
+      const newSelected = data.map((n) => n.odc_numodc);
       setSelected(newSelected);
       return;
     }
@@ -288,11 +262,11 @@ export default function ListODOsisComponent({ data }) {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(rows, getComparator(order, orderBy)).slice(
+      stableSort(data, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
@@ -314,18 +288,18 @@ export default function ListODOsisComponent({ data }) {
               rowCount={data.length}
             />
             <TableBody>
-              {data.map((row, index) => {
-                const isItemSelected = isSelected(row.item);
+              {visibleRows.map((row, index) => {
+                const isItemSelected = isSelected(row.odc_numodc);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.item)}
+                    onClick={(event) => handleClick(event, row.odc_numodc)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.item}
+                    key={row.odc_numodc}
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
@@ -344,10 +318,10 @@ export default function ListODOsisComponent({ data }) {
                       scope="row"
                       padding="none"
                     >
-                      {row.numeroPedido}
+                      {row.ppc_numppc}
                     </TableCell>
-                    <TableCell align="right">{row.emisionPedido}</TableCell>
-                    <TableCell align="right">{row.numeroOrden}</TableCell>
+                    <TableCell align="right">{row.odc_fecdoc}</TableCell>
+                    <TableCell align="right">{row.odc_numodc}</TableCell>
                     <TableCell align="right">{row.canal}</TableCell>
                     <TableCell align="right">{row.cliente}</TableCell>
                   </TableRow>
@@ -362,7 +336,7 @@ export default function ListODOsisComponent({ data }) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}

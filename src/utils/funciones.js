@@ -85,6 +85,21 @@ export const convertirTimeStringToDate = (horaString) => {
   return fechaHora;
 };
 
+export const convertirDateTimeToDate = (dia) => {
+  // Fecha en formato 'YYYY-MM-DD HH:mm:ss.SSS'
+  var fecha = new Date(dia);
+
+  // Obtener partes de la fecha
+  var año = fecha.getFullYear().toString();
+  var mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // El mes está basado en cero, por lo que sumamos 1
+  var dia = fecha.getDate().toString().padStart(2, "0");
+
+  // Concatenar partes de la fecha en formato 'YYYYMMDD'
+  var fechaFormateada = año +"-"+ mes +"-"+ dia;
+
+  return fechaFormateada; // Salida: '20071009'
+};
+
 export const getFetchFunction = async (path, setLoadingTable, setData) => {
   try {
     const token = localStorage.getItem("USUARIO_TOKEN");
