@@ -8,7 +8,7 @@ import { PAGE_AGRUPAR_OD } from "../../utils/titles";
 import { Checkbox, CircularProgress, MenuItem, Select } from "@mui/material";
 import ModalMessage from "../widgets/ModalComponent";
 import ParticionarODComponent from "../ParticionarODComponent";
-import { ORDENES_DESPACHO_TABLE_COLS_DESKTOP } from "../../utils/general";
+import { ORDENES_DESPACHO_TABLE_COLS_DESKTOP, PEN_CURRENCY } from "../../utils/general";
 import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
 import { convertirDateTimeToDate } from "../../utils/funciones";
 
@@ -52,24 +52,10 @@ const ListOrdenesDespachoComponent = ({
 
   return (
     <div>
-      <div className="flex space-x-4 place-items-center">
-        <div>Mostrar:</div>
-        <Select
-          value={limit}
-          id="demo-select-small"
-          onChange={(e) => handleChangeLimit(e)}
-         
-        >
-          <MenuItem value={10}>10</MenuItem>
-          <MenuItem value={25}>25</MenuItem>
-          <MenuItem value={50}>50</MenuItem>
-          <MenuItem value={100}>100</MenuItem>
-        </Select>
-      </div>
       <div className="desktop my-6">
         <TableCustom cols={ORDENES_DESPACHO_TABLE_COLS_DESKTOP}>
           {!loadingTable ? (
-            ordenesDespacho.result.map((orden) => (
+            ordenesDespacho && ordenesDespacho.result.map((orden) => (
               <tr
                 className={
                   !orden.grupo && titlePage.match(PAGE_AGRUPAR_OD)
@@ -87,7 +73,7 @@ const ListOrdenesDespachoComponent = ({
                     (orden.grupo ? <></> : handleSelectRow(orden))
                   }
                 >
-                  {orden.odc_numodc.trim()}
+                  {orden.odc_numodc}
                 </td>
                 <td
                   onClick={() =>
@@ -96,7 +82,7 @@ const ListOrdenesDespachoComponent = ({
                   }
                 >
                   <div className="td-group">
-                    <div>{orden.ppc_numppc.trim()}</div>
+                    <div>{orden.ppc_numppc}</div>
                   </div>
                 </td>
                 <td
@@ -106,10 +92,10 @@ const ListOrdenesDespachoComponent = ({
                   }
                 >
                   <div className="td-group">
-                    <div>{orden.odc_numodc.trim()}</div>
+                    <div>{orden.odc_numodc}</div>
                   </div>
                   <div className="td-group">
-                    <div>{convertirDateTimeToDate(orden.odc_fecdoc.trim())}</div>
+                    <div>{orden.odc_fecdoc && convertirDateTimeToDate(orden.odc_fecdoc)}</div>
                   </div>
                 </td>
                 <td
@@ -118,7 +104,7 @@ const ListOrdenesDespachoComponent = ({
                     (orden.grupo ? <></> : handleSelectRow(orden))
                   }
                 >
-                  {orden.odc_obsodc.trim()}
+                  {orden.odc_obsodc}
                 </td>
                 <td
                   onClick={() =>
@@ -127,9 +113,10 @@ const ListOrdenesDespachoComponent = ({
                   }
                 >
                   <div className="td-group">
-                    <div><label htmlFor="">Almacen: </label>{orden.alm_codalm}</div>
+                    {/* <div><label htmlFor="">Almacen: </label>{orden.alm_codalm}</div>
                     <div>{orden.pro_codpro}</div>
-                    <div>{orden.alm_codtra}</div>
+                    <div>{orden.alm_codtra}</div> */}
+                    <div>{orden.aux_nomaux}</div>
                   </div>
                 </td>
                 <td
@@ -142,7 +129,7 @@ const ListOrdenesDespachoComponent = ({
                     <div>{orden.volumen}</div>
                     <div>{orden.bultos} bultos</div>
                     <div>{orden.peso}</div>
-                    <div>S/. {orden.monto && orden.monto.toFixed(2)}</div>
+                    <div>{PEN_CURRENCY} {orden.odc_imptot && orden.odc_imptot.toFixed(2)}</div>
                   </div>
                 </td>
                 <td className="td-group bg-transparent text-center">
@@ -188,19 +175,19 @@ const ListOrdenesDespachoComponent = ({
               <tr className="grid grid-cols-6" key={orden.odc_numodc}>
                 <td className="col-span-4">
                   <div className="td-group-mobile">
-                    <label className="w-full text-left">{orden.item}</label>
+                    <label className="w-full text-left">{orden.odc_numodc}</label>
                     <div>
                       <label>Pedido:</label>
                       <div className="flex space-x-4">
-                        <div>{orden.numeroPedido}</div>
+                        <div>{orden.ppc_numppc}</div>
                         <div>{orden.emisionPedido}</div>
                       </div>
                     </div>
                     <div>
                       <label>Orden de Despacho:</label>
                       <div className="flex space-x-4">
-                        <div>{orden.numeroOrdenDespacho}</div>
-                        <div>{orden.emisionOrdenDespacho}</div>
+                        <div>{orden.odc_numodc}</div>
+                        <div>{orden.odc_fecdoc}</div>
                       </div>
                     </div>
                     <div>
@@ -208,7 +195,7 @@ const ListOrdenesDespachoComponent = ({
                     </div>
                     <div>
                       <label>Cliente:</label>
-                      <div>{orden.cliente}</div>
+                      <div>{orden.aux_nomaux}</div>
                       <div>{orden.direccionEntrega}</div>
                       <div>{orden.ubigeo}</div>
                     </div>
@@ -218,7 +205,7 @@ const ListOrdenesDespachoComponent = ({
                         <div>{orden.volumen}</div>
                         <div>{orden.bultos} bultos</div>
                         <div>{orden.peso}</div>
-                        <div>S/. {orden.monto && orden.monto.toFixed(2)}</div>
+                        <div>{PEN_CURRENCY} {orden.odc_imptot && orden.odc_imptot.toFixed(2)}</div>
                       </div>
                     </div>
                   </div>
@@ -250,7 +237,7 @@ const ListOrdenesDespachoComponent = ({
                             checked={
                               carritoOrdenesDespacho &&
                               carritoOrdenesDespacho.find(
-                                (o) => o.odc_numdoc === orden.odc_numdoc
+                                (o) => o.odc_numodc === orden.odc_numodc
                               )
                                 ? true
                                 : false

@@ -18,6 +18,7 @@ import {
   convertirDateTimeToDate,
 } from "../../utils/funciones";
 import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
+import { PEN_CURRENCY } from "../../utils/general";
 
 const FormCarritoAgrupacionODComponent = ({
   carritoOrdenesDespacho=objOrdenesDespachoEntity.result,
@@ -96,7 +97,7 @@ const FormCarritoAgrupacionODComponent = ({
                 <div>{orden.volumen}</div>
                 <div>{orden.bultos} bultos</div>
                 <div>{orden.peso}</div>
-                <div>S/. {orden.monto && orden.monto.toFixed(2)}</div>
+                <div>{PEN_CURRENCY} {orden.monto && orden.monto.toFixed(2)}</div>
               </div>
             </div>
           </div>

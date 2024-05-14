@@ -22,6 +22,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
+import { useEffect } from "react";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -208,10 +209,15 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function ListODOsisComponent({ data=objOrdenesDespachoEntity.result }) {
+export default function ListODOsisComponent({
+  data = objOrdenesDespachoEntity.result,
+  loadingTableOsis,
+  selected,
+  setSelected,
+}) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
-  const [selected, setSelected] = React.useState([]);
+  //const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -223,7 +229,7 @@ export default function ListODOsisComponent({ data=objOrdenesDespachoEntity.resu
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = data.map((n) => n.odc_numodc);
+      const newSelected = data.map((n) => n);
       setSelected(newSelected);
       return;
     }
@@ -270,7 +276,7 @@ export default function ListODOsisComponent({ data=objOrdenesDespachoEntity.resu
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage]
+    [order, orderBy, page, rowsPerPage, loadingTableOsis]
   );
 
   return (
@@ -288,55 +294,57 @@ export default function ListODOsisComponent({ data=objOrdenesDespachoEntity.resu
               rowCount={data.length}
             />
             <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.odc_numodc);
-                const labelId = `enhanced-table-checkbox-${index}`;
+              {!loadingTableOsis && (
+                visibleRows.map((row, index) => {
+                  const isItemSelected = isSelected(row);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.odc_numodc)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.odc_numodc}
-                    selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.odc_numodc+""+row.ppc_numppc}
+                      selected={isItemSelected}
+                      sx={{ cursor: "pointer" }}
                     >
-                      {row.ppc_numppc}
-                    </TableCell>
-                    <TableCell align="right">{row.odc_fecdoc}</TableCell>
-                    <TableCell align="right">{row.odc_numodc}</TableCell>
-                    <TableCell align="right">{row.canal}</TableCell>
-                    <TableCell align="right">{row.cliente}</TableCell>
-                  </TableRow>
-                );
-              })}
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            "aria-labelledby": labelId,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {row.ppc_numppc}
+                      </TableCell>
+                      <TableCell align="right">{row.odc_fecdoc}</TableCell>
+                      <TableCell align="center">{row.odc_numodc}</TableCell>
+                      <TableCell align="right">{row.canal}</TableCell>
+                      <TableCell align="center">{row.aux_nomaux}</TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
               {emptyRows > 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={6} className="text-center">No se encontraron registros</TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
+          rowsPerPageOptions={[5, 10, 25, 50]}
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}

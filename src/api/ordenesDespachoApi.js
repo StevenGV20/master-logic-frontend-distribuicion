@@ -54,6 +54,7 @@ const objOrdenesDespachoEntity = {
       odc_nompre: "",
       odc_indcan: "",
       aux_codaux: "",
+      aux_nomaux: "",
       lde_codlde: "",
       pro_codpro: "",
       zve_codzve: "",

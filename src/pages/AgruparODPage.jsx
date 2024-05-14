@@ -20,22 +20,21 @@ import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacio
 import { convertirDateTimeToDate, getFetchFunction } from "../utils/funciones";
 import SlideOverComponent from "../components/widgets/SlideOverComponent";
 import { objOrdenesDespachoEntity } from "../api/ordenesDespachoApi";
+import FormFiltroODFromOsis from "../components/FormFIltroODFromOsis";
+import AlertMessage from "../components/widgets/AlertMessage";
+import PaginationCustom from "../components/widgets/PaginationComponent/PaginationCustom";
 
 const AgruparODPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
 
-  const onImportarOD = () => {
-    setOpenModal(false);
-    setOrdenesDespachoOsis([]);
-  };
-
   registerLocale("es", es);
   setDefaultLocale("es");
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [openEndDate, setOpenEndDate] = useState(false);
+  const [refreshTable, setRefreshTable] = useState(true);
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -56,29 +55,31 @@ const AgruparODPage = () => {
     });
   };
 
-  const [ordenesDespacho, setOrdenesDespacho] = useState(objOrdenesDespachoEntity);
+  const [ordenesDespacho, setOrdenesDespacho] = useState(
+    objOrdenesDespachoEntity
+  );
   const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
-    const fetchOrdenesDespacho = async () => {
+    /* const fetchOrdenesDespacho = async () => {
       try {
         await getFetchFunction(
-          `${API_DISTRIBUCION}/listaOrdenDespacho`,
+          `${API_DISTRIBUCION}/listaOrdenDespachoFiltros?page=${page}&limit=${limit}&cia=01`,
           setLoadingTable,
           setOrdenesDespacho
         );
       } catch (error) {
         console.error(error);
       }
-    };
-    fetchOrdenesDespacho();
-  }, []);
+    }; */
+    findOrdenesDespacho(1, 10);
+  }, [refreshTable]);
 
-  const findOrdenesDespacho = (page, limit) => {
+  const findOrdenesDespacho = (page, limit,fromFilter=true) => {
     const fetchOrdenesDespacho = async () => {
       try {
         await getFetchFunction(
-          `${API_DISTRIBUCION}/listaOrdenDespacho?page=${page}&limit=${limit}`,
+          `${API_DISTRIBUCION}/listaOrdenDespachoFiltros?page=${page}&limit=${limit}&cia=01&dateStart=${convertirDateTimeToDate(filtrosOrdenesDespacho.fechaInicio)}&dateEnd=${convertirDateTimeToDate(filtrosOrdenesDespacho.fechaFinal)}&orderBy=${filtrosOrdenesDespacho.filtro1}`,
           setLoadingTable,
           setOrdenesDespacho
         );
@@ -95,7 +96,7 @@ const AgruparODPage = () => {
     filtro1: "",
     filtro2: "",
     filtro3: "",
-    btnFechaSelected: "",
+    btnFechaSelected: "btnFechaToday",
   });
 
   const handleChangeFechaButtonFiltro = (tipo) => {
@@ -129,15 +130,16 @@ const AgruparODPage = () => {
   const onSearchFiltroOD = () => {
     const filtros = filtrosOrdenesDespacho;
     delete filtros.btnFechaSelected;
-    alert(JSON.stringify(filtros, null, 2));
-    /* 
-    setFiltrosOrdenesDespacho({
+    //alert(JSON.stringify(filtros, null, 2));
+    findOrdenesDespacho(1, 10);
+    
+    /* setFiltrosOrdenesDespacho({
       fechaInicio: new Date(),
       fechaFinal: new Date(),
-      filtro1: "",
+      filtro1: "numodc",
       filtro2: "",
       filtro3: "",
-      btnFechaSelected: "",
+      btnFechaSelected: "btnFechaToday",
     }); */
   };
 
@@ -147,7 +149,9 @@ const AgruparODPage = () => {
   const handleSelectRow = async (orden) => {
     console.log(orden);
     console.log(carritoOrdenesDespacho);
-    const od = carritoOrdenesDespacho.find((o) => o.odc_numodc === orden.odc_numodc);
+    const od = carritoOrdenesDespacho.find(
+      (o) => o.odc_numodc === orden.odc_numodc
+    );
     if (!od) {
       setCarritoOrdenesDespacho([...carritoOrdenesDespacho, orden]);
     } else {
@@ -157,35 +161,9 @@ const AgruparODPage = () => {
       console.log(newLista);
       setCarritoOrdenesDespacho(newLista);
     }
-    
   };
 
-  const [ordenesDespachoOsis, setOrdenesDespachoOsis] = useState([]);
-  const [filtrosOsis, setFiltrosOsis] = useState({
-    canal: "",
-    cliente: "",
-    numeroPedido: "",
-    emisionPedido: "",
-    numeroOrden: "",
-    emisionOrden: "",
-  });
-  const [loadingTableOsis, setLoadingTableOsis] = useState(true);
-  
-  const onSearchOsis = () => {
-    const fetchOrdenesDespachoOsis = async () => {
-      try {
-        await getFetchFunction(
-          `${API_DISTRIBUCION}/listaOrdenDespachoFromOsis?fecppc=${convertirDateTimeToDate(filtrosOsis.emisionPedido)}&fecodc=${convertirDateTimeToDate(filtrosOsis.emisionOrden)}&numODC=${filtrosOsis.numeroOrden}&numPPC=${filtrosOsis.numeroPedido}&cia=01`,
-          setLoadingTableOsis,
-          setOrdenesDespachoOsis
-        );
-        
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchOrdenesDespachoOsis();
-  };
+  const [openMessage, setOpenMessage] = useState(false);
 
   return (
     <div className="page-container">
@@ -205,6 +183,7 @@ const AgruparODPage = () => {
           <div>
             <input
               type="text"
+              value={filtrosOrdenesDespacho.filtro1}
               className="modal-group-input w-full rounded-md border-blue-800 focus:border-blue-700 focus:shadow-md focus:shadow-blue-400"
               onChange={(e) =>
                 setFiltrosOrdenesDespacho({
@@ -258,7 +237,7 @@ const AgruparODPage = () => {
             <div className="w-1/2">
               <label>Fecha de inicio: </label>
               <DatePicker
-                selected={startDate}
+                selected={filtrosOrdenesDespacho.fechaInicio}
                 onChange={handleStartDateChange}
                 selectsStart
                 startDate={startDate}
@@ -272,7 +251,7 @@ const AgruparODPage = () => {
             <div className="w-1/2">
               <label>Fecha de fin: </label>
               <DatePicker
-                selected={endDate}
+                selected={filtrosOrdenesDespacho.fechaFinal}
                 onChange={handleEndDateChange}
                 selectsEnd
                 startDate={startDate}
@@ -336,114 +315,41 @@ const AgruparODPage = () => {
           </button>
         </FilterComponent>
       </div>
-      <ListOrdenesDespachoComponent
-        ordenesDespacho={ordenesDespacho}
-        setOrdenesDespacho={setOrdenesDespacho}
-        showButtonDelete={true}
-        showPagination={true}
-        carritoOrdenesDespacho={carritoOrdenesDespacho}
-        setCarritoOrdenesDespacho={setCarritoOrdenesDespacho}
-        titlePage={PAGE_AGRUPAR_OD}
-        loadingTable={loadingTable}
-        handleSelectRow={handleSelectRow}
-        findOrdenesDespacho={findOrdenesDespacho}
-      />
 
+      <AlertMessage openMessage={openMessage} setOpenMessage={setOpenMessage} />
+
+      <PaginationCustom
+        totalRows={
+          ordenesDespacho.totalRows && ordenesDespacho.totalRows.totalrows
+        }
+        fetchData={findOrdenesDespacho}
+      >
+        <ListOrdenesDespachoComponent
+          ordenesDespacho={ordenesDespacho}
+          setOrdenesDespacho={setOrdenesDespacho}
+          showButtonDelete={true}
+          showPagination={false}
+          carritoOrdenesDespacho={carritoOrdenesDespacho}
+          setCarritoOrdenesDespacho={setCarritoOrdenesDespacho}
+          titlePage={PAGE_AGRUPAR_OD}
+          loadingTable={loadingTable}
+          handleSelectRow={handleSelectRow}
+          findOrdenesDespacho={findOrdenesDespacho}
+        />
+      </PaginationCustom>
       {/*importar desde OSIS/SAP */}
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
         title={"Importar Ordenes de Despacho"}
         titleBtnAceptar={"Importar OD"}
-        onBtnAceptar={onImportarOD}
+        showButtons={false}
       >
-        <div className="modal-group-container text-black">
-          <div className="modal-group-item-container">
-            <label htmlFor="">Canal:</label>
-            <input
-              type="text"
-              className="modal-group-input-md"
-              value={filtrosOsis.canal}
-              onChange={(e) =>
-                setFiltrosOsis({ ...filtrosOsis, canal: e.target.value })
-              }
-            />
-          </div>
-          <div className="modal-group-control-container w-full">
-            <div className="modal-group-item-container grid-cols-4 w-full">
-              <label htmlFor="" className="col-span-1">
-                Cliente:
-              </label>
-              <input
-                type="text"
-                className="col-span-3 modal-group-input-md"
-                value={filtrosOsis.cliente}
-                onChange={(e) =>
-                  setFiltrosOsis({ ...filtrosOsis, cliente: e.target.value })
-                }
-              />
-            </div>
-          </div>
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">N° Pedido:</label>
-              <input
-                type="text"
-                className="modal-group-input-md"
-                value={filtrosOsis.numeroPedido}
-                onChange={(e) =>
-                  setFiltrosOsis({
-                    ...filtrosOsis,
-                    numeroPedido: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Emision Pedido:</label>
-              <DatePicker
-                selected={filtrosOsis.emisionPedido}
-                onChange={(date) =>
-                  setFiltrosOsis({ ...filtrosOsis, emisionPedido: date })
-                }
-                selectsStart
-                locale="es"
-                dateFormat="dd/MM/yyyy"
-                popperPlacement="bottom-end"
-                className="modal-group-input-md"
-              />
-            </div>
-          </div>
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">N° Orden:</label>
-              <input type="text" className="modal-group-input-md" />
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Emision Orden:</label>
-              <DatePicker
-                selected={filtrosOsis.emisionOrden}
-                onChange={(date) =>
-                  setFiltrosOsis({ ...filtrosOsis, emisionOrden: date })
-                }
-                selectsStart
-                locale="es"
-                dateFormat="dd/MM/yyyy"
-                popperPlacement="bottom-end"
-                className="modal-group-input-md"
-              />
-            </div>
-          </div>
-          <div className="w-full flex justify-end">
-            <button
-              className="bg-black w-full md:w-1/2 lg:w-1/3 py-2 text-white my-4 rounded-md"
-              onClick={() => onSearchOsis()}
-            >
-              Buscar
-            </button>
-          </div>
-        </div>
-        <ListODOsisComponent data={ordenesDespachoOsis.result} loadingTableOsis={loadingTableOsis}/>
+        <FormFiltroODFromOsis
+          setOpen={setOpenModal}
+          setOpenMessage={setOpenMessage}
+          setRefreshTable={setRefreshTable}
+        />
       </ModalMessage>
 
       {/*carrito de compras */}
