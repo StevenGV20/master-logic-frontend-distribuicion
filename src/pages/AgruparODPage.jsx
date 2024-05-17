@@ -5,7 +5,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from "date-fns/locale/es";
 
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 
 import BreadcrumbComponent from "../components/widgets/BreadcrumbComponent";
@@ -14,8 +13,7 @@ import ModalMessage from "../components/widgets/ModalComponent";
 import FilterComponent from "../components/widgets/FilterComponent";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import { PAGE_AGRUPAR_OD } from "../utils/titles";
-import { API_DISTRIBUCION, URL_MASTERLOGIC_API } from "../utils/general";
-import ListODOsisComponent from "../components/ListODOsisComponent/TableCheckbox";
+import { API_DISTRIBUCION } from "../utils/general";
 import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacionODComponent";
 import { convertirDateTimeToDate, getFetchFunction } from "../utils/funciones";
 import SlideOverComponent from "../components/widgets/SlideOverComponent";
@@ -61,17 +59,6 @@ const AgruparODPage = () => {
   const [loadingTable, setLoadingTable] = useState(true);
 
   useEffect(() => {
-    /* const fetchOrdenesDespacho = async () => {
-      try {
-        await getFetchFunction(
-          `${API_DISTRIBUCION}/listaOrdenDespachoFiltros?page=${page}&limit=${limit}&cia=01`,
-          setLoadingTable,
-          setOrdenesDespacho
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    }; */
     findOrdenesDespacho(1, 10);
   }, [refreshTable]);
 

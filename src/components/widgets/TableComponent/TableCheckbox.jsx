@@ -15,7 +15,6 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { visuallyHidden } from "@mui/utils";
-import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -33,10 +32,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -49,39 +44,6 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const headCells = [
-  {
-    id: "ID",
-    numeric: false,
-    disablePadding: true,
-    label: "ID",
-  },
-  {
-    id: "PEDIDO",
-    numeric: true,
-    disablePadding: false,
-    label: "PEDIDO",
-  },
-  {
-    id: "OD",
-    numeric: true,
-    disablePadding: false,
-    label: "ORDEN DESPACHO",
-  },
-  {
-    id: "CANAL",
-    numeric: true,
-    disablePadding: false,
-    label: "CANAL",
-  },
-  {
-    id: "CLIENTE",
-    numeric: true,
-    disablePadding: false,
-    label: "CLIENTE",
-  },
-];
-
 function EnhancedTableHead(props) {
   const {
     onSelectAllClick,
@@ -90,6 +52,7 @@ function EnhancedTableHead(props) {
     numSelected,
     rowCount,
     onRequestSort,
+    headCells,
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -142,6 +105,7 @@ EnhancedTableHead.propTypes = {
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
+  headCells: PropTypes.array.isRequired,
 };
 
 function EnhancedTableToolbar(props) {
@@ -176,24 +140,22 @@ function EnhancedTableToolbar(props) {
           variant="h6"
           id="tableTitle"
           component="div"
-        >
-          Nutrition
-        </Typography>
+        ></Typography>
       )}
       {/* 
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )} */}
+        {numSelected > 0 ? (
+          <Tooltip title="Delete">
+            <IconButton>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Filter list">
+            <IconButton>
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+        )} */}
     </Toolbar>
   );
 }
@@ -202,12 +164,14 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function ListODOsisComponent({
-  data = objOrdenesDespachoEntity.result,
-  loadingTableOsis,
+const TableCheckbox = ({
+  headCells=[],
+  data,
+  loadingTable,
   selected,
   setSelected,
-}) {
+  children
+}) => {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   //const [selected, setSelected] = React.useState([]);
@@ -269,7 +233,7 @@ export default function ListODOsisComponent({
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage, loadingTableOsis]
+    [order, orderBy, page, rowsPerPage, loadingTable]
   );
 
   return (
@@ -287,7 +251,7 @@ export default function ListODOsisComponent({
               rowCount={data.length}
             />
             <TableBody>
-              {!loadingTableOsis && (
+              {!loadingTable &&
                 visibleRows.map((row, index) => {
                   const isItemSelected = isSelected(row);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -299,7 +263,7 @@ export default function ListODOsisComponent({
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.odc_numodc+""+row.ppc_numppc}
+                      key={row.odc_numodc + "" + row.ppc_numppc}
                       selected={isItemSelected}
                       sx={{ cursor: "pointer" }}
                     >
@@ -326,18 +290,19 @@ export default function ListODOsisComponent({
                       <TableCell align="center">{row.aux_nomaux}</TableCell>
                     </TableRow>
                   );
-                })
-              )}
+                })}
               {emptyRows > 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">No se encontraron registros</TableCell>
+                  <TableCell colSpan={headCells.length} className="text-center">
+                    No se encontraron registros
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50]}
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}
@@ -349,4 +314,6 @@ export default function ListODOsisComponent({
       </Paper>
     </Box>
   );
-}
+};
+
+export default TableCheckbox;
