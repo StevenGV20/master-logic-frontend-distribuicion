@@ -16,7 +16,11 @@ const ORDENES_DESPACHO_TABLE_COLS_DESKTOP = [
   "Volumen (m3)",
   "Bultos",
   "Peso",
+  "Monto",
+  "Ubigeo",
+  "Direccion de Entrega",
   "Distancia",
+  "Rango Hora",
   "Opciones",
 ];
 

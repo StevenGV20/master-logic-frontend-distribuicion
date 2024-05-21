@@ -152,6 +152,27 @@ export const postFetchFunction = async (path, values, setOpenMessage) => {
   }
 };
 
+export const putFetchFunction = async (path, values, fnActions) => {
+  try {
+    const token = localStorage.getItem("USUARIO_TOKEN");
+    const response = await fetch(`${URL_MASTERLOGIC_API}${path}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(values, null, 2),
+    });
+    if (!response.ok) {
+      throw new Error("Error al cargar el archivo JSON");
+    }
+    const data = await response.json();
+    fnActions(data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const deleteFetchFunction = async (path, values, setOpenMessage) => {
   try {
     const token = localStorage.getItem("USUARIO_TOKEN");

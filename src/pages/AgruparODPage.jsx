@@ -13,9 +13,13 @@ import ModalMessage from "../components/widgets/ModalComponent";
 import FilterComponent from "../components/widgets/FilterComponent";
 import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoComponent";
 import { PAGE_AGRUPAR_OD } from "../utils/titles";
-import { API_DISTRIBUCION } from "../utils/general";
+import {
+  API_DISTRIBUCION,
+  URL_MASTERLOGIC_API,
+  USERNAME_LOCAL,
+} from "../utils/general";
 import FormCarritoAgrupacionODComponent from "../components/FormCarritoAgrupacionODComponent";
-import { convertirDateTimeToDate, getFetchFunction } from "../utils/funciones";
+import { convertirDateTimeToDate, getFetchFunction, putFetchFunction } from "../utils/funciones";
 import SlideOverComponent from "../components/widgets/SlideOverComponent";
 import { objOrdenesDespachoEntity } from "../api/ordenesDespachoApi";
 import FormFiltroODFromOsis from "../components/FormFIltroODFromOsis";
@@ -58,15 +62,21 @@ const AgruparODPage = () => {
   );
   const [loadingTable, setLoadingTable] = useState(true);
 
+  const userLocal = localStorage.getItem("USERNAME");
+
   useEffect(() => {
     findOrdenesDespacho(1, 10);
   }, [refreshTable]);
 
-  const findOrdenesDespacho = (page, limit,fromFilter=true) => {
+  const findOrdenesDespacho = (page, limit, fromFilter = true) => {
     const fetchOrdenesDespacho = async () => {
       try {
         await getFetchFunction(
-          `${API_DISTRIBUCION}/listaOrdenDespachoFiltros?page=${page}&limit=${limit}&cia=01&dateStart=${convertirDateTimeToDate(filtrosOrdenesDespacho.fechaInicio)}&dateEnd=${convertirDateTimeToDate(filtrosOrdenesDespacho.fechaFinal)}&orderBy=${filtrosOrdenesDespacho.filtro1}`,
+          `${API_DISTRIBUCION}/listaOrdenDespachoFiltros?page=${page}&limit=${limit}&cia=01&dateStart=${convertirDateTimeToDate(
+            filtrosOrdenesDespacho.fechaInicio
+          )}&dateEnd=${convertirDateTimeToDate(
+            filtrosOrdenesDespacho.fechaFinal
+          )}&orderBy=${filtrosOrdenesDespacho.filtro1}`,
           setLoadingTable,
           setOrdenesDespacho
         );
@@ -80,7 +90,7 @@ const AgruparODPage = () => {
   const [filtrosOrdenesDespacho, setFiltrosOrdenesDespacho] = useState({
     fechaInicio: new Date(),
     fechaFinal: new Date(),
-    filtro1: "",
+    filtro1: "numodc",
     filtro2: "",
     filtro3: "",
     btnFechaSelected: "btnFechaToday",
@@ -119,7 +129,7 @@ const AgruparODPage = () => {
     delete filtros.btnFechaSelected;
     //alert(JSON.stringify(filtros, null, 2));
     findOrdenesDespacho(1, 10);
-    
+
     /* setFiltrosOrdenesDespacho({
       fechaInicio: new Date(),
       fechaFinal: new Date(),
@@ -133,21 +143,58 @@ const AgruparODPage = () => {
   const [carritoOrdenesDespacho, setCarritoOrdenesDespacho] = useState([]);
   const [openCarritoGrupos, setOpenCarritoGrupos] = useState(false);
 
-  const handleSelectRow = async (orden) => {
-    console.log(orden);
-    console.log(carritoOrdenesDespacho);
-    const od = carritoOrdenesDespacho.find(
-      (o) => o.odc_numodc === orden.odc_numodc
-    );
-    if (!od) {
-      setCarritoOrdenesDespacho([...carritoOrdenesDespacho, orden]);
-    } else {
-      const newLista = carritoOrdenesDespacho.filter(
-        (o) => o.odc_numodc != orden.odc_numodc
-      );
-      console.log(newLista);
-      setCarritoOrdenesDespacho(newLista);
+  const updateCarritoOrdenesDespacho = (data) => {
+    setCarritoOrdenesDespacho(data);
+    localStorage.setItem("ODSAGRUPAR", JSON.stringify(data));
+  };
+
+  useEffect(() => {
+    if (ordenesDespacho.result.length > 0) {
+      let localODGroup = JSON.parse(localStorage.getItem("ODSAGRUPAR")) || [];
+      let listODs = [...localODGroup];
+
+      ordenesDespacho.result.map((o) => {
+        if (o.odc_estado === "2" && o.odc_selusu === userLocal) {
+          let isOd = listODs.find((od) => od.id === o.id);
+          if (!isOd) listODs.push(o);
+        }
+      });
+
+      updateCarritoOrdenesDespacho(listODs);
+      localStorage.setItem("ODSAGRUPAR", JSON.stringify(listODs));
     }
+  }, [refreshTable, ordenesDespacho]);
+
+  const handleSelectRow = async (orden) => {
+    const selectItemCarritoOD = (data) => {
+      if (data.statusCode === 200) {
+        const data_orden_selected = JSON.parse(data.mensaje);
+
+        orden.odc_estado = data_orden_selected.odc_estado;
+        orden.odc_selusu = data_orden_selected.odc_selusu;
+
+        if (data_orden_selected.odc_estado === "2") {
+          updateCarritoOrdenesDespacho([...carritoOrdenesDespacho, orden]);
+        } else {
+          const newLista = carritoOrdenesDespacho.filter(
+            (o) => o.id !== orden.id
+          );
+          updateCarritoOrdenesDespacho(newLista);
+        }
+      } else {
+        setOpenMessage({
+          state: true,
+          message: data.mensaje,
+          type: data.status.toLowerCase(),
+        });
+      }
+    };
+
+    putFetchFunction(
+      `${API_DISTRIBUCION}/selectOrdenDespachoToGroup?id=${orden.id}&usuario=${userLocal}`,
+      {},
+      selectItemCarritoOD
+    );
   };
 
   const [openMessage, setOpenMessage] = useState(false);
@@ -317,7 +364,7 @@ const AgruparODPage = () => {
           showButtonDelete={true}
           showPagination={false}
           carritoOrdenesDespacho={carritoOrdenesDespacho}
-          setCarritoOrdenesDespacho={setCarritoOrdenesDespacho}
+          setCarritoOrdenesDespacho={updateCarritoOrdenesDespacho}
           titlePage={PAGE_AGRUPAR_OD}
           loadingTable={loadingTable}
           handleSelectRow={handleSelectRow}
@@ -355,6 +402,7 @@ const AgruparODPage = () => {
         open={openCarritoGrupos}
         setOpen={setOpenCarritoGrupos}
         title={"Ordenes de Despacho Selecionadas"}
+        reSizeWidth={true}
       >
         <div className="table-container-tbody divide-y-2 divide-gray-400 md:p-4 text-left space-y-4 text-black">
           {carritoOrdenesDespacho.length > 0 ? (

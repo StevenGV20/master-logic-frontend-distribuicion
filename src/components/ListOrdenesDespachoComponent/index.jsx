@@ -1,23 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+  Checkbox,
+  CircularProgress,
+  MenuItem,
+  Popover,
+  Select,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+
 import TableCustom from "../widgets/TableComponent";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { PAGE_AGRUPAR_OD } from "../../utils/titles";
-import { Checkbox, CircularProgress, MenuItem, Select } from "@mui/material";
 import ModalMessage from "../widgets/ModalComponent";
 import ParticionarODComponent from "../ParticionarODComponent";
-import { ORDENES_DESPACHO_TABLE_COLS_DESKTOP, PEN_CURRENCY } from "../../utils/general";
+import {
+  ORDENES_DESPACHO_TABLE_COLS_DESKTOP,
+  PEN_CURRENCY,
+  USERNAME_LOCAL,
+} from "../../utils/general";
 import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
 import { convertirDateTimeToDate } from "../../utils/funciones";
+import BasicPopover from "../widgets/PopoverCustom";
+import FormEditCargaOrdenDespachoComponent from "../FormEditCargaOrdenDespachoComponent";
 
 const ListOrdenesDespachoComponent = ({
-  ordenesDespacho=objOrdenesDespachoEntity,
+  ordenesDespacho = objOrdenesDespachoEntity,
   setOrdenesDespacho,
   showButtonDelete,
   showPagination,
-  carritoOrdenesDespacho=objOrdenesDespachoEntity.result,
+  carritoOrdenesDespacho = objOrdenesDespachoEntity.result,
   setCarritoOrdenesDespacho,
   titlePage = "",
   loadingTable,
@@ -30,17 +45,12 @@ const ListOrdenesDespachoComponent = ({
     setPage(value);
     findOrdenesDespacho(value, limit);
   };
-  const handleChangeLimit = (e) =>{
-    setLimit(e.target.value)
+  const handleChangeLimit = (e) => {
+    setLimit(e.target.value);
     findOrdenesDespacho(page, e.target.value);
-  }
+  };
 
-  const [ordenSelected, setOrdenSelected] = useState({
-    canal: "",
-    cliente: "",
-    emisionOrden: "",
-    emisionPedido: "",
-  });
+  const [ordenSelected, setOrdenSelected] = useState(null);
 
   const handleSelectOrden = (orden) => {
     setOrdenSelected(orden);
@@ -50,41 +60,45 @@ const ListOrdenesDespachoComponent = ({
     alert(orden.grupo);
   };
 
+  const userLocal = localStorage.getItem("USERNAME");
+
+  const [openEditOrden, setOpenEditOrden] = useState(false);
+
   return (
     <div>
+      <ModalMessage
+        open={openEditOrden}
+        setOpen={setOpenEditOrden}
+        title={"Editar Carga de la Orden de Despacho"}
+        titleBtnAceptar={""}
+        showButtons={false}
+        onBtnAceptar={() => setOpenEditOrden(false)}
+      >
+        <FormEditCargaOrdenDespachoComponent
+          ordenSelected={ordenSelected}
+          setOpenModal={setOpenEditOrden}
+          setCarritoOrdenesDespacho={setCarritoOrdenesDespacho}
+        />
+      </ModalMessage>
+
       <div className="desktop my-6">
         <TableCustom cols={ORDENES_DESPACHO_TABLE_COLS_DESKTOP}>
           {!loadingTable ? (
-            ordenesDespacho && ordenesDespacho.result.map((orden) => (
+            ordenesDespacho &&
+            ordenesDespacho.result.map((orden) => (
               <tr
                 className={
                   !orden.grupo && titlePage.match(PAGE_AGRUPAR_OD)
-                    ? carritoOrdenesDespacho &&
-                      carritoOrdenesDespacho.find((o) => o.odc_numodc === orden.odc_numodc)
+                    ? orden.odc_estado === "2" && orden.odc_selusu === userLocal
                       ? "border-4 border-gray-800 bg-gray-200"
+                      : orden.odc_estado === "2" &&
+                        orden.odc_selusu !== userLocal
+                      ? "bg-gray-200 text-gray-400"
                       : "hover:bg-gray-200"
                     : ""
                 }
-                key={orden.odc_numodc}
+                key={orden.id}
               >
-                <td
-                  onClick={() =>
-                    titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
-                  }
-                >
-                  {orden.odc_numodc}
-                </td>
-                <td
-                  onClick={() =>
-                    titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
-                  }
-                >
-                  <div className="td-group">
-                    <div>{orden.ppc_numppc}</div>
-                  </div>
-                </td>
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
@@ -95,7 +109,20 @@ const ListOrdenesDespachoComponent = ({
                     <div>{orden.odc_numodc}</div>
                   </div>
                   <div className="td-group">
-                    <div>{orden.odc_fecdoc && convertirDateTimeToDate(orden.odc_fecdoc)}</div>
+                    <div>
+                      {orden.odc_fecdoc &&
+                        convertirDateTimeToDate(orden.odc_fecdoc)}
+                    </div>
+                  </div>
+                </td>
+                <td
+                  onClick={() =>
+                    titlePage.match(PAGE_AGRUPAR_OD) &&
+                    (orden.grupo ? <></> : handleSelectRow(orden))
+                  }
+                >
+                  <div className="td-group">
+                    <div>{orden.ppc_numppc}</div>
                   </div>
                 </td>
                 <td
@@ -125,12 +152,63 @@ const ListOrdenesDespachoComponent = ({
                     (orden.grupo ? <></> : handleSelectRow(orden))
                   }
                 >
-                  <div className="td-group">
-                    <div>{orden.volumen}</div>
-                    <div>{orden.bultos} bultos</div>
-                    <div>{orden.peso}</div>
-                    <div>{PEN_CURRENCY} {orden.odc_imptot && orden.odc_imptot.toFixed(2)}</div>
-                  </div>
+                  {orden.odc_volumen}
+                </td>
+                <td
+                  onClick={() =>
+                    titlePage.match(PAGE_AGRUPAR_OD) &&
+                    (orden.grupo ? <></> : handleSelectRow(orden))
+                  }
+                >
+                  {orden.odc_bultos}
+                </td>
+                <td
+                  onClick={() =>
+                    titlePage.match(PAGE_AGRUPAR_OD) &&
+                    (orden.grupo ? <></> : handleSelectRow(orden))
+                  }
+                >
+                  {orden.odc_peso}
+                </td>
+                <td
+                  onClick={() =>
+                    titlePage.match(PAGE_AGRUPAR_OD) &&
+                    (orden.grupo ? <></> : handleSelectRow(orden))
+                  }
+                >
+                  <div>{orden.odc_imptot}</div>
+                </td>
+                <td
+                  onClick={() =>
+                    titlePage.match(PAGE_AGRUPAR_OD) &&
+                    (orden.grupo ? <></> : handleSelectRow(orden))
+                  }
+                >
+                  <div>{orden.odc_ubigeo}</div>
+                </td>
+                <td
+                  onClick={() =>
+                    titlePage.match(PAGE_AGRUPAR_OD) &&
+                    (orden.grupo ? <></> : handleSelectRow(orden))
+                  }
+                >
+                  <div>{orden.odc_dirdes}</div>
+                </td>
+                <td
+                  onClick={() =>
+                    titlePage.match(PAGE_AGRUPAR_OD) &&
+                    (orden.grupo ? <></> : handleSelectRow(orden))
+                  }
+                >
+                  <div>{orden.odc_distancia}</div>
+                </td>
+                <td
+                  onClick={() =>
+                    titlePage.match(PAGE_AGRUPAR_OD) &&
+                    (orden.grupo ? <></> : handleSelectRow(orden))
+                  }
+                >
+                  <div>{orden.odc_ranrec}</div>
                 </td>
                 <td className="td-group bg-transparent text-center">
                   {orden.grupo ? (
@@ -146,13 +224,40 @@ const ListOrdenesDespachoComponent = ({
                       <div>{orden.sede}</div>
                     </>
                   ) : (
-                    <div className="z-50">
+                    <div className="z-10">
                       {titlePage.match(PAGE_AGRUPAR_OD) && (
-                        <ParticionarODComponent
-                          handleSelectOrden={handleSelectOrden}
-                          ordenRow={orden}
-                          ordenSelected={ordenSelected}
-                        />
+                        <>
+                          {((orden.odc_estado === "2" &&
+                            orden.odc_selusu === userLocal) ||
+                            orden.odc_estado === "1") && (
+                            <BasicPopover isClose={openEditOrden}>
+                              <ParticionarODComponent
+                                handleSelectOrden={handleSelectOrden}
+                                ordenRow={orden}
+                                ordenSelected={ordenSelected}
+                              />
+                              {carritoOrdenesDespacho &&
+                                carritoOrdenesDespacho.find(
+                                  (o) => o.odc_numodc === orden.odc_numodc
+                                ) && (
+                                  <>
+                                    <button
+                                      className="flex row-span-2 space-x-2"
+                                      onClick={() => {
+                                        handleSelectOrden(orden);
+                                        setOpenEditOrden(true);
+                                      }}
+                                    >
+                                      <span className="text-black font-bold px-4 py-2">
+                                        Editar Carga
+                                      </span>
+                                      <EditIcon className="text-gray-500 text-center" />
+                                    </button>
+                                  </>
+                                )}
+                            </BasicPopover>
+                          )}
+                        </>
                       )}
                     </div>
                   )}
@@ -172,10 +277,12 @@ const ListOrdenesDespachoComponent = ({
         <TableCustom cols={[]}>
           {!loadingTable ? (
             ordenesDespacho.result.map((orden) => (
-              <tr className="grid grid-cols-6" key={orden.odc_numodc}>
-                <td className="col-span-4">
+              <tr className="grid grid-cols-6" key={orden.id}>
+                <td className="col-span-5">
                   <div className="td-group-mobile">
-                    <label className="w-full text-left">{orden.odc_numodc}</label>
+                    <label className="w-full text-left">
+                      {orden.odc_numodc}
+                    </label>
                     <div>
                       <label>Pedido:</label>
                       <div className="flex space-x-4">
@@ -202,10 +309,13 @@ const ListOrdenesDespachoComponent = ({
                     <div className="block space-x-3">
                       <label>Carga:</label>
                       <div className="grid grid-cols-2">
-                        <div>{orden.volumen}</div>
-                        <div>{orden.bultos} bultos</div>
-                        <div>{orden.peso}</div>
-                        <div>{PEN_CURRENCY} {orden.odc_imptot && orden.odc_imptot.toFixed(2)}</div>
+                        <div>{orden.odc_volumen} m3</div>
+                        <div>{orden.odc_bultos} bultos</div>
+                        <div>{orden.odc_peso} tn</div>
+                        <div>
+                          {PEN_CURRENCY}{" "}
+                          {orden.odc_imptot && orden.odc_imptot.toFixed(2)}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -248,11 +358,28 @@ const ListOrdenesDespachoComponent = ({
                       </div>
                       <div>
                         {titlePage.match(PAGE_AGRUPAR_OD) && (
-                          <ParticionarODComponent
-                            handleSelectOrden={handleSelectOrden}
-                            ordenRow={orden}
-                            ordenSelected={ordenSelected}
-                          />
+                          <>
+                            <BasicPopover>
+                              <ParticionarODComponent
+                                handleSelectOrden={handleSelectOrden}
+                                ordenRow={orden}
+                                ordenSelected={ordenSelected}
+                              />
+                              {carritoOrdenesDespacho &&
+                                carritoOrdenesDespacho.find(
+                                  (o) => o.odc_numodc === orden.odc_numodc
+                                ) && (
+                                  <>
+                                    <button className="flex row-span-2 space-x-2">
+                                      <span className="text-black font-bold px-4 py-2">
+                                        Editar Carga
+                                      </span>
+                                      <EditIcon className="text-gray-500 text-center" />
+                                    </button>
+                                  </>
+                                )}
+                            </BasicPopover>
+                          </>
                         )}
                       </div>
                     </div>
@@ -277,7 +404,10 @@ const ListOrdenesDespachoComponent = ({
         <div className="w-full flex justify-center">
           <Stack spacing={2}>
             <Pagination
-              count={ordenesDespacho && Math.ceil(ordenesDespacho.result.length / limit)}
+              count={
+                ordenesDespacho &&
+                Math.ceil(ordenesDespacho.result.length / limit)
+              }
               color="primary"
               showFirstButton
               showLastButton
@@ -287,79 +417,6 @@ const ListOrdenesDespachoComponent = ({
           </Stack>
         </div>
       )}
-
-      {/* <ModalMessage
-        open={openModalParticionar}
-        setOpen={setOpenModalParticionar}
-        title={"Partcionar Ordenes de Despacho"}
-        titleBtnAceptar={"Crear Orden Parcial"}
-        onBtnAceptar={() => setOpenModalParticionar(false)}
-      >
-        <div className="modal-group-container text-black">
-          <div className="modal-group-item-container">
-            <label htmlFor="">Canal:</label>
-            <input
-              type="text"
-              className="modal-group-input-md"
-              value={ordenSelected.canal}
-              readOnly
-            />
-          </div>
-          <div className="modal-group-control-container w-full">
-            <div className="modal-group-item-container grid-cols-4 w-full">
-              <label htmlFor="" className="col-span-1">
-                Cliente:
-              </label>
-              <input
-                type="text"
-                className="col-span-3 modal-group-input-md"
-                value={ordenSelected.cliente}
-                readOnly
-              />
-            </div>
-          </div>
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">N° Pedido:</label>
-              <input
-                type="text"
-                className="modal-group-input-md"
-                value={ordenSelected.numeroPedido}
-                readOnly
-              />
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Emision Pedido:</label>
-              <input
-                type="text"
-                className="modal-group-input-md"
-                value={ordenSelected.emisionPedido}
-                readOnly
-              />
-            </div>
-          </div>
-          <div className="modal-group-control-container">
-            <div className="modal-group-item-container">
-              <label htmlFor="">N° Orden:</label>
-              <input
-                type="text"
-                className="modal-group-input-md"
-                value={ordenSelected.numeroOrdenDespacho}
-                readOnly
-              />
-            </div>
-            <div className="modal-group-item-container">
-              <label htmlFor="">Emision Orden:</label>
-              <input
-                type="text"
-                className="modal-group-input-md"
-                value={ordenSelected.emisionOrdenDespacho}
-                readOnly
-              />
-            </div>
-          </div>
-        </div>
-      </ModalMessage> */}
     </div>
   );
 };
