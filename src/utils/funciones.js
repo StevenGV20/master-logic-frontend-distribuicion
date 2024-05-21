@@ -3,7 +3,7 @@ import { URL_MASTERLOGIC_API } from "./general";
 export const calcularVolumenTotal = (ordenes) => {
   let totalVolumen = 0;
   for (let index = 0; index < ordenes.length; index++) {
-    totalVolumen += ordenes[index].volumen;
+    totalVolumen += ordenes[index].odc_volumen;
   }
   return totalVolumen;
 };
@@ -11,7 +11,7 @@ export const calcularVolumenTotal = (ordenes) => {
 export const calcularMontoTotal = (ordenes) => {
   let totalMonto = 0;
   for (let index = 0; index < ordenes.length; index++) {
-    totalMonto += ordenes[index].monto;
+    totalMonto += ordenes[index].odc_imptot;
   }
   return totalMonto.toFixed(2);
 };
@@ -19,7 +19,7 @@ export const calcularMontoTotal = (ordenes) => {
 export const calcularPesoTotal = (ordenes) => {
   let totalPeso = 0;
   for (let index = 0; index < ordenes.length; index++) {
-    totalPeso += ordenes[index].peso;
+    totalPeso += ordenes[index].odc_peso;
   }
   return totalPeso.toFixed(2);
 };
@@ -27,7 +27,7 @@ export const calcularPesoTotal = (ordenes) => {
 export const calcularBultosTotal = (ordenes) => {
   let totalPeso = 0;
   for (let index = 0; index < ordenes.length; index++) {
-    totalPeso += ordenes[index].bultos;
+    totalPeso += ordenes[index].odc_bultos;
   }
   return totalPeso;
 };
@@ -90,15 +90,19 @@ export const convertirDateTimeToDate = (dia) => {
   var fecha = new Date(dia);
 
   // Obtener partes de la fecha
-  var año = fecha.getFullYear().toString();
-  var mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // El mes está basado en cero, por lo que sumamos 1
-  var dia = fecha.getDate().toString().padStart(2, "0");
+  var year = fecha.getFullYear().toString();
+  var month = (fecha.getMonth() + 1).toString().padStart(2, "0"); // El mes está basado en cero, por lo que sumamos 1
+  var day = fecha.getDate().toString().padStart(2, "0");
 
   // Concatenar partes de la fecha en formato 'YYYYMMDD'
-  var fechaFormateada = año +"-"+ mes +"-"+ dia;
+  var fechaFormateada = year +"-"+ month +"-"+ day;
 
   return fechaFormateada; // Salida: '20071009'
 };
+
+export const redondearDecimales = (numero) => {
+  return Math.round(numero * 100) / 100;
+}
 
 export const getFetchFunction = async (path, setLoadingTable, setData) => {
   try {

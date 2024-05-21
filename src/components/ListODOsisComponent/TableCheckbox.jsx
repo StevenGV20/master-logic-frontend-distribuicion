@@ -299,7 +299,7 @@ export default function ListODOsisComponent({
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.odc_numodc+""+row.ppc_numppc}
+                      key={row.id+""+row.odc_numodc}
                       selected={isItemSelected}
                       sx={{ cursor: "pointer" }}
                     >

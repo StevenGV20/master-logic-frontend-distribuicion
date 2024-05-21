@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-const SlideOverComponent = ({ open, setOpen,title, children }) => {
+const SlideOverComponent = ({ open, setOpen,title, children,reSizeWidth=false }) => {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -20,7 +20,7 @@ const SlideOverComponent = ({ open, setOpen,title, children }) => {
 
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div className={`pointer-events-none fixed inset-y-0 right-0 flex pl-10 ${!reSizeWidth ? 'max-w-full' : 'xl:w-2/3 max-w-full ' }`}>
               <Transition.Child
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -30,7 +30,7 @@ const SlideOverComponent = ({ open, setOpen,title, children }) => {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="pointer-events-auto relative w-screen max-w-96">
+                <Dialog.Panel className={`pointer-events-auto relative ${!reSizeWidth ? 'w-screen max-w-96' : 'w-screen'}`}>
                   <Transition.Child
                     as={Fragment}
                     enter="ease-in-out duration-500"

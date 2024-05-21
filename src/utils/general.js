@@ -9,14 +9,27 @@ const USERNAME_LOCAL = localStorage.getItem("USERNAME");
 
 
 const ORDENES_DESPACHO_TABLE_COLS_DESKTOP = [
-  "Item",
-  "Pedido",
   "Ord. Despacho",
-  "Canal",
+  "Pedido",
+  "Campaña",
   "Cliente",
-  "Carga",
-  "GRUPO",
+  "Volumen (m3)",
+  "Bultos",
+  "Peso",
+  "Distancia",
+  "Opciones",
 ];
+
+const ORDENES_DESPACHO_TABLE_CART_COLS = [
+  "N° Item",
+  "Ord. Despacho",
+  "Pedido",
+  "Volumen (m3)",
+  "Bultos",
+  "Peso",
+  "Distancia",
+  "Opciones",
+]
 
 const GRUPOS_COLS_MODAL_DESKTOP = [
   "GRUPO",
@@ -108,6 +121,7 @@ export {
   URL_FAKE_API,
   PEN_CURRENCY,
   ORDENES_DESPACHO_TABLE_COLS_DESKTOP,
+  ORDENES_DESPACHO_TABLE_CART_COLS,
   ORDENES_DESPACHO_PARTITION_TABLE_COLS_DESKTOP,
   GRUPOS_COLS_MODAL_DESKTOP,
   GRUPOS_COLS_MODAL_MOBILE,
