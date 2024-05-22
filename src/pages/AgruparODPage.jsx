@@ -143,8 +143,8 @@ const AgruparODPage = () => {
   const [openCarritoGrupos, setOpenCarritoGrupos] = useState(false);
 
   const updateCarritoOrdenesDespacho = (data) => {
-    setCarritoOrdenesDespacho(data);
     localStorage.setItem("ODSAGRUPAR", JSON.stringify(data));
+    setCarritoOrdenesDespacho(data);
   };
 
   useEffect(() => {

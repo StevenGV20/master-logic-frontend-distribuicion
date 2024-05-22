@@ -99,11 +99,13 @@ const FormCarritoAgrupacionODComponent = ({
 
       let data = { grupo: values, listaOds: listODs };
 
-      console.log(JSON.stringify(data, null, 2));
+      //console.log(JSON.stringify(data, null, 2));
 
       const afterPost = (data) => {
         if (data.statusCode === 200) {
+          localStorage.setItem("ODSAGRUPAR", JSON.stringify(data));
           setCarritoOrdenesDespacho([]);
+
           setRefreshTable((prev) => !prev);
           setTimeout(() => {
             setOpenCarritoGrupos(false);
