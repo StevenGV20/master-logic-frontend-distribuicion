@@ -29,7 +29,7 @@ const FormEditCargaOrdenDespachoComponent = ({
       return errors;
     },
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      //alert(JSON.stringify(values, null, 2));
       ordenSelected.odc_bultos = values.odc_bultos;
       ordenSelected.odc_peso = values.odc_peso;
       ordenSelected.odc_volumen = values.odc_volumen;

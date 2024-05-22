@@ -57,7 +57,9 @@ const ListOrdenesDespachoComponent = ({
   };
 
   const handleDeletedGroup = (orden) => {
-    alert(orden.grupo);
+    
+    alert(orden.gru_grucod);
+
   };
 
   const userLocal = localStorage.getItem("USERNAME");
@@ -88,7 +90,7 @@ const ListOrdenesDespachoComponent = ({
             ordenesDespacho.result.map((orden) => (
               <tr
                 className={
-                  !orden.grupo && titlePage.match(PAGE_AGRUPAR_OD)
+                  !orden.gru_grucod && titlePage.match(PAGE_AGRUPAR_OD)
                     ? orden.odc_estado === "2" && orden.odc_selusu === userLocal
                       ? "border-4 border-gray-800 bg-gray-200"
                       : orden.odc_estado === "2" &&
@@ -102,7 +104,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   <div className="td-group">
@@ -118,7 +120,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   <div className="td-group">
@@ -128,7 +130,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   {orden.odc_obsodc}
@@ -136,7 +138,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   <div className="td-group">
@@ -149,7 +151,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   {orden.odc_volumen}
@@ -157,7 +159,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   {orden.odc_bultos}
@@ -165,7 +167,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   {orden.odc_peso}
@@ -173,7 +175,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   <div>{orden.odc_imptot}</div>
@@ -181,7 +183,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   <div>{orden.odc_ubigeo}</div>
@@ -189,7 +191,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   <div>{orden.odc_dirdes}</div>
@@ -197,7 +199,7 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   <div>{orden.odc_distancia}</div>
@@ -205,16 +207,16 @@ const ListOrdenesDespachoComponent = ({
                 <td
                   onClick={() =>
                     titlePage.match(PAGE_AGRUPAR_OD) &&
-                    (orden.grupo ? <></> : handleSelectRow(orden))
+                    (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
                   <div>{orden.odc_ranrec}</div>
                 </td>
                 <td className="td-group bg-transparent text-center">
-                  {orden.grupo ? (
+                  {orden.gru_grucod ? (
                     <>
                       <div className="flex space-x-2 justify-center w-full">
-                        <div className="">{orden.grupo} </div>
+                        <div className="">{orden.gru_grucod} </div>
                         {showButtonDelete && (
                           <button onClick={() => handleDeletedGroup(orden)}>
                             <DeleteIcon className="text-red-600" />
@@ -321,10 +323,10 @@ const ListOrdenesDespachoComponent = ({
                   </div>
                 </td>
                 <td className="col-span-1 grid content-center">
-                  {orden.grupo ? (
+                  {orden.gru_grucod ? (
                     <div className="td-group">
                       <div className="flex">
-                        {orden.grupo}{" "}
+                        {orden.gru_grucod}{" "}
                         {showButtonDelete && (
                           <button onClick={() => handleDeletedGroup(orden)}>
                             <DeleteIcon className={"text-red-700"} />
@@ -340,7 +342,7 @@ const ListOrdenesDespachoComponent = ({
                           className=""
                           onClick={() =>
                             titlePage.match(PAGE_AGRUPAR_OD) &&
-                            (orden.grupo ? <></> : handleSelectRow(orden))
+                            (orden.gru_grucod ? <></> : handleSelectRow(orden))
                           }
                         >
                           <Checkbox

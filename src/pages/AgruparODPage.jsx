@@ -28,7 +28,6 @@ import PaginationCustom from "../components/widgets/PaginationComponent/Paginati
 
 const AgruparODPage = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
 
   registerLocale("es", es);
   setDefaultLocale("es");
@@ -410,6 +409,9 @@ const AgruparODPage = () => {
               <FormCarritoAgrupacionODComponent
                 carritoOrdenesDespacho={carritoOrdenesDespacho}
                 handleSelectRow={handleSelectRow}
+                setCarritoOrdenesDespacho={updateCarritoOrdenesDespacho}
+                setOpenCarritoGrupos={setOpenCarritoGrupos}
+                setRefreshTable={setRefreshTable}
               />
             </>
           ) : (
