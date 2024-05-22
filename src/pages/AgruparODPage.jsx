@@ -356,6 +356,7 @@ const AgruparODPage = () => {
           ordenesDespacho.totalRows && ordenesDespacho.totalRows.totalrows
         }
         fetchData={findOrdenesDespacho}
+        refreshTable={refreshTable}
       >
         <ListOrdenesDespachoComponent
           ordenesDespacho={ordenesDespacho}
@@ -368,6 +369,8 @@ const AgruparODPage = () => {
           loadingTable={loadingTable}
           handleSelectRow={handleSelectRow}
           findOrdenesDespacho={findOrdenesDespacho}
+          setOpenMessage={setOpenMessage}
+          setRefreshTable={setRefreshTable}
         />
       </PaginationCustom>
       {/*importar desde OSIS/SAP */}

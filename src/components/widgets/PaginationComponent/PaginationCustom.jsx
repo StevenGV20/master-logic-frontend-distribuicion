@@ -5,21 +5,30 @@ import {
   Stack,
   TablePagination,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const PaginationCustom = ({ totalRows, children, fetchData, orderByList }) => {
+const PaginationCustom = ({
+  totalRows,
+  children,
+  fetchData,
+  orderByList,
+  refreshTable,
+}) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = React.useState(1);
   const [orderBy, setOrderBy] = useState("0");
 
+  useEffect(() => {
+    setLimit(10);
+    setPage(1);
+  }, [refreshTable]);
+
   const handleChange = (event, value) => {
-    console.log(value);
     setPage(value);
     fetchData(parseInt(value) === 0 ? 1 : value, limit, orderBy);
   };
 
   const handleChangeMobile = (event, value) => {
-    console.log(value);
     setPage(value);
     fetchData(parseInt(value) + 1, limit, orderBy);
   };
@@ -62,7 +71,11 @@ const PaginationCustom = ({ totalRows, children, fetchData, orderByList }) => {
               <MenuItem value={50}>50</MenuItem>
               <MenuItem value={100}>100</MenuItem>
             </Select>
-            <div>{((limit*(page-1))+1)} - {limit*page > totalRows ? totalRows : limit*page} de {totalRows} filas</div>
+            <div>
+              {limit * (page - 1) + 1} -{" "}
+              {limit * page > totalRows ? totalRows : limit * page} de{" "}
+              {totalRows} filas
+            </div>
           </div>
           <div className="grow flex justify-center">
             <Stack spacing={2}>

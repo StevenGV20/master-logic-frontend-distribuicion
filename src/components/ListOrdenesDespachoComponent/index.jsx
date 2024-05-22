@@ -18,12 +18,13 @@ import { PAGE_AGRUPAR_OD } from "../../utils/titles";
 import ModalMessage from "../widgets/ModalComponent";
 import ParticionarODComponent from "../ParticionarODComponent";
 import {
+  API_DISTRIBUCION,
   ORDENES_DESPACHO_TABLE_COLS_DESKTOP,
   PEN_CURRENCY,
   USERNAME_LOCAL,
 } from "../../utils/general";
 import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
-import { convertirDateTimeToDate } from "../../utils/funciones";
+import { convertirDateTimeToDate, putFetchFunction } from "../../utils/funciones";
 import BasicPopover from "../widgets/PopoverCustom";
 import FormEditCargaOrdenDespachoComponent from "../FormEditCargaOrdenDespachoComponent";
 
@@ -38,6 +39,8 @@ const ListOrdenesDespachoComponent = ({
   loadingTable,
   handleSelectRow,
   findOrdenesDespacho,
+  setOpenMessage,
+  setRefreshTable
 }) => {
   const [page, setPage] = React.useState(1);
   const [limit, setLimit] = useState(10);
@@ -57,17 +60,47 @@ const ListOrdenesDespachoComponent = ({
   };
 
   const handleDeletedGroup = (orden) => {
-    
-    alert(orden.gru_grucod);
+    setOrdenSelected(orden);    
+    setOpenModalDelete(true);
+  }
+  const onDeletedGroup = () => {
 
+    const openMessage = (data) => {
+      setOpenMessage({
+        state: true,
+        message: data.mensaje,
+        type: data.status.toLowerCase(),
+      });
+      setRefreshTable((prev) => !prev);
+      setOpenModalDelete(false);
+    }
+
+    putFetchFunction(`${API_DISTRIBUCION}/grupo/anular?codigo=${ordenSelected.gru_grucod}`,{},openMessage)
   };
 
   const userLocal = localStorage.getItem("USERNAME");
 
   const [openEditOrden, setOpenEditOrden] = useState(false);
 
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+
   return (
     <div>
+      <ModalMessage
+        open={openModalDelete}
+        setOpen={setOpenModalDelete}
+        title={"Eliminar Grupo"}
+        titleBtnAceptar={"Eliminar"}
+        onBtnAceptar={() => onDeletedGroup()}
+        showButtons={true}
+        isMessage={true}
+      >
+        <div className="w-full text-center text-lg p-0 font-semibold">
+          ¿Estas seguro de eliminar?
+        </div>
+      </ModalMessage>
+
+
       <ModalMessage
         open={openEditOrden}
         setOpen={setOpenEditOrden}

@@ -31,7 +31,6 @@ const FormAsignarVehiculoComponent = ({
 
   const handleChange = (event) => {
     const v_selected = event.target.value;
-    console.log(v_selected);
     setVehiculoSelected(v_selected);
     formik.setFieldValue("vehiculo", v_selected.vehiculo);
   };

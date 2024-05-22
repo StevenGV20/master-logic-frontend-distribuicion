@@ -120,7 +120,6 @@ const FormCarritoAgrupacionODComponent = ({
   });
 
   useEffect(() => {
-    console.log("run");
     formik.setFieldValue("listaOrdenesDespacho", carritoOrdenesDespacho);
     formik.setFieldValue(
       "gru_volumen",
