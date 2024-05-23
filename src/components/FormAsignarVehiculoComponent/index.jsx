@@ -37,6 +37,7 @@ const FormAsignarVehiculoComponent = ({
     formik.setFieldValue("utr_codutr", v_selected.utr_codutr);
     formik.setFieldValue("utr_plautr", v_selected.utr_plautr);
     formik.setFieldValue("cho_codcho", v_selected.cho_codcho);
+    formik.setFieldValue("vehiculo", v_selected);
   };
 
   const onAsignarVehiculo = () => {
@@ -81,6 +82,7 @@ const FormAsignarVehiculoComponent = ({
       via_monto: grupoToAsign.gru_monto || 0,
       via_nroode: grupoToAsign.gru_nroode || 0,
       cho_codcho: grupoToAsign.cho_codcho || "",
+      vehiculo: {cho_codcho:""},
       via_desfech: new Date(),
       via_deshor: dayjs(new Date()),
       fechaCarga: new Date(),
@@ -158,12 +160,12 @@ const FormAsignarVehiculoComponent = ({
               value={vehiculoSelected}
               onChange={handleChange}
               className="border-blue-200"
-              name="cho_codcho.cho_codcho"
+              name="vehiculo.cho_codcho"
             >
               {vehiculos.length > 0 &&
                 vehiculos.map((v) => (
                   <MenuItem value={v}>
-                    {v.cho_nombre}
+                    {v.utr_plautr} - {v.cho_nombre}
                   </MenuItem>
                 ))}
             </Select>

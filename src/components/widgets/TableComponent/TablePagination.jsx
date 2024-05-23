@@ -114,7 +114,7 @@ export default function CustomTablePagination({
         <TableHead>
           <TableRow>
             {columns.map((col) => (
-              <TableCell key={col}>{col}</TableCell>
+              <TableCell key={col} align="center">{col}</TableCell>
             ))}
           </TableRow>
         </TableHead>

@@ -74,6 +74,10 @@ function Row(props) {
                 <div>Monto total:</div>
                 {row.gru_monto}
               </div>
+              <div>
+                <div>Ubigeo:</div>
+                {row.gru_des_ubigeo}
+              </div>
             </TableCell>
             <TableCell colSpan={1}>
               {row.idviaje > 0 ? (
@@ -106,7 +110,7 @@ function Row(props) {
             <TableCell align="center">{row.gru_peso}</TableCell>
             <TableCell align="center">{row.gru_nroode}</TableCell>
             <TableCell align="center">{row.gru_monto}</TableCell>
-            <TableCell align="center">{}</TableCell>
+            <TableCell align="center">{row.gru_des_ubigeo}</TableCell>
             <TableCell align="center">
               {row.idviaje > 0 ? (
                 <div className="flex space-x-2 justify-center w-full">
@@ -156,6 +160,7 @@ const AsignarVehiculoPage = () => {
   const [grupos, setGrupos] = useState([]);
 
   const [loadingTable, setLoadingTable] = useState(true);
+  const [refreshTable, setRefreshTable] = useState(false);
 
   const fetchGrupos = async (page, limit) => {
     try {
@@ -171,17 +176,21 @@ const AsignarVehiculoPage = () => {
 
   useEffect(() => {
     fetchGrupos(1, 10);
-  }, []);
+  }, [refreshTable]);
 
   const [vehiculos, setVehiculos] = useState([]);
   const [loadingTableVehiculos, setLoadingTableVehiculos] = useState(true);
-  const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
+    const setDataVehiculos = (data) => {
+      let arrayVeh = data.result.filter(v=>v.cho_codcho != '');
+      setVehiculos({result:arrayVeh});
+    }
+
     getFetchFunction(
       `${API_MAESTRO}/listarMaestroUnidadesTransporteUTR?empresa=01`,
       setLoadingTableVehiculos,
-      setVehiculos
+      setDataVehiculos
     );
   }, [refreshTable]);
 

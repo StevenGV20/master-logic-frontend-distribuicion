@@ -11,6 +11,7 @@ import {
   Select,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import TableCustom from "../widgets/TableComponent";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -24,9 +25,13 @@ import {
   USERNAME_LOCAL,
 } from "../../utils/general";
 import { objOrdenesDespachoEntity } from "../../api/ordenesDespachoApi";
-import { convertirDateTimeToDate, putFetchFunction } from "../../utils/funciones";
+import {
+  convertirDateTimeToDate,
+  putFetchFunction,
+} from "../../utils/funciones";
 import BasicPopover from "../widgets/PopoverCustom";
 import FormEditCargaOrdenDespachoComponent from "../FormEditCargaOrdenDespachoComponent";
+import FormEditarLugarDespachoComponent from "../FormEditarLugarDespachoComponent";
 
 const ListOrdenesDespachoComponent = ({
   ordenesDespacho = objOrdenesDespachoEntity,
@@ -40,7 +45,7 @@ const ListOrdenesDespachoComponent = ({
   handleSelectRow,
   findOrdenesDespacho,
   setOpenMessage,
-  setRefreshTable
+  setRefreshTable,
 }) => {
   const [page, setPage] = React.useState(1);
   const [limit, setLimit] = useState(10);
@@ -60,11 +65,10 @@ const ListOrdenesDespachoComponent = ({
   };
 
   const handleDeletedGroup = (orden) => {
-    setOrdenSelected(orden);    
+    setOrdenSelected(orden);
     setOpenModalDelete(true);
-  }
+  };
   const onDeletedGroup = () => {
-
     const openMessage = (data) => {
       setOpenMessage({
         state: true,
@@ -73,9 +77,13 @@ const ListOrdenesDespachoComponent = ({
       });
       setRefreshTable((prev) => !prev);
       setOpenModalDelete(false);
-    }
+    };
 
-    putFetchFunction(`${API_DISTRIBUCION}/grupo/anular?codigo=${ordenSelected.gru_grucod}`,{},openMessage)
+    putFetchFunction(
+      `${API_DISTRIBUCION}/grupo/anular?codigo=${ordenSelected.gru_grucod}`,
+      {},
+      openMessage
+    );
   };
 
   const userLocal = localStorage.getItem("USERNAME");
@@ -83,6 +91,9 @@ const ListOrdenesDespachoComponent = ({
   const [openEditOrden, setOpenEditOrden] = useState(false);
 
   const [openModalDelete, setOpenModalDelete] = useState(false);
+
+  const [openModalEditLugarDespcaho, setOpenModalEditLugarDespcaho] =
+    useState(false);
 
   return (
     <div>
@@ -100,7 +111,6 @@ const ListOrdenesDespachoComponent = ({
         </div>
       </ModalMessage>
 
-
       <ModalMessage
         open={openEditOrden}
         setOpen={setOpenEditOrden}
@@ -112,6 +122,21 @@ const ListOrdenesDespachoComponent = ({
         <FormEditCargaOrdenDespachoComponent
           ordenSelected={ordenSelected}
           setOpenModal={setOpenEditOrden}
+          setCarritoOrdenesDespacho={setCarritoOrdenesDespacho}
+        />
+      </ModalMessage>
+
+      <ModalMessage
+        open={openModalEditLugarDespcaho}
+        setOpen={setOpenModalEditLugarDespcaho}
+        title={"Editar Lugar de Despacho"}
+        titleBtnAceptar={""}
+        showButtons={false}
+        onBtnAceptar={() => setOpenModalEditLugarDespcaho(false)}
+      >
+        <FormEditarLugarDespachoComponent
+          ordenSelected={ordenSelected}
+          setOpenModal={setOpenModalEditLugarDespcaho}
           setCarritoOrdenesDespacho={setCarritoOrdenesDespacho}
         />
       </ModalMessage>
@@ -219,7 +244,7 @@ const ListOrdenesDespachoComponent = ({
                     (orden.gru_grucod ? <></> : handleSelectRow(orden))
                   }
                 >
-                  <div>{orden.odc_ubigeo}</div>
+                  <div>{orden.odc_desubigeo}</div>
                 </td>
                 <td
                   onClick={() =>
@@ -277,7 +302,7 @@ const ListOrdenesDespachoComponent = ({
                                 ) && (
                                   <>
                                     <button
-                                      className="flex row-span-2 space-x-2"
+                                      className="flex row-span-2 items-center"
                                       onClick={() => {
                                         handleSelectOrden(orden);
                                         setOpenEditOrden(true);
@@ -286,7 +311,19 @@ const ListOrdenesDespachoComponent = ({
                                       <span className="text-black font-bold px-4 py-2">
                                         Editar Carga
                                       </span>
-                                      <EditIcon className="text-gray-500 text-center" />
+                                      <EditIcon className="text-gray-500 text-center -ml-2" />
+                                    </button>
+                                    <button
+                                      className="flex row-span-2 items-center"
+                                      onClick={() => {
+                                        handleSelectOrden(orden);
+                                        setOpenModalEditLugarDespcaho(true);
+                                      }}
+                                    >
+                                      <span className="text-black font-bold px-4 py-2">
+                                        Asignar Lugar de Despacho
+                                      </span>
+                                      <LocationOnIcon className="text-red-500 text-center -ml-2" />
                                     </button>
                                   </>
                                 )}
@@ -339,7 +376,7 @@ const ListOrdenesDespachoComponent = ({
                       <label>Cliente:</label>
                       <div>{orden.aux_nomaux}</div>
                       <div>{orden.direccionEntrega}</div>
-                      <div>{orden.ubigeo}</div>
+                      <div>{orden.odc_desubigeo}</div>
                     </div>
                     <div className="block space-x-3">
                       <label>Carga:</label>
@@ -405,11 +442,23 @@ const ListOrdenesDespachoComponent = ({
                                   (o) => o.odc_numodc === orden.odc_numodc
                                 ) && (
                                   <>
-                                    <button className="flex row-span-2 space-x-2">
+                                    <button
+                                      className="flex row-span-2 space-x-2"
+                                      onClick={() => {
+                                        handleSelectOrden(orden);
+                                        setOpenEditOrden(true);
+                                      }}
+                                    >
                                       <span className="text-black font-bold px-4 py-2">
                                         Editar Carga
                                       </span>
                                       <EditIcon className="text-gray-500 text-center" />
+                                    </button>
+                                    <button className="flex row-span-2 space-x-2">
+                                      <span className="text-black font-bold px-4 py-2">
+                                        Asignar Lugar de Despacho
+                                      </span>
+                                      <LocationOnIcon className="text-gray-500 text-center" />
                                     </button>
                                   </>
                                 )}

@@ -104,7 +104,7 @@ export const redondearDecimales = (numero) => {
   return Math.round(numero * 100) / 100;
 }
 
-export const getFetchFunction = async (path, setLoadingTable, setData) => {
+export async function getFetchFunction(path, setLoadingTable, setData) {
   try {
     const token = localStorage.getItem("USUARIO_TOKEN");
     const response = await fetch(`${URL_MASTERLOGIC_API}${path}`, {
