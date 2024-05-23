@@ -162,7 +162,7 @@ const AgruparODPage = () => {
       updateCarritoOrdenesDespacho(listODs);
       localStorage.setItem("ODSAGRUPAR", JSON.stringify(listODs));
     }
-  }, [refreshTable, ordenesDespacho]);
+  }, [ordenesDespacho]);
 
   const handleSelectRow = async (orden) => {
     const selectItemCarritoOD = (data) => {
@@ -357,9 +357,10 @@ const AgruparODPage = () => {
         }
         fetchData={findOrdenesDespacho}
         refreshTable={refreshTable}
+        showLimit={true}
       >
         <ListOrdenesDespachoComponent
-          ordenesDespacho={ordenesDespacho}
+          ordenesDespacho={ordenesDespacho.result}
           setOrdenesDespacho={setOrdenesDespacho}
           showButtonDelete={true}
           showPagination={false}

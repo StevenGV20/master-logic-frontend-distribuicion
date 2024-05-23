@@ -95,13 +95,19 @@ const MantenimientoVehiculosPage = () => {
         >
           Nuevo
         </button>
-        <FilterComponent title={"Filtrar Unidades de transporte"}></FilterComponent>
+        <FilterComponent
+          title={"Filtrar Unidades de transporte"}
+        ></FilterComponent>
       </div>
 
       <ModalMessage
         open={openModal}
         setOpen={setOpenModal}
-        title={vehiculoSelected ? "Editar Unidad de transporte" : "Nueva Unidad de transporte"}
+        title={
+          vehiculoSelected
+            ? "Editar Unidad de transporte"
+            : "Nueva Unidad de transporte"
+        }
         titleBtnAceptar={"Guardar"}
         onBtnAceptar={() => <></>}
         showButtons={false}
@@ -145,7 +151,7 @@ const MantenimientoVehiculosPage = () => {
                 (v, index) =>
                   index !== 0 && (
                     <tr key={v.id}>
-                    <td>{v.id}</td>
+                      <td>{v.id}</td>
                       <td>{v.utr_codutr}</td>
                       <td>
                         <div>{v.utr_desutr}</div>
@@ -158,10 +164,14 @@ const MantenimientoVehiculosPage = () => {
                         <div>{v.utr_codusu}</div>
                       </td>
                       <td>
-                        <div>{v.utr_conrep}</div>
-                        <div>{v.utr_tercero}</div>
-                        <div>{v.utr_prvruc}</div>
-                        <div>{v.utr_prvrso}</div>
+                        <div className="flex justify-center">
+                          <span className="w-32 text-left">Volumen (m3): </span>
+                          <div className="">{v.utr_carvol}</div>
+                        </div>
+                        <div className="flex justify-center">
+                          <span className="w-32 text-left">Peso (tn): </span>
+                          <div>{v.utr_carton}</div>
+                        </div>
                       </td>
                       <td></td>
                       <td className="space-x-2">

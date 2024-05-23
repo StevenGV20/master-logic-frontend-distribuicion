@@ -103,11 +103,10 @@ const FormCarritoAgrupacionODComponent = ({
 
       const afterPost = (data) => {
         if (data.statusCode === 200) {
-          localStorage.setItem("ODSAGRUPAR", JSON.stringify(data));
-          setCarritoOrdenesDespacho([]);
-
-          setRefreshTable((prev) => !prev);
+          localStorage.setItem("ODSAGRUPAR", null);
+          //setCarritoOrdenesDespacho([]);
           setTimeout(() => {
+            setRefreshTable((prev) => !prev);
             setOpenCarritoGrupos(false);
           }, 3000);
         }

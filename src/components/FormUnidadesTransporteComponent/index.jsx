@@ -44,6 +44,8 @@ const FormUnidadesTransporteComponent = ({
       utr_tercero: vehiculoSelected ? vehiculoSelected.utr_tercero : "",
       utr_prvruc: vehiculoSelected ? vehiculoSelected.utr_prvruc : "",
       utr_prvrso: vehiculoSelected ? vehiculoSelected.utr_prvrso : "",
+      utr_carvol: vehiculoSelected ? vehiculoSelected.utr_carvol : "",
+      utr_carton: vehiculoSelected ? vehiculoSelected.utr_carton : "",
     },
     onSubmit: (values) => {
       console.log(JSON.stringify(values, null, 2));
@@ -562,6 +564,64 @@ const FormUnidadesTransporteComponent = ({
             {formik.errors.utr_prvrso && (
               <span className="form-container-group-content-span-error">
                 {formik.errors.utr_prvrso}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label
+            htmlFor="utr_carvol"
+            className="form-container-group-content-label"
+          >
+            Volumen máximo (m3):
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_carvol"
+              id="utr_carvol"
+              value={formik.values.utr_carvol}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_carvol
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_carvol && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_carvol}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="form-container-group-content">
+          <label
+            htmlFor="utr_carton"
+            className="form-container-group-content-label"
+          >
+            Peso máximo (tn):
+          </label>
+          <div className="mt-2">
+            <input
+              type="text"
+              name="utr_carton"
+              id="utr_carton"
+              value={formik.values.utr_carton}
+              onChange={formik.handleChange}
+              autoComplete="given-name"
+              className={`form-container-group-content-input ${
+                formik.errors.utr_carton
+                  ? "form-container-group-content-input-error"
+                  : ""
+              }`}
+            />
+            {formik.errors.utr_carton && (
+              <span className="form-container-group-content-span-error">
+                {formik.errors.utr_carton}
               </span>
             )}
           </div>

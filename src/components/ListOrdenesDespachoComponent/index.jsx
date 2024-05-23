@@ -120,7 +120,7 @@ const ListOrdenesDespachoComponent = ({
         <TableCustom cols={ORDENES_DESPACHO_TABLE_COLS_DESKTOP}>
           {!loadingTable ? (
             ordenesDespacho &&
-            ordenesDespacho.result.map((orden) => (
+            ordenesDespacho.map((orden) => (
               <tr
                 className={
                   !orden.gru_grucod && titlePage.match(PAGE_AGRUPAR_OD)
@@ -311,7 +311,7 @@ const ListOrdenesDespachoComponent = ({
       <div className="mobile">
         <TableCustom cols={[]}>
           {!loadingTable ? (
-            ordenesDespacho.result.map((orden) => (
+            ordenesDespacho.map((orden) => (
               <tr className="grid grid-cols-6" key={orden.id}>
                 <td className="col-span-5">
                   <div className="td-group-mobile">

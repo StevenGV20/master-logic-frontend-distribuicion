@@ -14,6 +14,7 @@ const TableCollapseMUICustomComponent = ({
   children,
   titleSubTable,
   subtable,
+  colSpanSubTable = 8
 }) => {
   const [open, setOpen] = React.useState(false);
   return (
@@ -31,7 +32,7 @@ const TableCollapseMUICustomComponent = ({
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={colSpanSubTable}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">

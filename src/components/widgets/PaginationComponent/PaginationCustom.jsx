@@ -13,6 +13,7 @@ const PaginationCustom = ({
   fetchData,
   orderByList,
   refreshTable,
+  showLimit = false,
 }) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = React.useState(1);
@@ -60,22 +61,26 @@ const PaginationCustom = ({
       <div className="flex desktop">
         <div className="flex space-x-4 place-items-center">
           <div className="flex space-x-4 place-items-center">
-            <div>Mostrar:</div>
-            <Select
-              value={limit}
-              id="demo-select-small"
-              onChange={(e) => handleChangeLimit(e)}
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </Select>
-            <div>
-              {limit * (page - 1) + 1} -{" "}
-              {limit * page > totalRows ? totalRows : limit * page} de{" "}
-              {totalRows} filas
-            </div>
+            {showLimit && (
+              <>
+                <div>Mostrar:</div>
+                <Select
+                  value={limit}
+                  id="demo-select-small"
+                  onChange={(e) => handleChangeLimit(e)}
+                >
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={25}>25</MenuItem>
+                  <MenuItem value={50}>50</MenuItem>
+                  <MenuItem value={100}>100</MenuItem>
+                </Select>
+                <div>
+                  {limit * (page - 1) + 1} -{" "}
+                  {limit * page > totalRows ? totalRows : limit * page} de{" "}
+                  {totalRows} filas
+                </div>
+              </>
+            )}
           </div>
           <div className="grow flex justify-center">
             <Stack spacing={2}>

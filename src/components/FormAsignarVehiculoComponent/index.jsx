@@ -19,6 +19,7 @@ import { useFormik } from "formik";
 import {
   calcularVolumenAsignadoTotal,
   calcularVolumenTotal,
+  convertirDateTimeToDate,
   convertirDateToTimeString,
 } from "../../utils/funciones";
 
@@ -31,8 +32,11 @@ const FormAsignarVehiculoComponent = ({
 
   const handleChange = (event) => {
     const v_selected = event.target.value;
+    console.log(v_selected);
     setVehiculoSelected(v_selected);
-    formik.setFieldValue("vehiculo", v_selected.vehiculo);
+    formik.setFieldValue("utr_codutr", v_selected.utr_codutr);
+    formik.setFieldValue("utr_plautr", v_selected.utr_plautr);
+    formik.setFieldValue("cho_codcho", v_selected.cho_codcho);
   };
 
   const onAsignarVehiculo = () => {
@@ -42,7 +46,7 @@ const FormAsignarVehiculoComponent = ({
   registerLocale("es", es);
   setDefaultLocale("es");
 
-  const grupoVolumenTotal = calcularVolumenTotal(grupoToAsign.ordenesDespacho);
+
 
   const showMessageCapacidadDisponible = (vehiculo) => {
     if (!(vehiculo.gruposAsignados && vehiculo.gruposAsignados.length > 0))
@@ -51,7 +55,7 @@ const FormAsignarVehiculoComponent = ({
     const volDisponible =
       vehiculo.volumenMaximo -
       calcularVolumenAsignadoTotal(vehiculo.gruposAsignados);
-    if (volDisponible < grupoVolumenTotal) {
+    if (volDisponible < grupoToAsign.gru_volumen) {
       return (
         <>
           <div className="">{volAsigTotal}</div>
@@ -70,34 +74,40 @@ const FormAsignarVehiculoComponent = ({
 
   const formik = useFormik({
     initialValues: {
-      nombre: grupoToAsign.name,
-      volumen: grupoToAsign ? grupoVolumenTotal : 0,
-      vehiculo: "",
-      fechaSalida: new Date(),
-      horaSalida: dayjs(new Date()),
+      gru_grucod: grupoToAsign.gru_grucod,
+      via_volumen: grupoToAsign.gru_volumen || 0,
+      via_bultos: grupoToAsign.gru_bultos || 0,
+      via_peso: grupoToAsign.gru_peso || 0,
+      via_monto: grupoToAsign.gru_monto || 0,
+      via_nroode: grupoToAsign.gru_nroode || 0,
+      cho_codcho: grupoToAsign.cho_codcho || "",
+      via_desfech: new Date(),
+      via_deshor: dayjs(new Date()),
       fechaCarga: new Date(),
       horaCarga: dayjs(new Date()),
-      numeroPalets: 0,
-      observacion: "",
+      via_carfch:"",
+      via_palets: 0,
+      via_observ: "",
     },
     onSubmit: (values) => {
       values.horaCarga = convertirDateToTimeString(values.horaCarga);
-      values.horaSalida = convertirDateToTimeString(values.horaSalida);
+      values.via_deshor = convertirDateToTimeString(values.via_deshor);
+      values.via_carfch = convertirDateTimeToDate(values.fechaCarga) + " " + values.horaCarga
       alert(JSON.stringify(values, null, 2));
       setOpenModal(false);
     },
     validate: (values) => {
       const errors = {};
-      if (!values.vehiculo) {
-        errors.vehiculo = "Debes elegir un vehiculo";
+      if (!values.cho_codcho) {
+        errors.cho_codcho = "Debes elegir un vehiculo";
       }
       if (values.horaCarga == formik.initialValues.horaCarga) {
         errors.horaCarga = "Debes elegir una hora de carga";
       }
-      if (values.horaSalida == formik.initialValues.horaSalida) {
+      if (values.via_deshor == formik.initialValues.via_deshor) {
         errors.horaSalida = "Debes elegir una hora de salida";
       }
-      if (values.numeroPalets < 0) {
+      if (values.via_palets < 0) {
         errors.numeroPalets = "El numero de Palets no puede ser menor a 0";
       }
       return errors;
@@ -112,8 +122,8 @@ const FormAsignarVehiculoComponent = ({
           <div>
             <input
               type="text"
-              value={formik.values.nombre}
-              name="nombre"
+              defaultValue={formik.values.gru_grucod}
+              name="gru_grucod"
               readOnly
               className="p-4"
             />
@@ -126,8 +136,8 @@ const FormAsignarVehiculoComponent = ({
           <div className="flex">
             <input
               type="text"
-              value={formik.values.volumen}
-              name="nombre"
+              defaultValue={formik.values.via_volumen}
+              name="gru_volumen"
               readOnly
               className="p-4"
             />
@@ -148,17 +158,18 @@ const FormAsignarVehiculoComponent = ({
               value={vehiculoSelected}
               onChange={handleChange}
               className="border-blue-200"
+              name="cho_codcho.cho_codcho"
             >
               {vehiculos.length > 0 &&
                 vehiculos.map((v) => (
                   <MenuItem value={v}>
-                    {v.chofer} - {v.volumenMaximo}
+                    {v.cho_nombre}
                   </MenuItem>
                 ))}
             </Select>
           </FormControl>
-          {formik.errors.vehiculo ? (
-            <div className="text-xs text-red-500">{formik.errors.vehiculo}</div>
+          {formik.errors.cho_codcho ? (
+            <div className="text-xs text-red-500">{formik.errors.cho_codcho}</div>
           ) : null}
         </div>
 
@@ -182,8 +193,8 @@ const FormAsignarVehiculoComponent = ({
             Fecha de Salida:
           </label>
           <DatePicker
-            selected={formik.values.fechaSalida}
-            value={formik.values.fechaSalida}
+            selected={formik.values.via_desfech}
+            value={formik.values.via_desfech}
             onChange={(date) => formik.setFieldValue("fechaSalida", date)}
             locale="es"
             name="fechaSalida"
@@ -200,15 +211,15 @@ const FormAsignarVehiculoComponent = ({
           <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <MobileTimePicker
-                defaultValue={formik.values.horaSalida}
+                defaultValue={formik.values.via_deshor}
                 onChange={(time) => formik.setFieldValue("horaSalida", time)}
                 name="horaSalida"
                 className="form-container-group-content-input"
               />
             </LocalizationProvider>
-            {formik.errors.horaSalida ? (
+            {formik.errors.via_deshor ? (
               <span className="text-xs text-red-500">
-                {formik.errors.horaSalida}
+                {formik.errors.via_deshor}
               </span>
             ) : null}
           </div>
@@ -257,13 +268,13 @@ const FormAsignarVehiculoComponent = ({
             <input
               type="number"
               className="form-container-group-content-input"
-              value={formik.values.numeroPalets}
+              value={formik.values.via_palets}
               name="numeroPalets"
               onChange={formik.handleChange}
             />
-            {formik.errors.numeroPalets ? (
+            {formik.errors.via_palets ? (
               <span className="text-xs text-red-500">
-                {formik.errors.numeroPalets}
+                {formik.errors.via_palets}
               </span>
             ) : null}
           </div>
@@ -275,7 +286,7 @@ const FormAsignarVehiculoComponent = ({
           <TextareaAutosize
             minRows={4}
             className="form-container-group-content-input"
-            value={formik.values.observacion}
+            value={formik.values.via_observ}
             name="observacion"
             onChange={formik.handleChange}
           />

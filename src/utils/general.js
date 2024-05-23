@@ -47,6 +47,9 @@ const GRUPOS_COLS_DESKTOP = [
   "GRUPO",
   "SEDE",
   "VOLUMEN (m3)",
+  "BULTOS",
+  "PESO",
+  "N° ORDENES",
   "MONTO TOTAL",
   "UBIGEO",
   "VEHÍCULO",
@@ -73,7 +76,7 @@ const MANTENIMIENTO_UNIDAD_TRANSPORTE_TABLE_COLS_DESKTOP = [
   "CODIGO",
   "VEHICULO",
   "CHOFER",
-  "utr_conrep",
+  "CAPACIDAD",
   "",
 ];
 

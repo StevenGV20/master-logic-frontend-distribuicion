@@ -9,6 +9,8 @@ import ListOrdenesDespachoComponent from "../components/ListOrdenesDespachoCompo
 import ModalMessage from "../components/widgets/ModalComponent";
 import { CircularProgress } from "@mui/material";
 import {
+  API_DISTRIBUCION,
+  API_MAESTRO,
   GRUPOS_COLS_DESKTOP,
   GRUPOS_COLS_MOBILE,
   GRUPOS_COLS_MODAL_DESKTOP,
@@ -21,11 +23,13 @@ import {
   calcularMontoTotal,
   calcularVolumenAsignadoTotal,
   calcularVolumenTotal,
+  getFetchFunction,
 } from "../utils/funciones";
 import TableCustom from "../components/widgets/TableComponent";
 import TableCollapseMUICustomComponent from "../components/widgets/TableComponent/TableCollapseMUICustomComponent";
 import TableMUICustomComponent from "../components/widgets/TableComponent/TableMUICustomComponent";
 import FormAsignarVehiculoComponent from "../components/FormAsignarVehiculoComponent";
+import PaginationCustom from "../components/widgets/PaginationComponent/PaginationCustom";
 
 function Row(props) {
   const { row, isMobile, vehiculos } = props;
@@ -47,7 +51,7 @@ function Row(props) {
         titleSubTable={"Ordenes de Despacho"}
         subtable={
           <ListOrdenesDespachoComponent
-            ordenesDespacho={row.ordenesDespacho}
+            ordenesDespacho={row.ordenDespachos}
             setOrdenesDespacho={() => <></>}
             showButtonDelete={false}
             showPagination={false}
@@ -55,23 +59,24 @@ function Row(props) {
             loadingTable={false}
           />
         }
+        colSpanSubTable={GRUPOS_COLS_DESKTOP.length}
       >
         {isMobile ? (
           <>
             <TableCell colSpan={2}>
-              <div>{row.name}</div>
-              <div>{row.sede}</div>
+              <div>{row.gru_grucod}</div>
+              <div>{row.sed_sedcod}</div>
               <div>
                 <div>Volumen total (m3):</div>
-                {calcularVolumenTotal(row.ordenesDespacho)}
+                {row.gru_volumen}
               </div>
               <div>
                 <div>Monto total:</div>
-                {calcularMontoTotal(row.ordenesDespacho)}
+                {row.gru_monto}
               </div>
             </TableCell>
             <TableCell colSpan={1}>
-              {row.vehiculo ? (
+              {row.idviaje > 0 ? (
                 <div className="flex space-x-2 justify-center w-full">
                   <div>{row.vehiculo}</div>
                   <button className="z-50">
@@ -93,18 +98,17 @@ function Row(props) {
         ) : (
           <>
             <TableCell component="th" scope="row">
-              {row.name}
+              {row.gru_grucod}
             </TableCell>
-            <TableCell align="center">{row.sede}</TableCell>
-            <TableCell align="center">
-              {calcularVolumenTotal(row.ordenesDespacho)}
-            </TableCell>
-            <TableCell align="center">
-              {calcularMontoTotal(row.ordenesDespacho)}
-            </TableCell>
+            <TableCell align="center">{row.sed_sedcod}</TableCell>
+            <TableCell align="center">{row.gru_volumen}</TableCell>
+            <TableCell align="center">{row.gru_bultos}</TableCell>
+            <TableCell align="center">{row.gru_peso}</TableCell>
+            <TableCell align="center">{row.gru_nroode}</TableCell>
+            <TableCell align="center">{row.gru_monto}</TableCell>
             <TableCell align="center">{}</TableCell>
             <TableCell align="center">
-              {row.vehiculo ? (
+              {row.idviaje > 0 ? (
                 <div className="flex space-x-2 justify-center w-full">
                   <div>{row.vehiculo}</div>
                   <button className="z-50">
@@ -137,7 +141,7 @@ function Row(props) {
         showButtons={false}
       >
         <FormAsignarVehiculoComponent
-          vehiculos={vehiculos}
+          vehiculos={vehiculos.result}
           grupoToAsign={grupoToAsign}
           setOpenModal={setOpenModal}
         />
@@ -153,40 +157,33 @@ const AsignarVehiculoPage = () => {
 
   const [loadingTable, setLoadingTable] = useState(true);
 
+  const fetchGrupos = async (page, limit) => {
+    try {
+      getFetchFunction(
+        `${API_DISTRIBUCION}/grupo/lista?limit=${limit}&page=${page}&cia=01&dateStart=2024-05-21&dateEnd=2024-05-28`,
+        setLoadingTable,
+        setGrupos
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchGrupos = async (filtros) => {
-      try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/grupos.json`);
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        setGrupos(data);
-        setLoadingTable(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchGrupos();
+    fetchGrupos(1, 10);
   }, []);
 
   const [vehiculos, setVehiculos] = useState([]);
+  const [loadingTableVehiculos, setLoadingTableVehiculos] = useState(true);
+  const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
-    const fetchVehiculos = async () => {
-      try {
-        const response = await fetch(`${URL_MASTERLOGIC_API}/vehiculos.json`);
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        const data = await response.json();
-        setVehiculos(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchVehiculos();
-  }, []);
+    getFetchFunction(
+      `${API_MAESTRO}/listarMaestroUnidadesTransporteUTR?empresa=01`,
+      setLoadingTableVehiculos,
+      setVehiculos
+    );
+  }, [refreshTable]);
 
   const [openModalVehiculos, setOpenModalVehiculos] = useState(false);
 
@@ -213,169 +210,182 @@ const AsignarVehiculoPage = () => {
       >
         <div className="desktop text-black">
           <TableCustom cols={VEHICULOS_DISPONIBILIDAD_COLS_DESKTOP}>
-            {vehiculos.map((vehiculo) => {
-              const totalVolumenAsignado = vehiculo.gruposAsignados
-                ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
-                : 0;
-              //["GRUPO", "SEDE", "VOLUMEN TOTAL", "MONTO TOTAL"]
-              return (
-                <>
-                  <TableCollapseMUICustomComponent
-                    titleSubTable={
-                      vehiculo.gruposAsignados &&
-                      vehiculo.gruposAsignados.length > 0
-                        ? "Grupos Asignados"
-                        : "No tienen ningún grupo asignado"
-                    }
-                    subtable={
-                      vehiculo.gruposAsignados &&
-                      vehiculo.gruposAsignados.length > 0 && (
-                        <TableMUICustomComponent
-                          cols={GRUPOS_COLS_MODAL_DESKTOP}
+            {!loadingTableVehiculos &&
+              vehiculos.result.map((vehiculo) => {
+                const totalVolumenAsignado = vehiculo.gruposAsignados
+                  ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
+                  : 0;
+                //["GRUPO", "SEDE", "VOLUMEN TOTAL", "MONTO TOTAL"]
+                return (
+                  <>
+                    <TableCollapseMUICustomComponent
+                      titleSubTable={
+                        vehiculo.gruposAsignados &&
+                        vehiculo.gruposAsignados.length > 0
+                          ? "Grupos Asignados"
+                          : "No tienen ningún grupo asignado"
+                      }
+                      subtable={
+                        vehiculo.gruposAsignados &&
+                        vehiculo.gruposAsignados.length > 0 && (
+                          <TableMUICustomComponent
+                            cols={GRUPOS_COLS_MODAL_DESKTOP}
+                          >
+                            {vehiculo.gruposAsignados.map((grupo) => (
+                              <>
+                                <TableRow>
+                                  <TableCell component="th" scope="row">
+                                    {grupo.name}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {grupo.sede}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {grupo.volumenTotal}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {grupo.montoTotal}
+                                  </TableCell>
+                                </TableRow>
+                              </>
+                            ))}
+                          </TableMUICustomComponent>
+                        )
+                      }
+                    >
+                      <>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          className="hidden"
                         >
-                          {vehiculo.gruposAsignados.map((grupo) => (
-                            <>
-                              <TableRow>
-                                <TableCell component="th" scope="row">
-                                  {grupo.name}
-                                </TableCell>
-                                <TableCell align="center">
-                                  {grupo.sede}
-                                </TableCell>
-                                <TableCell align="center">
-                                  {grupo.volumenTotal}
-                                </TableCell>
-                                <TableCell align="center">
-                                  {grupo.montoTotal}
-                                </TableCell>
-                              </TableRow>
-                            </>
-                          ))}
-                        </TableMUICustomComponent>
-                      )
-                    }
-                  >
-                    <>
-                      <TableCell component="th" scope="row" className="hidden">
-                        {vehiculo.vehiculo}
-                      </TableCell>
-                      <TableCell align="center">{vehiculo.chofer}</TableCell>
-                      <TableCell align="center">{vehiculo.sede}</TableCell>
-                      <TableCell align="center">
-                        {vehiculo.volumenMaximo}
-                      </TableCell>
-                      <TableCell align="center">
-                        {totalVolumenAsignado}
-                      </TableCell>
-                      <TableCell align="center">
-                        {vehiculo.volumenMaximo - totalVolumenAsignado}
-                      </TableCell>
-                    </>
-                  </TableCollapseMUICustomComponent>
-                </>
-              );
-            })}
+                          {vehiculo.vehiculo}
+                        </TableCell>
+                        <TableCell align="center">{vehiculo.chofer}</TableCell>
+                        <TableCell align="center">{vehiculo.sede}</TableCell>
+                        <TableCell align="center">
+                          {vehiculo.volumenMaximo}
+                        </TableCell>
+                        <TableCell align="center">
+                          {totalVolumenAsignado}
+                        </TableCell>
+                        <TableCell align="center">
+                          {vehiculo.volumenMaximo - totalVolumenAsignado}
+                        </TableCell>
+                      </>
+                    </TableCollapseMUICustomComponent>
+                  </>
+                );
+              })}
           </TableCustom>
         </div>
         <div className="mobile text-black">
           <TableCustom cols={VEHICULOS_DISPONIBILIDAD_COLS_MOBILE}>
-            {vehiculos.map((vehiculo) => {
-              const totalVolumenAsignado = vehiculo.gruposAsignados
-                ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
-                : 0;
-              //["GRUPO", "SEDE", "VOLUMEN TOTAL", "MONTO TOTAL"]
-              return (
-                <>
-                  <TableCollapseMUICustomComponent
-                    titleSubTable={
-                      vehiculo.gruposAsignados &&
-                      vehiculo.gruposAsignados.length > 0
-                        ? "Grupos Asignados"
-                        : "No tienen ningún grupo asignado"
-                    }
-                    subtable={
-                      vehiculo.gruposAsignados &&
-                      vehiculo.gruposAsignados.length > 0 && (
-                        <TableMUICustomComponent
-                          cols={GRUPOS_COLS_MODAL_MOBILE}
-                        >
-                          {vehiculo.gruposAsignados.map((grupo) => (
-                            <>
-                              <TableRow>
-                                <TableCell component="th" scope="row">
-                                  <div>{grupo.name}</div>
-                                  <div>{grupo.sede}</div>
-                                  <div>{grupo.volumenTotal}</div>
-                                  <div>{grupo.montoTotal}</div>
-                                </TableCell>
-                              </TableRow>
-                            </>
-                          ))}
-                        </TableMUICustomComponent>
-                      )
-                    }
-                  >
-                    <>
-                      <TableCell component="th" scope="row">
-                        <div className="block">
-                          <div className="grid grid-cols-1">
-                            <label htmlFor="">Vehiculo: </label>
-                            <span>{vehiculo.vehiculo}</span>
+            {!loadingTableVehiculos &&
+              vehiculos.result.map((vehiculo) => {
+                const totalVolumenAsignado = vehiculo.gruposAsignados
+                  ? calcularVolumenAsignadoTotal(vehiculo.gruposAsignados)
+                  : 0;
+                //["GRUPO", "SEDE", "VOLUMEN TOTAL", "MONTO TOTAL"]
+                return (
+                  <>
+                    <TableCollapseMUICustomComponent
+                      titleSubTable={
+                        vehiculo.gruposAsignados &&
+                        vehiculo.gruposAsignados.length > 0
+                          ? "Grupos Asignados"
+                          : "No tienen ningún grupo asignado"
+                      }
+                      subtable={
+                        vehiculo.gruposAsignados &&
+                        vehiculo.gruposAsignados.length > 0 && (
+                          <TableMUICustomComponent
+                            cols={GRUPOS_COLS_MODAL_MOBILE}
+                          >
+                            {vehiculo.gruposAsignados.map((grupo) => (
+                              <>
+                                <TableRow>
+                                  <TableCell component="th" scope="row">
+                                    <div>{grupo.name}</div>
+                                    <div>{grupo.sede}</div>
+                                    <div>{grupo.volumenTotal}</div>
+                                    <div>{grupo.montoTotal}</div>
+                                  </TableCell>
+                                </TableRow>
+                              </>
+                            ))}
+                          </TableMUICustomComponent>
+                        )
+                      }
+                    >
+                      <>
+                        <TableCell component="th" scope="row">
+                          <div className="block">
+                            <div className="grid grid-cols-1">
+                              <label htmlFor="">Vehiculo: </label>
+                              <span>{vehiculo.vehiculo}</span>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label htmlFor="">Chofer: </label>
+                              <span>{vehiculo.chofer}</span>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label htmlFor="">Sede: </label>
+                              <span>{vehiculo.sede}</span>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label htmlFor="">Volumen Maximo:</label>
+                              <span>{vehiculo.volumenMaximo}</span>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label htmlFor="">Volumen Asignado:</label>
+                              <span>{totalVolumenAsignado}</span>
+                            </div>
+                            <div className="grid grid-cols-1">
+                              <label htmlFor="">Volumen Disponible: </label>
+                              <span>
+                                {vehiculo.volumenMaximo - totalVolumenAsignado}
+                              </span>
+                            </div>
                           </div>
-                          <div className="grid grid-cols-1">
-                            <label htmlFor="">Chofer: </label>
-                            <span>{vehiculo.chofer}</span>
-                          </div>
-                          <div className="grid grid-cols-1">
-                            <label htmlFor="">Sede: </label>
-                            <span>{vehiculo.sede}</span>
-                          </div>
-                          <div className="grid grid-cols-1">
-                            <label htmlFor="">Volumen Maximo:</label>
-                            <span>{vehiculo.volumenMaximo}</span>
-                          </div>
-                          <div className="grid grid-cols-1">
-                            <label htmlFor="">Volumen Asignado:</label>
-                            <span>{totalVolumenAsignado}</span>
-                          </div>
-                          <div className="grid grid-cols-1">
-                            <label htmlFor="">Volumen Disponible: </label>
-                            <span>
-                              {vehiculo.volumenMaximo - totalVolumenAsignado}
-                            </span>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </>
-                  </TableCollapseMUICustomComponent>
-                </>
-              );
-            })}
+                        </TableCell>
+                      </>
+                    </TableCollapseMUICustomComponent>
+                  </>
+                );
+              })}
           </TableCustom>
         </div>
       </ModalMessage>
 
       <div className="desktop p-2 md:p-4">
-        <TableMUICustomComponent cols={GRUPOS_COLS_DESKTOP}>
-          {!loadingTable ? (
-            grupos.result.map((row) => (
-              <Row
-                key={row.name}
-                row={row}
-                isMobile={false}
-                loadingTable={loadingTable}
-                vehiculos={vehiculos}
-                setVehiculos={setVehiculos}
-              />
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={GRUPOS_COLS_DESKTOP.length}>
-                <CircularProgress />
-              </TableCell>
-            </TableRow>
-          )}
-        </TableMUICustomComponent>
+        <PaginationCustom
+          totalRows={grupos.totalRows}
+          fetchData={fetchGrupos}
+          refreshTable={refreshTable}
+          showLimit={false}
+        >
+          <TableMUICustomComponent cols={GRUPOS_COLS_DESKTOP}>
+            {!loadingTable ? (
+              grupos.result.map((row) => (
+                <Row
+                  key={row.id}
+                  row={row}
+                  isMobile={false}
+                  loadingTable={loadingTable}
+                  vehiculos={vehiculos}
+                  setVehiculos={setVehiculos}
+                />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={GRUPOS_COLS_DESKTOP.length}>
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+            )}
+          </TableMUICustomComponent>
+        </PaginationCustom>
       </div>
 
       <div className="mobile">
